@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 30% 98%;
+    --foreground: 220 25% 20%;
+
+    --card: 40 35% 97%;
+    --card-foreground: 220 25% 20%;
+
+    --popover: 40 35% 97%;
+    --popover-foreground: 220 25% 20%;
+
+    --primary: 175 55% 42%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 35 45% 92%;
+    --secondary-foreground: 220 25% 25%;
+
+    --muted: 35 30% 90%;
+    --muted-foreground: 220 15% 45%;
+
+    --accent: 15 75% 62%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 25% 88%;
+    --input: 35 25% 88%;
+    --ring: 175 55% 42%;
+
+    --radius: 1rem;
+
+    /* Custom tokens */
+    --bear-brown: 25 50% 45%;
+    --bear-light: 30 45% 65%;
+    --bear-nose: 25 30% 25%;
+    --doctor-coat: 200 20% 95%;
+    --stethoscope: 210 10% 35%;
+    
+    --gradient-hero: linear-gradient(135deg, hsl(40 30% 98%) 0%, hsl(175 40% 95%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(40 35% 97%) 100%);
+    --gradient-accent: linear-gradient(135deg, hsl(175 55% 42%) 0%, hsl(180 50% 50%) 100%);
+    
+    --shadow-soft: 0 4px 20px -4px hsl(220 25% 20% / 0.08);
+    --shadow-medium: 0 8px 30px -8px hsl(220 25% 20% / 0.12);
+    --shadow-glow: 0 0 40px hsl(175 55% 42% / 0.2);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 220 25% 10%;
+    --foreground: 40 30% 95%;
+
+    --card: 220 25% 12%;
+    --card-foreground: 40 30% 95%;
+
+    --popover: 220 25% 12%;
+    --popover-foreground: 40 30% 95%;
+
+    --primary: 175 55% 50%;
+    --primary-foreground: 220 25% 10%;
+
+    --secondary: 220 20% 18%;
+    --secondary-foreground: 40 30% 90%;
+
+    --muted: 220 20% 20%;
+    --muted-foreground: 220 15% 60%;
+
+    --accent: 15 70% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 175 55% 50%;
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .speech-bubble {
+    @apply relative bg-card border-2 border-primary/20 rounded-2xl p-4;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 12px solid transparent;
+    border-right-color: hsl(var(--card));
+  }
+
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+
+  .card-gradient {
+    background: var(--gradient-card);
+  }
+
+  .text-gradient {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@layer utilities {
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-wave {
+    animation: wave 2s ease-in-out infinite;
+    transform-origin: 70% 70%;
+  }
+
+  .animate-bounce-soft {
+    animation: bounce-soft 2s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(20deg); }
+    75% { transform: rotate(-10deg); }
+  }
+
+  @keyframes bounce-soft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+}
