@@ -72,7 +72,7 @@ export function PersistentBear({ currentStep }: PersistentBearProps) {
         };
       case 'photo':
         return {
-          x: '15%',
+          x: '5%',
           y: '50%',
           translateY: '-50%',
           scale: 1.0,
@@ -81,7 +81,7 @@ export function PersistentBear({ currentStep }: PersistentBearProps) {
         };
       case 'results':
         return {
-          x: '15%',
+          x: '5%',
           y: '50%',
           translateY: '-50%',
           scale: 1.0,
@@ -90,7 +90,7 @@ export function PersistentBear({ currentStep }: PersistentBearProps) {
         };
       case 'hood':
         return {
-          x: '15%',
+          x: '5%',
           y: '50%',
           translateY: '-50%',
           scale: 1.0,
