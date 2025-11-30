@@ -9,11 +9,11 @@ interface PersistentBearProps {
 
 // Map steps to bear images
 const BEAR_IMAGES: Record<Step, string> = {
-  hero: '/images/no_background/landing_page.png',
-  name: '/images/no_background/ask_name.png',
-  photo: '/images/no_background/take_photo.png',
-  results: '/images/no_background/chart_read.png',
-  hood: '/images/no_background/under_the_hood.png',
+  hero: `${import.meta.env.BASE_URL}images/no_background/landing_page.png`,
+  name: `${import.meta.env.BASE_URL}images/no_background/ask_name.png`,
+  photo: `${import.meta.env.BASE_URL}images/no_background/take_photo.png`,
+  results: `${import.meta.env.BASE_URL}images/no_background/chart_read.png`,
+  hood: `${import.meta.env.BASE_URL}images/no_background/under_the_hood.png`,
 };
 
 export function PersistentBear({ currentStep }: PersistentBearProps) {
