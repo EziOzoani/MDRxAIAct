@@ -8,15 +8,26 @@ interface HeroSectionProps {
 
 export function HeroSection({ onGetStarted }: HeroSectionProps) {
   return (
-    <section className="min-h-screen hero-gradient flex flex-col items-center justify-center relative overflow-hidden px-4">
+    <section className="min-h-screen hero-gradient flex flex-col relative overflow-hidden px-4">
+      {/* Warning Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="w-full bg-yellow-500 text-black py-3 px-4 text-center font-bold text-lg shadow-lg z-20"
+      >
+        ⚠️ !! WORK IN PROGRESS !! ⚠️
+      </motion.div>
+      
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/3 rounded-full blur-[100px]" />
       </div>
-
-      <div className="container mx-auto flex flex-col items-center justify-center z-10">
+      
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="container mx-auto flex flex-col items-center justify-center z-10">
         {/* Content */}
         <motion.div
           initial={{ opacity: 0, x: 50 }}
@@ -69,6 +80,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             </Button>
           </motion.div>
         </motion.div>
+        </div>
       </div>
 
       {/* Scroll indicator */}
