@@ -1,4 +1,6 @@
-# Welcome to your Lovable project
+# Welcome to the MRD x AI Act Medical Dashbaord 
+
+!!! THIS WORK IN VERY MUCH IN PROGRESS & IN THE EARLY STAGES!!! 
 
 
 
