@@ -86,63 +86,10 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange }: UnderThe
           </div>
         )}
 
-        {/* Compliance badges - moved to top */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="mb-8 p-6 glass-card"
-        >
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <h4 className="text-xl font-bold text-foreground mb-2">Regulatory Compliance</h4>
-              <p className="text-muted-foreground">
-                Our AI system meets the highest standards for medical device software.
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="px-4 py-2 bg-primary/10 rounded-lg border border-primary/20">
-                <span className="text-sm font-bold text-primary">MDR 2017/745</span>
-              </div>
-              <div className="px-4 py-2 bg-accent/10 rounded-lg border border-accent/20">
-                <span className="text-sm font-bold text-accent">EU AI Act</span>
-              </div>
-            </div>
-          </div>
-        </motion.div>
 
-        {/* Framework areas overview */}
-        <div className="mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            viewport={{ once: true }}
-            className="text-center mb-8"
-          >
-            <h3 className="text-2xl font-bold text-foreground mb-4">Three Key Framework Areas</h3>
-          </motion.div>
-
-          {/* Framework badges */}
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <div className="flex items-center gap-2 px-4 py-2 bg-blue-500/10 rounded-lg">
-              <div className="w-3 h-3 bg-blue-500 rounded-full" />
-              <span className="text-sm font-medium">{frameworkAreas.mdr.title}</span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-green-500/10 rounded-lg">
-              <div className="w-3 h-3 bg-green-500 rounded-full" />
-              <span className="text-sm font-medium">{frameworkAreas.aiAct.title}</span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-purple-500/10 rounded-lg">
-              <div className="w-3 h-3 bg-purple-500 rounded-full" />
-              <span className="text-sm font-medium">{frameworkAreas.overlap.title}</span>
-            </div>
-          </div>
-        </div>
 
         {/* Regulatory components - expandable cards */}
-        <div className="space-y-4" style={{ marginLeft: '50%', width: '50%', marginTop: '-8rem' }}>
+        <div className="space-y-4" style={{ marginLeft: '50%', width: '50%' }}>
           {regulatoryComponents.map((component, index) => (
             <RegulatoryCard 
               key={component.id} 
