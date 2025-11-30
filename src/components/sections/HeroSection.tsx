@@ -61,8 +61,8 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed"
           >
-            Explore our advanced skin lesion and tattoo detection AI system. 
-            Your friendly bear doctor will guide you through every step!
+            Explore our tattoo detection AI system. 
+            Your friendly Doctor Bear will guide you through every step!
           </motion.p>
 
           <motion.div
