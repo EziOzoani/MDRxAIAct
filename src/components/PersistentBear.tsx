@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-type Step = 'hero' | 'name' | 'photo' | 'results' | 'hood';
+type Step = 'hero' | 'name' | 'photo' | 'mdr' | 'results' | 'hood';
 
 interface PersistentBearProps {
   currentStep: Step;
@@ -12,6 +12,7 @@ const BEAR_IMAGES: Record<Step, string> = {
   hero: `${import.meta.env.BASE_URL}images/no_background/landing_page.png`,
   name: `${import.meta.env.BASE_URL}images/no_background/ask_name.png`,
   photo: `${import.meta.env.BASE_URL}images/no_background/take_photo.png`,
+  mdr: `${import.meta.env.BASE_URL}images/no_background/doctor_bear_thinking_no_background.png`,
   results: `${import.meta.env.BASE_URL}images/no_background/chart_read.png`,
   hood: `${import.meta.env.BASE_URL}images/no_background/under_the_hood.png`,
 };
@@ -78,6 +79,15 @@ export function PersistentBear({ currentStep }: PersistentBearProps) {
           scale: 1.0,
           width: 400,
           height: 500,
+        };
+      case 'mdr':
+        return {
+          x: '-100%',
+          y: '50%',
+          translateY: '-50%',
+          scale: 0,
+          width: 0,
+          height: 0,
         };
       case 'results':
         return {

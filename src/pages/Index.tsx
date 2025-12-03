@@ -2,11 +2,12 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { HeroSection } from '@/components/sections/HeroSection';
 import { NameInputSection } from '@/components/sections/NameInputSection';
 import { PhotoCaptureSection } from '@/components/sections/PhotoCaptureSection';
+import { MDRExplanationSection } from '@/components/sections/MDRExplanationSection';
 import { ResultsSection } from '@/components/sections/ResultsSection';
 import { UnderTheHoodSection } from '@/components/sections/UnderTheHoodSection';
 import { PersistentBear } from '@/components/PersistentBear';
 
-type Step = 'hero' | 'name' | 'photo' | 'results' | 'hood';
+type Step = 'hero' | 'name' | 'photo' | 'mdr' | 'results' | 'hood';
 
 const Index = () => {
   const [currentStep, setCurrentStep] = useState<Step>('hero');
@@ -15,6 +16,7 @@ const Index = () => {
 
   const nameRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
+  const mdrRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
   const hoodRef = useRef<HTMLDivElement>(null);
 
@@ -30,6 +32,7 @@ const Index = () => {
       // Calculate which section is most visible
       const sections = [
         { ref: null, step: 'hero' as Step, top: 0 },
+        { ref: mdrRef.current, step: 'mdr' as Step },
         { ref: nameRef.current, step: 'name' as Step },
         { ref: photoRef.current, step: 'photo' as Step },
         { ref: resultsRef.current, step: 'results' as Step },
@@ -75,8 +78,8 @@ const Index = () => {
   };
 
   const handleGetStarted = () => {
-    setCurrentStep('name');
-    setTimeout(() => scrollToRef(nameRef), 100);
+    setCurrentStep('mdr');
+    setTimeout(() => scrollToRef(mdrRef), 100);
   };
 
   const handleNameSubmit = (name: string) => {
@@ -90,6 +93,11 @@ const Index = () => {
     setTimeout(() => scrollToRef(resultsRef), 100);
   };
 
+  const handleMDRContinue = () => {
+    setCurrentStep('name');
+    setTimeout(() => scrollToRef(nameRef), 100);
+  };
+
   const handleConfirm = () => {
     setCurrentStep('hood');
     setTimeout(() => scrollToRef(hoodRef), 100);
@@ -101,7 +109,8 @@ const Index = () => {
   };
 
   // Determine which sections to show based on progress
-  const showName = currentStep !== 'hero' || userName !== '';
+  const showMDR = currentStep !== 'hero';
+  const showName = ['name', 'photo', 'results', 'hood'].includes(currentStep) || userName !== '';
   const showPhoto = ['photo', 'results', 'hood'].includes(currentStep) || userName !== '';
   const showResults = ['results', 'hood'].includes(currentStep);
   const showHood = currentStep === 'hood';
@@ -113,6 +122,13 @@ const Index = () => {
 
       {/* Hero Section */}
       <HeroSection onGetStarted={handleGetStarted} />
+
+      {/* MDR Explanation Section */}
+      {showMDR && (
+        <div ref={mdrRef}>
+          <MDRExplanationSection onContinue={handleMDRContinue} />
+        </div>
+      )}
 
       {/* Name Input Section */}
       {showName && (
