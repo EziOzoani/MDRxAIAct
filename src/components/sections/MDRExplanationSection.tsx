@@ -19,7 +19,7 @@ export function MDRExplanationSection({ onContinue }: MDRExplanationSectionProps
       <div className="container mx-auto px-4 py-16 relative z-10">
 
         {/* Three bears conversation */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end max-w-7xl mx-auto" style={{ paddingLeft: '0', marginLeft: '0' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 items-end max-w-7xl mx-auto relative" style={{ paddingLeft: '0', marginLeft: '0' }}>
           {/* First Bear - Questioning */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -90,6 +90,15 @@ export function MDRExplanationSection({ onContinue }: MDRExplanationSectionProps
               </SpeechBubble>
             </div>
           </motion.div>
+          {/* Arrow between first and second bear */}
+          <div className="absolute hidden lg:block text-primary/50 text-7xl font-bold" style={{ left: '33%', top: '70%', transform: 'translateX(-50%) translateY(-50%) rotate(-45deg)' }}>
+            <span>›</span>
+          </div>
+          
+          {/* Arrow between second and third bear */}
+          <div className="absolute hidden lg:block text-primary/50 text-7xl font-bold" style={{ left: '66%', top: '70%', transform: 'translateX(-50%) translateY(-50%)' }}>
+            <span>›</span>
+          </div>
         </div>
 
         {/* Continue button */}
