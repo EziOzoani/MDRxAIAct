@@ -59,7 +59,7 @@ export function MDRExplanationSection({ onContinue }: MDRExplanationSectionProps
               className="object-contain flex-shrink-0"
             />
             <div className="absolute" style={{ left: '100px', top: '-50px' }}>
-              <SpeechBubble direction="bottom" className="max-w-xs">
+              <SpeechBubble direction="bottom" className="max-w-2xl">
                 <p className="text-sm md:text-base">
                   Because we want to explore regulation under the MDR × AI Act, but without the complexity, liability, or risk of a real medical device. This is an educational demonstration, not a diagnostic tool!
                 </p>
