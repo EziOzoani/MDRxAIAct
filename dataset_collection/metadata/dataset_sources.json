@@ -1,0 +1,165 @@
+{
+  "dataset_name": "tattoo-classification-v1",
+  "task": "3-class image classification (real_tattoo, sticker_tattoo, pen_drawn)",
+  "created": "2026-03-02",
+  "categories": {
+    "real_tattoo": {
+      "sources": [
+        {
+          "name": "rlaope/tatvton-tattoo-raw",
+          "type": "huggingface_dataset",
+          "url": "https://huggingface.co/datasets/rlaope/tatvton-tattoo-raw",
+          "description": "Real tattoo photos on skin, cropped from TatVTON virtual try-on dataset",
+          "total_images": 5434,
+          "license": "See HuggingFace dataset card",
+          "download_script": "download_full_tatvton.py"
+        }
+      ],
+      "preprocessing": "Center-cropped to square, resized to 224x224 PNG",
+      "quality_notes": "~18% flagged as flat graphics or split comparisons — needs cleaning"
+    },
+    "sticker_tattoo": {
+      "sources": [
+        {
+          "name": "Openverse API",
+          "type": "api_search",
+          "url": "https://api.openverse.org/v1/images/",
+          "description": "CC-licensed images from Flickr, Wikimedia Commons, and other sources",
+          "queries": [
+            "temporary tattoo on skin", "sticker tattoo on arm", "fake tattoo on skin",
+            "temporary tattoo child", "metallic temporary tattoo", "transfer tattoo on hand",
+            "henna tattoo on hand", "henna tattoo dark skin", "mehndi design on skin",
+            "henna mehndi arm", "temporary tattoo back", "kids temporary tattoo arm",
+            "wash off tattoo", "glitter tattoo on skin", "airbrush tattoo",
+            "temporary tattoo wrist"
+          ],
+          "license": "Various CC licenses (tracked per-image in free_sources_metadata.json)",
+          "download_script": "collect_free_sources.py"
+        },
+        {
+          "name": "Wikimedia Commons",
+          "type": "api_category",
+          "url": "https://commons.wikimedia.org/w/api.php",
+          "categories": ["Temporary_tattoos", "Tattoo_stickers", "Henna_tattoos", "Mehndi"],
+          "license": "CC / Public Domain"
+        }
+      ],
+      "preprocessing": "Center-cropped to square, resized to 224x224 PNG",
+      "quality_notes": "~50% of images are noisy (not actually sticker tattoos). Manual curation essential."
+    },
+    "pen_drawn": {
+      "sources": [
+        {
+          "name": "Openverse API",
+          "type": "api_search",
+          "url": "https://api.openverse.org/v1/images/",
+          "description": "CC-licensed images from Flickr, Wikimedia Commons, and other sources",
+          "queries": [
+            "pen drawing on skin", "pen drawing on hand", "sharpie drawing on arm",
+            "marker drawing on skin", "ballpoint pen on hand", "drawing on arm pen",
+            "doodle on skin", "marker art on hand", "body marker drawing",
+            "pen tattoo on skin", "fake pen tattoo", "drawn tattoo marker"
+          ],
+          "license": "Various CC licenses (tracked per-image in free_sources_metadata.json)",
+          "download_script": "collect_free_sources.py"
+        },
+        {
+          "name": "Wikimedia Commons",
+          "type": "api_category",
+          "url": "https://commons.wikimedia.org/w/api.php",
+          "categories": ["Body_painting"],
+          "license": "CC / Public Domain"
+        }
+      ],
+      "preprocessing": "Center-cropped to square, resized to 224x224 PNG",
+      "quality_notes": "~50% noisy. Hardest category to source — no public dataset exists. Manual photos recommended."
+    }
+  },
+  "skin_tone_analysis": {
+    "method": "Border pixel brightness estimation mapped to Fitzpatrick scale",
+    "real_tattoo_distribution": {
+      "I-II (Very light/Light)": "1.7%",
+      "III (Medium light)": "18.3%",
+      "IV (Medium/olive/tan)": "48.7%",
+      "V (Medium dark/Brown)": "27.2%",
+      "VI (Dark/Very dark)": "4.1%",
+      "note": "Type IV overrepresented, Types I-II and VI underrepresented. Balancing script addresses this."
+    }
+  },
+  "balancing_strategy": {
+    "class_balancing": "Subsample real_tattoo to match smallest class, augment sticker/pen if needed",
+    "skin_tone_balancing": "Prioritize rare types (I-II, VI) when subsampling. Target: 15% I-II, 20% III, 30% IV, 20% V, 10% VI",
+    "augmentation_methods": ["horizontal flip", "rotation", "brightness", "contrast", "color jitter", "gaussian blur", "random crop"],
+    "script": "balance_dataset.py"
+  },
+  "cleaning": {
+    "method": "deep_clean.py (STANDARD mode)",
+    "date": "2026-03-02",
+    "heuristics": [
+      "skin_pixel_ratio (warm tone: R>G>B, brightness 40-230)",
+      "dark_skin_detection (mid brightness, low channel spread)",
+      "color_temperature (R.mean - B.mean)",
+      "edge_density (gradient magnitude)",
+      "white_background_ratio (brightness > 230)",
+      "dark_pixel_ratio (brightness < 20)",
+      "overall_brightness (mean, reject < 35 or > 225)",
+      "color_saturation (max-min channel ratio)",
+      "center_vs_border_brightness (product shot detection)",
+      "unique_color_count (32x32 thumbnail)"
+    ],
+    "results": {
+      "sticker_tattoo": {
+        "before": 480,
+        "after": 438,
+        "rejected": 42,
+        "reasons": {"cold_tones": 28, "white_bg": 9, "too_dark": 4, "low_texture": 1}
+      },
+      "pen_drawn": {
+        "before": 491,
+        "after": 433,
+        "rejected": 58,
+        "reasons": {"white_bg": 21, "cold_tones": 20, "no_skin": 10, "too_dark": 6, "low_texture": 1}
+      }
+    },
+    "rejected_location": "_rejected/ subdirectory in each category folder"
+  },
+  "training_variants": {
+    "model_1_balanced": {
+      "data": "cleaned + balanced (data_balanced/)",
+      "class_weights": true,
+      "skin_tone_balancing": true,
+      "maps_to": "All AI Act protections ON"
+    },
+    "model_2_unbalanced": {
+      "data": "cleaned + unbalanced (data/ post-clean)",
+      "class_weights": false,
+      "skin_tone_balancing": false,
+      "maps_to": "Bias-testing protection OFF"
+    },
+    "model_3_uncleaned": {
+      "data": "uncleaned + unbalanced (data/ pre-clean, includes _rejected/)",
+      "class_weights": false,
+      "skin_tone_balancing": false,
+      "maps_to": "Transparency protection OFF"
+    }
+  },
+  "known_issues": [
+    "No existing public dataset for real vs fake tattoo classification — this is novel",
+    "Original model (loremipsum3658/tattoo-detection) is YOLOv5 detector, not classifier",
+    "Sticker/pen categories rely on noisy CC image searches — automated cleaning applied",
+    "Skin tone estimation is approximate (border pixel heuristic, not a validated method)",
+    "Deep clean may misclassify edge cases (e.g., dark-skin images flagged as cold_tones)"
+  ],
+  "additional_sources_identified": {
+    "real_tattoo_supplementary": [
+      "BIVTatt (210 images, free on GitHub): https://github.com/mnicolas94/BIVTatt-Dataset",
+      "Roboflow TattooDet (4418 images, free): https://universe.roboflow.com/tattoodet/tattoo-detection-cbtkn",
+      "NTU Tattoo v2 (5740 images, requires agreement): https://github.com/BFLTeam/NTU_Dataset"
+    ],
+    "better_collection_apis": [
+      "Pexels API (CC0, better curated): https://www.pexels.com/api/new/",
+      "Unsplash API (free tier): https://unsplash.com/developers",
+      "Pixabay API (CC0): https://pixabay.com/api/docs/"
+    ]
+  }
+}

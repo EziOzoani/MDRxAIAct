@@ -1,0 +1,233 @@
+{
+  "UNCLEANED (data_uncleaned/)": {
+    "real_tattoo": {
+      "total": 4902,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 92,
+          "pct": 1.9
+        },
+        "III": {
+          "count": 918,
+          "pct": 18.7
+        },
+        "IV": {
+          "count": 2320,
+          "pct": 47.3
+        },
+        "V": {
+          "count": 1388,
+          "pct": 28.3
+        },
+        "VI": {
+          "count": 183,
+          "pct": 3.7
+        }
+      }
+    },
+    "sticker_tattoo": {
+      "total": 481,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 23,
+          "pct": 4.8
+        },
+        "III": {
+          "count": 88,
+          "pct": 18.3
+        },
+        "IV": {
+          "count": 156,
+          "pct": 32.4
+        },
+        "V": {
+          "count": 156,
+          "pct": 32.4
+        },
+        "VI": {
+          "count": 58,
+          "pct": 12.1
+        }
+      }
+    },
+    "pen_drawn": {
+      "total": 494,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 64,
+          "pct": 13.0
+        },
+        "III": {
+          "count": 120,
+          "pct": 24.3
+        },
+        "IV": {
+          "count": 172,
+          "pct": 34.8
+        },
+        "V": {
+          "count": 104,
+          "pct": 21.1
+        },
+        "VI": {
+          "count": 34,
+          "pct": 6.9
+        }
+      }
+    }
+  },
+  "CLEANED (data/)": {
+    "real_tattoo": {
+      "total": 5017,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 93,
+          "pct": 1.9
+        },
+        "III": {
+          "count": 941,
+          "pct": 18.8
+        },
+        "IV": {
+          "count": 2370,
+          "pct": 47.2
+        },
+        "V": {
+          "count": 1427,
+          "pct": 28.4
+        },
+        "VI": {
+          "count": 185,
+          "pct": 3.7
+        }
+      }
+    },
+    "sticker_tattoo": {
+      "total": 438,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 18,
+          "pct": 4.1
+        },
+        "III": {
+          "count": 77,
+          "pct": 17.6
+        },
+        "IV": {
+          "count": 141,
+          "pct": 32.2
+        },
+        "V": {
+          "count": 148,
+          "pct": 33.8
+        },
+        "VI": {
+          "count": 54,
+          "pct": 12.3
+        }
+      }
+    },
+    "pen_drawn": {
+      "total": 433,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 45,
+          "pct": 10.4
+        },
+        "III": {
+          "count": 105,
+          "pct": 24.2
+        },
+        "IV": {
+          "count": 160,
+          "pct": 37.0
+        },
+        "V": {
+          "count": 98,
+          "pct": 22.6
+        },
+        "VI": {
+          "count": 25,
+          "pct": 5.8
+        }
+      }
+    }
+  },
+  "BALANCED (data_balanced/)": {
+    "real_tattoo": {
+      "total": 400,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 60,
+          "pct": 15.0
+        },
+        "III": {
+          "count": 84,
+          "pct": 21.0
+        },
+        "IV": {
+          "count": 129,
+          "pct": 32.2
+        },
+        "V": {
+          "count": 84,
+          "pct": 21.0
+        },
+        "VI": {
+          "count": 42,
+          "pct": 10.5
+        }
+      }
+    },
+    "sticker_tattoo": {
+      "total": 400,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 18,
+          "pct": 4.5
+        },
+        "III": {
+          "count": 77,
+          "pct": 19.2
+        },
+        "IV": {
+          "count": 133,
+          "pct": 33.2
+        },
+        "V": {
+          "count": 122,
+          "pct": 30.5
+        },
+        "VI": {
+          "count": 50,
+          "pct": 12.5
+        }
+      }
+    },
+    "pen_drawn": {
+      "total": 400,
+      "fitzpatrick": {
+        "I-II": {
+          "count": 45,
+          "pct": 11.2
+        },
+        "III": {
+          "count": 99,
+          "pct": 24.8
+        },
+        "IV": {
+          "count": 142,
+          "pct": 35.5
+        },
+        "V": {
+          "count": 89,
+          "pct": 22.2
+        },
+        "VI": {
+          "count": 25,
+          "pct": 6.2
+        }
+      }
+    }
+  }
+}

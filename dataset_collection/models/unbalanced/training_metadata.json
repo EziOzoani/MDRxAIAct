@@ -1,0 +1,32 @@
+{
+  "data_dir": "data",
+  "class_counts": {
+    "real_tattoo": 5444,
+    "sticker_tattoo": 438,
+    "pen_drawn": 433
+  },
+  "class_weights": null,
+  "imbalance_ratio": 12.572748267898383,
+  "metrics": {
+    "eval_loss": 0.14317192137241364,
+    "eval_accuracy": 0.9548693586698337,
+    "eval_f1": 0.9534944414943566,
+    "eval_acc_real_tattoo": 0.7195121951219512,
+    "eval_acc_sticker_tattoo": 0.9944547134935305,
+    "eval_acc_pen_drawn": 0.7171717171717171,
+    "eval_runtime": 19.2568,
+    "eval_samples_per_second": 65.587,
+    "eval_steps_per_second": 2.077,
+    "epoch": 5.0
+  },
+  "args": {
+    "model_name": "google/vit-base-patch16-224-in21k",
+    "data_dir": "data",
+    "epochs": 5,
+    "batch_size": 32,
+    "lr": 2e-05,
+    "no_class_weights": true,
+    "push_to_hub": false,
+    "hub_model_id": null
+  }
+}

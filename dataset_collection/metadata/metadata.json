@@ -1,0 +1,23 @@
+{
+  "dataset_name": "tattoo-classification",
+  "description": "Images for training a real vs fake tattoo classifier",
+  "categories": {
+    "real_tattoo": {
+      "count": 0,
+      "description": "Real ink tattoos on skin across various skin tones"
+    },
+    "sticker_tattoo": {
+      "count": 480,
+      "description": "Temporary, sticker, transfer, henna, and airbrush tattoos"
+    },
+    "pen_drawn": {
+      "count": 491,
+      "description": "Pen, marker, sharpie drawings on skin"
+    }
+  },
+  "image_size": "224x224 PNG",
+  "source": "Pexels API (CC0 license \u2014 free for commercial use)",
+  "license": "CC0 (Pexels license \u2014 no attribution required)",
+  "collection_date": "2026-03-02",
+  "skin_tone_notes": "Queries include skin tone diversity terms. Manual review recommended to verify Fitzpatrick I-VI coverage."
+}
