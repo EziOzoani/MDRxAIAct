@@ -24,7 +24,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from transformers import ViTForImageClassification, ViTImageProcessor
 
-MODEL_DIR = Path(__file__).parent / "model_output"
+MODEL_DIR = Path(__file__).parent.parent / "models"
 
 # Model name mapping — the app will use these as model IDs
 MODELS = {
