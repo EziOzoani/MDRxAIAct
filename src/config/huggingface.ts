@@ -13,8 +13,8 @@ export const HUGGING_FACE_CONFIG = {
   // Used when transparency protection is OFF
   UNCLEANED_MODEL_ID: 'tattoo-uncleaned',
 
-  // API endpoint — proxied to local FastAPI inference server (port 8000)
-  API_URL: '/api/models/',
+  // API endpoint — local proxy in dev, GCP VM inference server in production
+  API_URL: import.meta.env.DEV ? '/api/models/' : 'http://35.206.143.54/models/',
 
   MAX_RETRIES: 3,
   RETRY_DELAY_MS: 15000,
