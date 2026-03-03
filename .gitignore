@@ -27,3 +27,13 @@ dist-ssr
 .env
 .env.local
 .env.production
+
+# Claude Code
+.claude/
+
+# Mockups and planning docs (not shipped)
+mock_ups_next_step/
+src/components/mockups/
+src/pages/MockupsGallery.tsx
+src/pages/IntegratedDemo.tsx
+src/pages/demos/

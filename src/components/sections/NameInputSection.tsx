@@ -2,14 +2,27 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, FileText, Eye, Shield, Check, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { allProtections, type RegState } from '../RegulationMenu';
+
+// Helper to get protection info
+const getProtectionInfo = (id: string) => allProtections.find(p => p.id === id);
 
 interface NameInputSectionProps {
   onSubmit: (name: string) => void;
+  regState?: RegState;
+  appliedProtections?: string[];
 }
 
-export function NameInputSection({ onSubmit }: NameInputSectionProps) {
+export function NameInputSection({ onSubmit, regState = 'both', appliedProtections = [] }: NameInputSectionProps) {
   const [name, setName] = useState('');
+
+  // Check protections relevant to this step
+  const hasIfu = appliedProtections.includes('ifu');
+  const hasTransparency = appliedProtections.includes('transparency');
+  const sectionProtections = ['ifu', 'transparency'];
+  const activeCount = sectionProtections.filter(p => appliedProtections.includes(p)).length;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -1,13 +1,33 @@
 import { motion } from 'framer-motion';
 import { SpeechBubble } from '../SpeechBubble';
 import { Button } from '../ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Map, MessageCircle, Layers, Shield, Thermometer, AlertTriangle } from 'lucide-react';
+import type { VizMode } from './HeroSection';
+import { allProtections, type RegState } from '../RegulationMenu';
+import { cn } from '@/lib/utils';
+
+// Helper to get protection info
+const getProtectionInfo = (id: string) => allProtections.find(p => p.id === id);
 
 interface MDRExplanationSectionProps {
   onContinue: () => void;
+  vizMode?: VizMode;
+  regState?: RegState;
+  appliedProtections?: string[];
 }
 
-export function MDRExplanationSection({ onContinue }: MDRExplanationSectionProps) {
+export function MDRExplanationSection({ onContinue, vizMode = 'reactive-bear', regState = 'both', appliedProtections = [] }: MDRExplanationSectionProps) {
+  const mdrEnabled = regState === 'both' || regState === 'mdrOnly';
+  const aiActEnabled = regState === 'both' || regState === 'aiActOnly';
+
+  // Check specific protections
+  const hasCeMarking = appliedProtections.includes('ce-marking');
+  const hasClinicalEval = appliedProtections.includes('clinical-eval');
+  const hasPms = appliedProtections.includes('pms');
+
+  // Count active protections for this section
+  const sectionProtections = ['ce-marking', 'clinical-eval', 'pms'];
+  const activeCount = sectionProtections.filter(p => appliedProtections.includes(p)).length;
   return (
     <section className="min-h-screen bg-gradient-to-br from-background via-secondary/20 to-accent/10 relative flex items-center overflow-hidden">
       {/* Background pattern */}
@@ -101,13 +121,15 @@ export function MDRExplanationSection({ onContinue }: MDRExplanationSectionProps
           </div>
         </div>
 
+        {/* Protection status now shown in the thermometer (left side) and PiP overlay */}
+
         {/* Continue button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.9 }}
           viewport={{ once: true }}
-          className="mt-12 flex justify-center"
+          className="mt-6 flex justify-center"
         >
           <Button
             onClick={onContinue}
@@ -119,5 +141,68 @@ export function MDRExplanationSection({ onContinue }: MDRExplanationSectionProps
         </motion.div>
       </div>
     </section>
+  );
+}
+
+// VizMode Preview Component - shows what visualization style is active
+function VizModePreview({ vizMode }: { vizMode: VizMode }) {
+  const vizConfig = {
+    'patient-journey': {
+      icon: Map,
+      label: 'Patient Journey Mode',
+      description: "You'll follow a patient through safety checkpoints",
+      color: 'text-blue-500',
+      bg: 'bg-blue-50 dark:bg-blue-900/20',
+      border: 'border-blue-200 dark:border-blue-800'
+    },
+    'reactive-bear': {
+      icon: MessageCircle,
+      label: 'Reactive Bear Mode',
+      description: "Dr. Bear will explain what's happening at each step",
+      color: 'text-amber-500',
+      bg: 'bg-amber-50 dark:bg-amber-900/20',
+      border: 'border-amber-200 dark:border-amber-800'
+    },
+    'layers': {
+      icon: Layers,
+      label: 'Protection Layers Mode',
+      description: "You'll see layers of protection around the patient",
+      color: 'text-purple-500',
+      bg: 'bg-purple-50 dark:bg-purple-900/20',
+      border: 'border-purple-200 dark:border-purple-800'
+    },
+    'shields': {
+      icon: Shield,
+      label: 'Stacking Shields Mode',
+      description: "Watch shields stack up as protections are added",
+      color: 'text-green-500',
+      bg: 'bg-green-50 dark:bg-green-900/20',
+      border: 'border-green-200 dark:border-green-800'
+    },
+    'thermometer': {
+      icon: Thermometer,
+      label: 'Risk Thermometer Mode',
+      description: "See risk levels change as protections are toggled",
+      color: 'text-red-500',
+      bg: 'bg-red-50 dark:bg-red-900/20',
+      border: 'border-red-200 dark:border-red-800'
+    }
+  };
+
+  const config = vizConfig[vizMode];
+  const Icon = config.icon;
+
+  return (
+    <div className={cn(
+      "inline-flex items-center gap-3 px-5 py-3 rounded-xl border",
+      config.bg,
+      config.border
+    )}>
+      <Icon className={cn("w-5 h-5", config.color)} />
+      <div>
+        <p className={cn("font-semibold text-sm", config.color)}>{config.label}</p>
+        <p className="text-xs text-muted-foreground">{config.description}</p>
+      </div>
+    </div>
   );
 }

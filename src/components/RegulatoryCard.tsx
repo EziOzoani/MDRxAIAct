@@ -1,15 +1,18 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronDown, ChevronUp, Camera, Sliders, Brain, FileCheck, Shield, ArrowLeft, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Camera, Sliders, Brain, FileCheck, Shield, ArrowLeft, X, ShieldOff, AlertTriangle, Lock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RegulatoryComponent } from '@/lib/regulatoryData';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 
+type RegState = 'both' | 'mdrOnly' | 'aiActOnly' | 'neither';
+
 interface RegulatoryCardProps {
   component: RegulatoryComponent;
   index: number;
   onExpandedChange?: (isExpanded: boolean) => void;
+  regState?: RegState;
 }
 
 // Icon mapping
@@ -21,14 +24,32 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Shield
 };
 
-export function RegulatoryCard({ component, index, onExpandedChange }: RegulatoryCardProps) {
+export function RegulatoryCard({ component, index, onExpandedChange, regState = 'both' }: RegulatoryCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const Icon = iconMap[component.icon] || Camera;
 
   const handleExpandedChange = (expanded: boolean) => {
+    // Can't expand when no regulations
+    if (regState === 'neither' && expanded) return;
     setIsExpanded(expanded);
     onExpandedChange?.(expanded);
   };
+
+  // Warning messages for partial/no regulation
+  const getCardWarning = () => {
+    if (regState === 'neither') {
+      return { icon: ShieldOff, text: 'NO OVERSIGHT', color: 'red' };
+    }
+    if (regState === 'mdrOnly') {
+      return { icon: AlertTriangle, text: 'Missing AI monitoring', color: 'amber' };
+    }
+    if (regState === 'aiActOnly') {
+      return { icon: AlertTriangle, text: 'Missing clinical validation', color: 'amber' };
+    }
+    return null;
+  };
+
+  const warning = getCardWarning();
 
   return (
     <>
@@ -40,22 +61,64 @@ export function RegulatoryCard({ component, index, onExpandedChange }: Regulator
         viewport={{ once: true }}
         className="w-full"
       >
-        <div className="glass-card overflow-hidden">
+        <div className={cn(
+          "glass-card overflow-hidden relative",
+          regState === 'neither' && "opacity-60 border-red-300 bg-red-50/50"
+        )}>
+          {/* Warning badge */}
+          {warning && (
+            <div className={cn(
+              "absolute top-2 right-2 px-2 py-1 rounded text-xs font-bold flex items-center gap-1 z-10",
+              warning.color === 'red' && "bg-red-500 text-white",
+              warning.color === 'amber' && "bg-amber-500 text-black"
+            )}>
+              <warning.icon className="w-3 h-3" />
+              {warning.text}
+            </div>
+          )}
+
           <button
             onClick={() => handleExpandedChange(true)}
-            className="w-full p-6 text-left hover:bg-muted/5 transition-colors group"
+            disabled={regState === 'neither'}
+            className={cn(
+              "w-full p-6 text-left transition-colors group",
+              regState === 'neither'
+                ? "cursor-not-allowed"
+                : "hover:bg-muted/5"
+            )}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Icon className="w-7 h-7 text-primary" />
+                <div className={cn(
+                  "w-14 h-14 rounded-xl flex items-center justify-center transition-colors",
+                  regState === 'neither'
+                    ? "bg-red-100"
+                    : "bg-primary/10 group-hover:bg-primary/20"
+                )}>
+                  {regState === 'neither' ? (
+                    <Lock className="w-7 h-7 text-red-500" />
+                  ) : (
+                    <Icon className="w-7 h-7 text-primary" />
+                  )}
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-foreground">{component.name}</h3>
-                  <p className="text-muted-foreground mt-1">{component.description}</p>
+                  <h3 className={cn(
+                    "text-xl font-bold",
+                    regState === 'neither' ? "text-red-700" : "text-foreground"
+                  )}>{component.name}</h3>
+                  <p className={cn(
+                    "mt-1",
+                    regState === 'neither' ? "text-red-500" : "text-muted-foreground"
+                  )}>
+                    {regState === 'neither'
+                      ? "No documentation, no validation, no monitoring"
+                      : component.description}
+                  </p>
                 </div>
               </div>
-              <ChevronDown className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+              {regState !== 'neither' && (
+                <ChevronDown className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
+              )}
             </div>
           </button>
         </div>
@@ -125,18 +188,60 @@ export function RegulatoryCard({ component, index, onExpandedChange }: Regulator
                     </p>
                   </div>
                   
-                  <Tabs defaultValue="mdr" className="w-full">
+                  <Tabs defaultValue={regState === 'aiActOnly' ? 'ai' : 'mdr'} className="w-full">
                     <TabsList className="grid w-full grid-cols-3 mb-8">
-                      <TabsTrigger value="mdr" className="data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-600">
-                        MDR Requirements
+                      <TabsTrigger
+                        value="mdr"
+                        disabled={regState === 'aiActOnly'}
+                        className={cn(
+                          "data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-600",
+                          regState === 'aiActOnly' && "opacity-40 cursor-not-allowed"
+                        )}
+                      >
+                        {regState === 'aiActOnly' ? '🔒 MDR (Disabled)' : 'MDR Requirements'}
                       </TabsTrigger>
-                      <TabsTrigger value="ai" className="data-[state=active]:bg-green-500/10 data-[state=active]:text-green-600">
-                        AI Act Requirements
+                      <TabsTrigger
+                        value="ai"
+                        disabled={regState === 'mdrOnly'}
+                        className={cn(
+                          "data-[state=active]:bg-green-500/10 data-[state=active]:text-green-600",
+                          regState === 'mdrOnly' && "opacity-40 cursor-not-allowed"
+                        )}
+                      >
+                        {regState === 'mdrOnly' ? '🔒 AI Act (Disabled)' : 'AI Act Requirements'}
                       </TabsTrigger>
-                      <TabsTrigger value="overlap" className="data-[state=active]:bg-purple-500/10 data-[state=active]:text-purple-600">
-                        Overlap Zone
+                      <TabsTrigger
+                        value="overlap"
+                        disabled={regState !== 'both'}
+                        className={cn(
+                          "data-[state=active]:bg-purple-500/10 data-[state=active]:text-purple-600",
+                          regState !== 'both' && "opacity-40 cursor-not-allowed"
+                        )}
+                      >
+                        {regState !== 'both' ? '🔒 Overlap (Requires Both)' : 'Overlap Zone'}
                       </TabsTrigger>
                     </TabsList>
+
+                    {/* Warning banner for partial regulation */}
+                    {regState !== 'both' && (
+                      <div className={cn(
+                        "mb-6 p-4 rounded-lg border flex items-center gap-3",
+                        regState === 'mdrOnly' && "bg-amber-50 border-amber-300 text-amber-800",
+                        regState === 'aiActOnly' && "bg-amber-50 border-amber-300 text-amber-800"
+                      )}>
+                        <AlertTriangle className="w-6 h-6 flex-shrink-0" />
+                        <div>
+                          <p className="font-bold">
+                            {regState === 'mdrOnly' && 'AI Act requirements not active'}
+                            {regState === 'aiActOnly' && 'MDR requirements not active'}
+                          </p>
+                          <p className="text-sm">
+                            {regState === 'mdrOnly' && 'Missing: Bias testing, drift monitoring, explainability, transparency requirements'}
+                            {regState === 'aiActOnly' && 'Missing: Clinical validation, CE marking, post-market surveillance, IFU requirements'}
+                          </p>
+                        </div>
+                      </div>
+                    )}
 
                   {/* MDR Tab */}
                   <TabsContent value="mdr" className="space-y-4">

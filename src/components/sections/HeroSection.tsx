@@ -2,11 +2,16 @@ import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
 import { ChevronDown } from 'lucide-react';
 
+export type VizMode = 'reactive-bear' | 'shields' | 'thermometer';
+
 interface HeroSectionProps {
   onGetStarted: () => void;
+  vizMode?: VizMode;
+  onVizModeChange?: (mode: VizMode) => void;
 }
 
 export function HeroSection({ onGetStarted }: HeroSectionProps) {
+
   return (
     <section className="min-h-screen hero-gradient flex flex-col relative overflow-hidden px-4">
       {/* Warning Banner */}
@@ -18,7 +23,8 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
       >
         ⚠️ !! WORK IN PROGRESS !! ⚠️
       </motion.div>
-      
+
+            
       {/* Background decorations */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 left-10 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
@@ -69,6 +75,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
+            className="flex flex-col sm:flex-row gap-4 items-center justify-center ml-8"
           >
             <Button
               onClick={onGetStarted}
