@@ -20,6 +20,7 @@ import { allProtections, type RegState } from '@/components/RegulationMenu';
 import { RiskThermometer } from '@/components/RiskThermometer';
 import { PiPWindow } from '@/components/PiPWindow';
 import { selectActiveResult, type AllClassificationResults } from '@/config/huggingface';
+import { FEATURE_FLAGS } from '@/config/features';
 
 type Step = 'hero' | 'mdr' | 'name' | 'photo' | 'results' | 'hood';
 export type Perspective = 'doctor' | 'engineer';
@@ -29,8 +30,8 @@ const Index = () => {
   const [userName, setUserName] = useState('');
   const [hideBear, setHideBear] = useState(false);
 
-  // Main view is always doctor; PiP shows engineer (the opposite)
-  const perspective: Perspective = 'doctor';
+  // Perspective toggle — main view vs PiP shows the opposite
+  const [perspective, setPerspective] = useState<Perspective>('doctor');
 
   // Regulation state
   const [regState, setRegState] = useState<RegState>('both');
@@ -40,6 +41,11 @@ const Index = () => {
 
   // All 3 model results (run in parallel at classification time)
   const [allResults, setAllResults] = useState<AllClassificationResults | null>(null);
+
+  // The user's captured / uploaded photo, lifted up from PhotoCaptureSection so
+  // the Under-the-Hood tiles (KNN similarity grid, checkpoint progression) can
+  // display the user's own image rather than a placeholder.
+  const [userImageUrl, setUserImageUrl] = useState<string | null>(null);
 
   // Derive active result reactively from current protection toggles — no re-classification needed
   const classificationResult = allResults
@@ -172,17 +178,62 @@ const Index = () => {
 
   return (
     <main className="min-h-screen relative">
-      {/* Risk Thermometer with integrated shield toggles (left side) */}
-      <RiskThermometer
-        currentStep={currentStep}
-        regState={regState}
-        appliedProtections={appliedProtections}
-        onRegStateChange={setRegState}
-        onProtectionToggle={handleProtectionToggle}
-      />
+      {/*
+        Perspective toggle — top right.
+        Gated by FEATURE_FLAGS.PERSPECTIVE_TOGGLE so the whole Medical /
+        Engineer view machinery can be toggled from one place. When the flag
+        is on, the button still only renders inside Under-the-Hood (same
+        rationale as the shield widget below — exploration controls live in
+        the workshop step, not on every page).
+      */}
+      {FEATURE_FLAGS.PERSPECTIVE_TOGGLE && showHood && (
+        <button
+          onClick={() => setPerspective(p => p === 'doctor' ? 'engineer' : 'doctor')}
+          className="fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full shadow-lg border transition-all duration-300 hover:shadow-xl backdrop-blur-sm"
+          style={{
+            background: perspective === 'doctor'
+              ? 'linear-gradient(135deg, #e0f2fe, #f0fdf4)'
+              : 'linear-gradient(135deg, #eef2ff, #faf5ff)',
+            borderColor: perspective === 'doctor' ? '#93c5fd' : '#a5b4fc',
+          }}
+        >
+          <span className="text-lg">{perspective === 'doctor' ? '\u{1F3E5}' : '\u{1F527}'}</span>
+          <span className="text-sm font-bold" style={{ color: perspective === 'doctor' ? '#1e40af' : '#4338ca' }}>
+            {perspective === 'doctor' ? 'Medical View' : 'Engineer View'}
+          </span>
+          <span className="text-xs text-slate-500 ml-1">tap to switch</span>
+        </button>
+      )}
 
-      {/* Picture-in-Picture Window (Engineer View) — visible from MDR step onwards */}
-      {showMDR && (
+      {/*
+        Risk Thermometer with integrated shield toggles (left side).
+        Per the May 12 design decision, the shield controls only appear in the
+        Under-the-Hood step — toggling them next to the tiles is where the
+        cause-and-effect is visible. We keep the same visual component, just
+        gated to the 'hood' step. Doctor / Engineer perspective toggle stays
+        at the top because it's a global lens, not a compliance control.
+      */}
+      {showHood && (
+        <RiskThermometer
+          currentStep={currentStep}
+          regState={regState}
+          appliedProtections={appliedProtections}
+          onRegStateChange={setRegState}
+          onProtectionToggle={handleProtectionToggle}
+        />
+      )}
+
+      {/*
+        Picture-in-Picture Window (Engineer View).
+        Two flags can each grant access independently:
+          - PERSPECTIVE_TOGGLE → user has the global Medical/Engineer switch
+          - ENGINEER_VIEW_IN_UTH → engineering view is hardcoded for UTH only
+        Either one will show the PiP overlay inside Under-the-Hood. The PiP
+        shows the opposite of the `perspective` prop, so passing 'doctor'
+        here makes the corner show engineer details — which is what we want
+        for the workshop step.
+      */}
+      {(FEATURE_FLAGS.PERSPECTIVE_TOGGLE || FEATURE_FLAGS.ENGINEER_VIEW_IN_UTH) && showHood && (
         <PiPWindow
           perspective={perspective}
           currentStep={currentStep}
@@ -233,6 +284,7 @@ const Index = () => {
             perspective={perspective}
             classificationResult={classificationResult}
             onClassificationResult={setAllResults}
+            onUserImageChange={setUserImageUrl}
           />
         </div>
       )}
@@ -253,7 +305,14 @@ const Index = () => {
         </div>
       )}
 
-      {/* Under the Hood Section */}
+      {/*
+        Under-the-Hood Section.
+        Perspective is hardcoded to 'engineer' when ENGINEER_VIEW_IN_UTH is on,
+        regardless of the global perspective state. Other sections continue to
+        receive the global perspective (currently sealed at 'doctor' since the
+        toggle flag is off), so the upper steps remain in medical view while
+        the workshop step always renders in engineering view.
+      */}
       {showHood && (
         <div ref={hoodRef}>
           <UnderTheHoodSection
@@ -262,7 +321,9 @@ const Index = () => {
             vizMode="thermometer"
             regState={regState}
             appliedProtections={appliedProtections}
-            perspective={perspective}
+            perspective={FEATURE_FLAGS.ENGINEER_VIEW_IN_UTH ? 'engineer' : perspective}
+            userImageUrl={userImageUrl}
+            classificationResult={classificationResult}
           />
         </div>
       )}

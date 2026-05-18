@@ -23,9 +23,15 @@ interface PhotoCaptureSectionProps {
   perspective?: Perspective;
   classificationResult?: any;
   onClassificationResult?: (result: AllClassificationResults | null) => void;
+  /**
+   * Lifts the captured / uploaded photo URL up to the page level so
+   * downstream sections (Under-the-Hood tiles, KNN similarity grid) can
+   * display the user's own image. Fired whenever selectedImage changes.
+   */
+  onUserImageChange?: (dataUrl: string | null) => void;
 }
 
-export function PhotoCaptureSection({ userName, onContinue, appliedProtections = [], perspective = 'doctor', classificationResult, onClassificationResult }: PhotoCaptureSectionProps) {
+export function PhotoCaptureSection({ userName, onContinue, appliedProtections = [], perspective = 'doctor', classificationResult, onClassificationResult, onUserImageChange }: PhotoCaptureSectionProps) {
   // Check protections relevant to this step
   const hasBiasTesting = appliedProtections.includes('bias-testing');
   const hasTransparency = appliedProtections.includes('transparency');
@@ -42,6 +48,13 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
   const setAllResults = (result: AllClassificationResults | null) => {
     onClassificationResult?.(result);
   };
+
+  // Lift selectedImage up to the page so Under-the-Hood can use it for the
+  // KNN-similarity tile and any future engineer-view detail panels. We fire
+  // the callback whenever the local state changes — including clear (null).
+  useEffect(() => {
+    onUserImageChange?.(selectedImage);
+  }, [selectedImage, onUserImageChange]);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -600,15 +613,18 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                       <div className={`p-6 rounded-xl border ${
                         (classificationResult.predictedClass || (classificationResult.isRealTattoo ? 'real_tattoo' : 'sticker_tattoo')) === 'real_tattoo'
                           ? 'bg-green-50 border-green-300'
-                          : (classificationResult.predictedClass === 'pen_drawn'
-                            ? 'bg-purple-50 border-purple-300'
-                            : 'bg-orange-50 border-orange-300')
+                          : classificationResult.predictedClass === 'not_tattoo'
+                            ? 'bg-slate-50 border-slate-300'
+                            : (classificationResult.predictedClass === 'pen_drawn'
+                              ? 'bg-purple-50 border-purple-300'
+                              : 'bg-orange-50 border-orange-300')
                       }`}>
                         <p className="text-lg font-semibold">
                           {(() => {
                             const cls = classificationResult.predictedClass || (classificationResult.isRealTattoo ? 'real_tattoo' : 'sticker_tattoo');
                             if (cls === 'real_tattoo') return 'Real Tattoo Detected';
                             if (cls === 'sticker_tattoo') return 'Sticker/Temporary Tattoo Detected';
+                            if (cls === 'not_tattoo') return 'No Tattoo Detected';
                             return 'Pen/Marker Drawing Detected';
                           })()}
                         </p>
