@@ -428,6 +428,16 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                     </div>
                   </div>
 
+                  {/* Best-result hint — the model is most accurate on a close,
+                      well-lit shot where the tattoo fills the frame. */}
+                  <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-muted-foreground">
+                    <Camera className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    <span>
+                      For the best result, get <strong>close</strong> so the tattoo fills most of
+                      the frame, in good light. Wide arm or full-body shots are harder for the model.
+                    </span>
+                  </div>
+
                   {/* Action buttons */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <Button
@@ -488,6 +498,26 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                       muted
                       className="w-full aspect-video object-cover"
                     />
+                    {/*
+                      Framing guide — the model was trained on tight tattoo
+                      crops, so it performs best when the tattoo fills the
+                      frame. This square reticle nudges users toward a close
+                      shot rather than a wide arm/selfie photo.
+                    */}
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                      <div className="relative aspect-square h-[78%] max-h-[78%]">
+                        {/* dashed reticle */}
+                        <div className="absolute inset-0 rounded-lg border-2 border-dashed border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]" />
+                        {/* corner ticks */}
+                        <span className="absolute -top-px -left-px h-5 w-5 border-t-2 border-l-2 border-primary rounded-tl-lg" />
+                        <span className="absolute -top-px -right-px h-5 w-5 border-t-2 border-r-2 border-primary rounded-tr-lg" />
+                        <span className="absolute -bottom-px -left-px h-5 w-5 border-b-2 border-l-2 border-primary rounded-bl-lg" />
+                        <span className="absolute -bottom-px -right-px h-5 w-5 border-b-2 border-r-2 border-primary rounded-br-lg" />
+                      </div>
+                    </div>
+                    <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                      Fill the frame with your tattoo
+                    </div>
                     {/* Camera switch button (useful on phones with two cameras) */}
                     <button
                       onClick={switchCamera}

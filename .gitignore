@@ -50,3 +50,6 @@ dataset_collection/embeddings/
 tile_doc_samples.json
 under_the_hood_tiles_spec.html
 /tmp_*
+
+# Augmented models (regenerable from cluster output_aug/)
+dataset_collection/models_aug/

@@ -27,7 +27,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
-import { Database, Shield, AlertTriangle, CheckCircle2, RotateCw, X } from 'lucide-react';
+import { Database, BarChart3, Shield, AlertTriangle, CheckCircle2, RotateCw, X } from 'lucide-react';
 import type { RegState } from '../RegulationMenu';
 import type { TierSimilarity } from '@/hooks/useKnnSimilarity';
 import { SHIELD_RULES, type ShieldEffect, type ShieldEffectTarget } from '@/config/shieldRules';
@@ -189,51 +189,46 @@ export function Tile1Data({
     .map((n) => n.thumbnail ? `data:image/jpeg;base64,${n.thumbnail}` : '')
     .filter(Boolean) ?? SAMPLE_THUMBS.map((src) => `${baseURL}${src}`);
 
-  // ─── RESTING STATE ───────────────────────────────────────────────────
+  // ─── RESTING STATE — back of a poker card ────────────────────────────
   if (state === 'resting') {
     return (
       <motion.button
         layout
         onClick={() => setState('expanded')}
-        whileHover={{ scale: 1.02, y: -2 }}
-        animate={{ scale: [1, 1.015, 1] }}
-        transition={{ scale: { duration: 2.4, repeat: Infinity, ease: 'easeInOut' } }}
-        className="group relative w-full max-w-sm cursor-pointer rounded-2xl border-2 border-slate-700 bg-slate-900 p-6 text-left shadow-xl transition-shadow hover:border-blue-500 hover:shadow-blue-500/20"
+        whileHover={{ scale: 1.03, y: -6 }}
+        animate={{ y: [0, -5, 0] }}
+        transition={{ y: { duration: 3, repeat: Infinity, ease: 'easeInOut' } }}
+        className="group relative mx-auto aspect-[5/7] w-full max-w-[320px] cursor-pointer overflow-hidden rounded-2xl border-2 border-primary/40 bg-primary/5 shadow-medium transition-shadow hover:shadow-[0_22px_55px_-15px_rgba(0,0,0,0.4)]"
       >
-        <div className="flex items-center gap-4">
-          {/* User photo placeholder on the left */}
-          <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl border-2 border-slate-600 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
-            {userImageUrl ? (
-              <img src={userImageUrl} alt="Your upload" className="h-full w-full object-cover" />
-            ) : (
-              <span className="text-xs text-slate-400 text-center px-2">Your<br />Photo</span>
-            )}
+        {/* Inner frame */}
+        <div className="absolute inset-3 rounded-xl border-2 border-primary/30" />
+        {/* Corner pips */}
+        <BarChart3 className="absolute left-3 top-3 h-4 w-4 text-primary/70" />
+        <BarChart3 className="absolute right-3 top-3 h-4 w-4 text-primary/70" />
+        <BarChart3 className="absolute left-3 bottom-3 h-4 w-4 text-primary/70 rotate-180" />
+        <BarChart3 className="absolute right-3 bottom-3 h-4 w-4 text-primary/70 rotate-180" />
+
+        {/* Centre medallion */}
+        <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4">
+          <div className="rounded-full border-2 border-primary/40 bg-card p-5 shadow-soft">
+            <BarChart3 className="h-10 w-10 text-primary" />
           </div>
-          {/* 2x2 mosaic from the current tier's nearest neighbours */}
-          <div className="grid grid-cols-2 gap-1.5">
-            {restingThumbs.slice(0, 4).map((src, i) => (
-              <img
-                key={`${tier}-${i}`}
-                src={src}
-                alt=""
-                className="h-11 w-11 rounded-md border border-slate-600 object-cover"
-              />
-            ))}
-          </div>
+          <span className="text-2xl font-extrabold tracking-[0.35em] text-primary">DATA</span>
+          <motion.span
+            animate={{ opacity: [0.5, 1, 0.5] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+            className="text-xs font-medium text-muted-foreground"
+          >
+            tap to reveal →
+          </motion.span>
         </div>
 
-        <div className="mt-4 flex items-center gap-2">
-          <Database className="h-4 w-4 text-blue-400" />
-          <h3 className="text-lg font-bold text-slate-100">The Data Behind Your Result</h3>
-        </div>
-
-        <motion.p
-          animate={{ opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
-          className="mt-2 text-xs text-slate-500"
-        >
-          tap to explore →
-        </motion.p>
+        {/* AppliedAI logo at the foot of the card */}
+        <img
+          src={`${baseURL}images/brand/appliedai-logo.svg`}
+          alt="Applied AI Institute"
+          className="absolute bottom-5 left-1/2 z-10 h-12 -translate-x-1/2 opacity-90"
+        />
       </motion.button>
     );
   }
@@ -264,7 +259,7 @@ export function Tile1Data({
           {/* Close button — sits above the rotating card so it never flips upside down */}
           <button
             onClick={() => setState('resting')}
-            className="absolute -top-3 -right-3 z-10 rounded-full bg-slate-800 p-2 text-slate-300 hover:bg-slate-700 hover:text-white shadow-lg border border-slate-700"
+            className="absolute -top-3 -right-3 z-10 rounded-full bg-muted p-2 text-foreground hover:bg-muted/70 shadow-soft border border-border"
             aria-label="Close"
           >
             <X className="h-4 w-4" />
@@ -272,7 +267,7 @@ export function Tile1Data({
 
           {/* FRONT — Expanded data view */}
           <div
-            className="rounded-2xl border-2 border-slate-700 bg-slate-900 p-6 shadow-2xl"
+            className="rounded-2xl border-2 border-border bg-card p-6 shadow-2xl"
             style={{ backfaceVisibility: 'hidden' }}
           >
             {/* Stacked banners for every shield-driven "missing protection"
@@ -288,8 +283,8 @@ export function Tile1Data({
 
             <div className="mb-4 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <Database className="h-5 w-5 text-blue-400" />
-                <h3 className="text-xl font-bold text-slate-100">The Data Behind Your Result</h3>
+                <Database className="h-5 w-5 text-primary" />
+                <h3 className="text-xl font-bold text-foreground">The Data Behind Your Result</h3>
               </div>
               {shieldsMissing > 0 && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-red-950/60 border border-red-700 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-red-200">
@@ -302,18 +297,18 @@ export function Tile1Data({
             {/* Top row — user image + training samples */}
             <div className="flex flex-wrap gap-6">
               <div className="flex-shrink-0">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">Your Image</p>
-                <div className="h-32 w-32 overflow-hidden rounded-xl border-2 border-slate-600 bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Image</p>
+                <div className="h-32 w-32 overflow-hidden rounded-xl border-2 border-border bg-muted flex items-center justify-center">
                   {userImageUrl ? (
                     <img src={userImageUrl} alt="Your upload" className="h-full w-full object-cover" />
                   ) : (
-                    <span className="text-sm text-slate-400 text-center">User<br />Photo</span>
+                    <span className="text-sm text-muted-foreground text-center">User<br />Photo</span>
                   )}
                 </div>
               </div>
 
               <div className="flex-1 min-w-[200px]">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Nearest Neighbours In The {composition.label} Dataset
                 </p>
                 <NeighbourGrid
@@ -328,8 +323,8 @@ export function Tile1Data({
             {/* Distribution bars — wrapped in a redaction strip so Clinical
                 Evaluation removal physically covers them with a black overlay
                 rather than just toggling a text label. */}
-            <div className="mt-6 border-t border-slate-700 pt-5">
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <div className="mt-6 border-t border-border pt-5">
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 What the {tier} model trained on
               </p>
 
@@ -340,10 +335,10 @@ export function Tile1Data({
                     const pct = (count / maxClass) * 100;
                     return (
                       <div key={cls} className="flex items-center gap-3 text-sm">
-                        <span className="w-24 text-right font-mono text-xs text-slate-300">
+                        <span className="w-24 text-right font-mono text-xs text-foreground/80">
                           {CLASS_LABELS[cls]}
                         </span>
-                        <div className="flex-1 overflow-hidden rounded bg-slate-800 h-5">
+                        <div className="flex-1 overflow-hidden rounded bg-muted h-5">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${pct}%` }}
@@ -351,7 +346,7 @@ export function Tile1Data({
                             className={`h-full ${CLASS_COLOURS[cls]}`}
                           />
                         </div>
-                        <span className="w-14 font-mono text-xs text-slate-400">{count}</span>
+                        <span className="w-14 font-mono text-xs text-muted-foreground">{count}</span>
                       </div>
                     );
                   })}
@@ -360,8 +355,8 @@ export function Tile1Data({
 
               <div className="mt-4 flex items-center justify-between gap-3">
                 <RedactionStrip active={!!sourceRedaction} label={sourceRedaction?.label}>
-                  <span className="text-xs text-slate-500">
-                    Total: <span className="font-mono text-slate-300">{total.toLocaleString()}</span> images
+                  <span className="text-xs text-muted-foreground">
+                    Total: <span className="font-mono text-foreground/80">{total.toLocaleString()}</span> images
                   </span>
                 </RedactionStrip>
                 <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${composition.badgeColour}`}>
@@ -385,15 +380,15 @@ export function Tile1Data({
             {/* IFU disclaimer — hidden when the rule says so, otherwise the
                 standard "not a diagnosis" line. */}
             {!ifuHidden && (
-              <p className="mt-4 text-center text-[10px] italic text-slate-500">
+              <p className="mt-4 text-center text-[10px] italic text-muted-foreground">
                 AI-assisted result · Not a diagnosis · Consult a clinician
               </p>
             )}
 
-            <div className="mt-5 flex justify-center border-t border-slate-700 pt-4">
+            <div className="mt-5 flex justify-center border-t border-border pt-4">
               <button
                 onClick={() => setState('flipped')}
-                className="inline-flex items-center gap-2 rounded-full bg-blue-500/20 px-4 py-2 text-xs font-semibold text-blue-300 hover:bg-blue-500/30 transition-colors"
+                className="inline-flex items-center gap-2 rounded-full bg-primary/15 px-4 py-2 text-xs font-semibold text-primary hover:bg-primary/25 transition-colors"
               >
                 <RotateCw className="h-3.5 w-3.5" />
                 tap to flip — see the regulatory requirements
@@ -404,35 +399,35 @@ export function Tile1Data({
           {/* BACK — Regulatory view, mirrored on the Y-axis so it reads
               correctly once the card has rotated 180° */}
           <div
-            className="absolute inset-0 rounded-2xl border-2 border-slate-700 bg-gradient-to-br from-slate-900 to-slate-950 p-6 shadow-2xl"
+            className="absolute inset-0 rounded-2xl border-2 border-border bg-gradient-to-br from-card to-muted p-6 shadow-2xl"
             style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
           >
             <div className="mb-4 flex items-center gap-2">
-              <Shield className="h-5 w-5 text-violet-400" />
-              <h3 className="text-xl font-bold text-slate-100">Why This Matters</h3>
+              <Shield className="h-5 w-5 text-accent" />
+              <h3 className="text-xl font-bold text-foreground">Why This Matters</h3>
             </div>
 
             <div className="space-y-3">
-              <div className="rounded-xl border-l-4 border-blue-500 bg-slate-950 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-blue-400">
+              <div className="rounded-xl border-l-4 border-primary bg-muted/40 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-primary">
                   MDR — Clinical Evaluation
                 </p>
                 {/* Body text is redacted when Explainability is off — the
                     reasoning the regulator wants to see is what gets hidden. */}
                 <RedactionStrip active={!!flipMdrRedaction} label={flipMdrRedaction?.label}>
-                  <p className="mt-1 text-sm text-slate-300">
+                  <p className="mt-1 text-sm text-foreground/80">
                     Clinical evaluation requires evidence that training data represents the intended
                     patient population. Insufficient diversity invalidates the device's intended use claim.
                   </p>
                 </RedactionStrip>
               </div>
 
-              <div className="rounded-xl border-l-4 border-violet-500 bg-slate-950 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wider text-violet-400">
+              <div className="rounded-xl border-l-4 border-accent bg-muted/40 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wider text-accent">
                   AI Act — Article 10 (Data Governance)
                 </p>
                 <RedactionStrip active={!!flipAiActRedaction} label={flipAiActRedaction?.label}>
-                  <p className="mt-1 text-sm text-slate-300">
+                  <p className="mt-1 text-sm text-foreground/80">
                     Training data must be relevant, representative, and free of errors.
                     Bias in datasets must be detected and corrected. Data governance practices must be documented.
                   </p>
@@ -463,10 +458,10 @@ export function Tile1Data({
               </div>
             </div>
 
-            <div className="mt-5 flex justify-center border-t border-slate-700 pt-4">
+            <div className="mt-5 flex justify-center border-t border-border pt-4">
               <button
                 onClick={() => setState('expanded')}
-                className="inline-flex items-center gap-2 rounded-full bg-slate-700/50 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition-colors"
+                className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-xs font-semibold text-foreground/80 hover:bg-muted/70 transition-colors"
               >
                 <RotateCw className="h-3.5 w-3.5" />
                 tap to flip back
@@ -504,11 +499,11 @@ function NeighbourGrid({ similarity, loading, baseURL, tier }: NeighbourGridProp
               key={`skeleton-${i}`}
               animate={{ opacity: [0.3, 0.6, 0.3] }}
               transition={{ duration: 1.4, repeat: Infinity, delay: i * 0.08 }}
-              className="aspect-square w-full rounded-md border border-slate-700 bg-slate-800"
+              className="aspect-square w-full rounded-md border border-border bg-muted"
             />
           ))}
         </div>
-        <p className="mt-1 text-center text-[10px] text-slate-500/70">
+        <p className="mt-1 text-center text-[10px] text-muted-foreground/70">
           Finding your nearest neighbours…
         </p>
       </div>
@@ -526,12 +521,12 @@ function NeighbourGrid({ similarity, loading, baseURL, tier }: NeighbourGridProp
               key={`fallback-${i}`}
               src={`${baseURL}${src}`}
               alt=""
-              className="aspect-square w-full rounded-md border border-slate-600 object-cover opacity-60"
+              className="aspect-square w-full rounded-md border border-border object-cover opacity-60"
               onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0.2'; }}
             />
           ))}
         </div>
-        <p className="mt-1 text-center text-[10px] text-slate-500/70 italic">
+        <p className="mt-1 text-center text-[10px] text-muted-foreground/70 italic">
           Upload an image to see your nearest training-set neighbours
         </p>
       </div>
@@ -569,12 +564,12 @@ function NeighbourGrid({ similarity, loading, baseURL, tier }: NeighbourGridProp
                 <img
                   src={`data:image/jpeg;base64,${n.thumbnail}`}
                   alt=""
-                  className="aspect-square w-full rounded-md border border-slate-600 object-cover"
+                  className="aspect-square w-full rounded-md border border-border object-cover"
                 />
               ) : (
-                <div className="aspect-square w-full rounded-md border border-slate-700 bg-slate-800" />
+                <div className="aspect-square w-full rounded-md border border-border bg-muted" />
               )}
-              <span className="absolute bottom-1 right-1 rounded bg-slate-900/85 px-1 py-0.5 text-[9px] font-mono text-slate-200 leading-none">
+              <span className="absolute bottom-1 right-1 rounded bg-slate-900/85 px-1 py-0.5 text-[9px] font-mono text-foreground leading-none">
                 {n.similarity.toFixed(2)}
               </span>
             </div>
@@ -582,11 +577,11 @@ function NeighbourGrid({ similarity, loading, baseURL, tier }: NeighbourGridProp
         </motion.div>
       </AnimatePresence>
       {meanSim !== null && (
-        <p className="mt-1.5 text-center text-[10px] text-slate-400">
+        <p className="mt-1.5 text-center text-[10px] text-muted-foreground">
           Mean similarity:{' '}
-          <span className="font-mono text-slate-200">{meanSim.toFixed(2)}</span>
+          <span className="font-mono text-foreground">{meanSim.toFixed(2)}</span>
           {' · '}
-          <span className="text-slate-500">
+          <span className="text-muted-foreground">
             {meanSim >= 0.75 ? 'strong fit' : meanSim >= 0.55 ? 'moderate fit' : 'weak fit'}
           </span>
         </p>

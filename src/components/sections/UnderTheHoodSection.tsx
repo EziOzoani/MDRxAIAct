@@ -28,11 +28,13 @@ import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Eye } from 'lucide-react';
-import { SpeechBubble } from '../SpeechBubble';
 import { allProtections, type RegState } from '../RegulationMenu';
+import { SpeechBubble } from '../SpeechBubble';
 import { Tile1Data } from '../tiles/Tile1Data';
+import { Tile3Model } from '../tiles/Tile3Model';
 import { ShieldToastStack } from '../ShieldToastStack';
 import { useKnnSimilarity, type SimTier } from '@/hooks/useKnnSimilarity';
+import { useCheckpointInference } from '@/hooks/useCheckpointInference';
 import { useShieldToast } from '@/hooks/useShieldToast';
 import type { VizMode } from './HeroSection';
 import type { Perspective } from '@/pages/Index';
@@ -69,6 +71,11 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
   const knn = useKnnSimilarity(userImageUrl, classificationResult?.predictedClass);
   const tier = activeTier(appliedProtections);
   const currentTierSimilarity = knn[tier];
+
+  // Run the user's photo through the active tier's epoch checkpoints. Lazy
+  // per tier — the first toggle to a new tier triggers its inference, then
+  // it's cached for the rest of the session.
+  const checkpointInference = useCheckpointInference(userImageUrl, tier);
 
   // Emit "what just changed" toasts whenever a shield is toggled. The toast
   // text lives in shieldRules.ts so adding a new shield is a single-row
@@ -109,7 +116,10 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
         </svg>
       </div>
 
-      <div className="container mx-auto px-4 relative z-10">
+      {/* Content is padded left on wide screens so the header text and cards
+          sit to the upper-right, clear of the bear + speech bubble on the
+          left. Below xl the bear is hidden, so no padding is needed. */}
+      <div className="container mx-auto px-4 relative z-10 xl:pl-[26rem]">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -124,26 +134,10 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-4">
             Let's Look <span className="text-gradient">Under the Hood</span>
           </h2>
-
-          {/* ─── NEW: Tile preview — shows the new flip-tile approach alongside
-              the existing view modes so the comparison is visible. Once the
-              new design is approved this can replace the modes below. */}
-          <div className="my-6 flex flex-col items-center gap-2">
-            <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-300 border border-amber-500/30">
-              ✦ NEW · Tile preview · click the card below
-            </div>
-            <Tile1Data
-              regState={regState}
-              appliedProtections={appliedProtections}
-              userImageUrl={userImageUrl}
-              predictedClass={classificationResult?.predictedClass}
-              similarity={currentTierSimilarity}
-              similarityLoading={knn.loading}
-            />
-          </div>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
-            Curious about how our AI works? Here's the technical breakdown of our
-            medical-grade detection system.
+            Pick a card to flip it over. Toggle the shields and watch the
+            <span className="text-primary font-medium"> data</span> and the
+            <span className="text-accent font-medium"> model</span> react in real time — to your own image.
           </p>
 
           {/* Final Protection Summary */}
@@ -182,57 +176,55 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           </div>
         </motion.div>
 
-        {/* Bear with microscope and speech bubble */}
+        {/*
+          Bear speech bubble — fixed at the bear's MOUTH height (he's centred
+          vertically, face in the upper third → ~mouth at ~42% of viewport),
+          just to his right with the tail pointing back at him. The content
+          block is padded right (xl:pl on the container) so cards/text never
+          sit under it. Hidden on narrow screens and while a card is expanded.
+        */}
         {!hasExpandedCard && (
-          <div className="relative mb-8" style={{ minHeight: '150px' }}>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              viewport={{ once: true }}
-              className="lg:max-w-[360px] absolute"
-              style={{ 
-                left: '22%', // Moved right from bear's position
-                top: '125px', // 1/4 of 500px bear height
-                transform: 'translateY(-50%)'
-              }}
-            >
-              <SpeechBubble direction="left">
-                <p className="text-lg font-semibold text-foreground">
-                  Alright {userName}, put on your lab coat! 🔬
-                </p>
-                <p className="text-muted-foreground mt-2">
-                  As a doctor, I believe in transparency. Let me show you exactly how our 
-                  AI analyzes your images and makes its predictions. Knowledge is power!
-                </p>
-              </SpeechBubble>
-            </motion.div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="fixed z-30 hidden xl:block w-56"
+            style={{ left: 'calc(5% + 300px)', top: '42%' }}
+          >
+            <SpeechBubble direction="left">
+              <p className="text-sm font-semibold text-foreground">
+                Put on your lab coat, {userName}! 🔬
+              </p>
+              <p className="text-muted-foreground mt-1 text-xs">
+                Flip a card and toggle the shields — watch how the data and model
+                react to your own image.
+              </p>
+            </SpeechBubble>
+          </motion.div>
         )}
 
-
         {/* ────────────────────────────────────────────────────────────────
-            The previous Under-the-Hood content (4 view modes — Requirements /
-            Cards / Monitor / Scenarios — plus the "Ready to explore more"
-            footer) has been removed. The replacement is a pair of interactive
-            flip tiles that react live to shield/protection toggles.
+            The two flip cards, shown as the backs of poker cards. Both the
+            same size (aspect 5/7), centred as a pair. Stacks to one column
+            on narrow screens.
 
-            Currently in place:
-              • Tile 1 (Data Behind Your Result)   — shown above in the header
-            Coming next:
-              • Relocated shield/protection toggles (will sit above the tiles)
-              • Tile 3 (How the Model Learned Your Image, uses /checkpoints API)
-
-            See: src/components/tiles/Tile1Data.tsx
+            Tile 1 — the data the model learned from (KNN neighbours + bars)
+            Tile 3 — how the model learned the user's image (checkpoints)
         ──────────────────────────────────────────────────────────────── */}
-        <div className="mt-12 flex flex-col items-center gap-3 text-sm text-muted-foreground">
-          <div className="rounded-2xl border border-dashed border-slate-700 px-6 py-4 max-w-md text-center">
-            <p className="font-semibold text-slate-300 mb-1">Workshop area</p>
-            <p className="text-xs">
-              Shield toggles + Tile 3 (model learning progression) will appear
-              here. Click the data tile above to test the new interaction.
-            </p>
-          </div>
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
+          <Tile1Data
+            regState={regState}
+            appliedProtections={appliedProtections}
+            userImageUrl={userImageUrl}
+            predictedClass={classificationResult?.predictedClass}
+            similarity={currentTierSimilarity}
+            similarityLoading={knn.loading}
+          />
+          <Tile3Model
+            appliedProtections={appliedProtections}
+            userImageUrl={userImageUrl}
+            checkpoints={checkpointInference.current}
+          />
         </div>
       </div>
     </section>
