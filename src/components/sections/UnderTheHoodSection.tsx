@@ -54,15 +54,18 @@ interface UnderTheHoodSectionProps {
   regState?: RegState;
   vizMode?: VizMode;
   appliedProtections?: string[];
+  /** Toggle a shield by ID. Plumbed in so the in-card seal/tier buttons
+   *  can mutate shield state directly from the tile. */
+  onToggleProtection?: (id: string) => void;
   perspective?: Perspective;
   /** User's captured photo (data URL) lifted up from PhotoCaptureSection. */
   userImageUrl?: string | null;
-  /** Active classification result — gives us the predicted class for the tile. */
+  /** Active classification result, gives us the predicted class for the tile. */
   classificationResult?: any;
 }
 
 
-export function UnderTheHoodSection({ userName, onCardExpandedChange, regState = 'both', appliedProtections = [], userImageUrl, classificationResult }: UnderTheHoodSectionProps) {
+export function UnderTheHoodSection({ userName, onCardExpandedChange, regState = 'both', appliedProtections = [], onToggleProtection, userImageUrl, classificationResult }: UnderTheHoodSectionProps) {
   const [hasExpandedCard, setHasExpandedCard] = useState(false);
 
   // Pre-fetch nearest-neighbour images for all three tiers in parallel. Tier
@@ -94,7 +97,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
   return (
     <section className="min-h-screen bg-gradient-to-b from-secondary/30 to-background relative overflow-hidden pt-4 pb-16">
       {/*
-        Transient "shield just changed" toast stack — slides in at the top
+        Transient "shield just changed" toast stack, slides in at the top
         of the page whenever the user toggles a protection. Fixed-position
         so it survives the section's own scroll/transform context.
       */}
@@ -137,7 +140,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
             Pick a card to flip it over. Toggle the shields and watch the
             <span className="text-primary font-medium"> data</span> and the
-            <span className="text-accent font-medium"> model</span> react in real time — to your own image.
+            <span className="text-accent font-medium"> model</span> react in real time, to your own image.
           </p>
 
           {/* Final Protection Summary */}
@@ -177,7 +180,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
         </motion.div>
 
         {/*
-          Bear speech bubble — fixed at the bear's MOUTH height (he's centred
+          Bear speech bubble, fixed at the bear's MOUTH height (he's centred
           vertically, face in the upper third → ~mouth at ~42% of viewport),
           just to his right with the tail pointing back at him. The content
           block is padded right (xl:pl on the container) so cards/text never
@@ -196,7 +199,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
                 Put on your lab coat, {userName}! 🔬
               </p>
               <p className="text-muted-foreground mt-1 text-xs">
-                Flip a card and toggle the shields — watch how the data and model
+                Flip a card and toggle the shields, watch how the data and model
                 react to your own image.
               </p>
             </SpeechBubble>
@@ -208,13 +211,14 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
             same size (aspect 5/7), centred as a pair. Stacks to one column
             on narrow screens.
 
-            Tile 1 — the data the model learned from (KNN neighbours + bars)
-            Tile 3 — how the model learned the user's image (checkpoints)
+            Tile 1, the data the model learned from (KNN neighbours + bars)
+            Tile 3, how the model learned the user's image (checkpoints)
         ──────────────────────────────────────────────────────────────── */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
           <Tile1Data
             regState={regState}
             appliedProtections={appliedProtections}
+            onToggleProtection={onToggleProtection}
             userImageUrl={userImageUrl}
             predictedClass={classificationResult?.predictedClass}
             similarity={currentTierSimilarity}
@@ -222,9 +226,42 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           />
           <Tile3Model
             appliedProtections={appliedProtections}
+            onToggleProtection={onToggleProtection}
             userImageUrl={userImageUrl}
+            predictedClass={classificationResult?.predictedClass}
             checkpoints={checkpointInference.current}
           />
+        </div>
+
+        {/* Acknowledgement, compact and centred at the foot of the page.
+            Source: https://practical-ai-act.eu/latest/Acknowledgment
+            (BAIAA logo asset slot, replace the text badge with the official
+            SVG/PNG once we have it). */}
+        <div className="mt-12 mx-auto max-w-xl">
+          <div className="flex items-center gap-3 justify-center mb-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary/15 to-accent/15 border border-primary/30">
+              <span className="text-sm font-extrabold tracking-tight text-primary">BAIAA</span>
+            </div>
+            <div className="text-left">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Acknowledgement</p>
+              <p className="text-xs font-semibold text-foreground">Bavarian AI Act Accelerator</p>
+            </div>
+          </div>
+          <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+            A two-year project funded by the Bavarian State Ministry of Digital Affairs,
+            led by the <span className="font-semibold text-primary">appliedAI Institute for Europe</span>{' '}
+            in collaboration with LMU, TUM, and TH Nuremberg, supporting SMEs, start-ups,
+            and the public sector in complying with the EU AI Act.
+            {' '}
+            <a
+              href="https://practical-ai-act.eu/latest/Acknowledgment"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline-offset-2 hover:underline"
+            >
+              Read more
+            </a>
+          </p>
         </div>
       </div>
     </section>

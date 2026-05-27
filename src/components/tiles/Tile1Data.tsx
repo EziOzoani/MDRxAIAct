@@ -33,6 +33,7 @@ import type { TierSimilarity } from '@/hooks/useKnnSimilarity';
 import { SHIELD_RULES, type ShieldEffect, type ShieldEffectTarget } from '@/config/shieldRules';
 import { RedactionStrip } from './RedactionStrip';
 import { TileBanner } from './TileBanner';
+import { cn } from '@/lib/utils';
 
 interface Tile1DataProps {
   regState: RegState;
@@ -48,6 +49,9 @@ interface Tile1DataProps {
   similarity?: TierSimilarity | null;
   /** True while the KNN pre-fetch is in flight for any tier. */
   similarityLoading?: boolean;
+  /** Toggle a shield by ID, used by the in-card Bias Testing button to
+   *  switch dataset tier directly from the card. */
+  onToggleProtection?: (id: string) => void;
 }
 
 /**
@@ -130,6 +134,7 @@ export function Tile1Data({
   userImageUrl,
   similarity,
   similarityLoading,
+  onToggleProtection,
 }: Tile1DataProps) {
   const [state, setState] = useState<'resting' | 'expanded' | 'flipped'>('resting');
 
@@ -256,7 +261,7 @@ export function Tile1Data({
           style={{ transformStyle: 'preserve-3d' }}
           className="relative"
         >
-          {/* Close button — sits above the rotating card so it never flips upside down */}
+          {/* Close button, sits above the rotating card so it never flips upside down */}
           <button
             onClick={() => setState('resting')}
             className="absolute -top-3 -right-3 z-10 rounded-full bg-muted p-2 text-foreground hover:bg-muted/70 shadow-soft border border-border"
@@ -265,7 +270,7 @@ export function Tile1Data({
             <X className="h-4 w-4" />
           </button>
 
-          {/* FRONT — Expanded data view */}
+          {/* FRONT, Expanded data view */}
           <div
             className="rounded-2xl border-2 border-border bg-card p-6 shadow-2xl"
             style={{ backfaceVisibility: 'hidden' }}
@@ -281,20 +286,67 @@ export function Tile1Data({
               </div>
             )}
 
-            <div className="mb-4 flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Database className="h-5 w-5 text-primary" />
-                <h3 className="text-xl font-bold text-foreground">The Data Behind Your Result</h3>
+            {/* HEADER STRIP, same design language as Tile 3. Tier badge
+                doubles as the Bias Testing toggle, status reflects whether
+                the dataset is balanced (best), unbalanced, or uncleaned. */}
+            <div
+              className={cn(
+                'mb-5 -mx-6 -mt-6 flex items-center justify-between gap-3 px-6 py-4 border-b-2 rounded-t-2xl',
+                tier === 'balanced'
+                  ? 'border-b-emerald-300/60 bg-gradient-to-r from-emerald-50/60 to-transparent dark:border-b-emerald-900/70 dark:from-emerald-950/30'
+                  : tier === 'unbalanced'
+                    ? 'border-b-amber-300/60 bg-gradient-to-r from-amber-50/60 to-transparent dark:border-b-amber-900/70 dark:from-amber-950/30'
+                    : 'border-b-red-300/60 bg-gradient-to-r from-red-50/60 to-transparent dark:border-b-red-900/70 dark:from-red-950/30',
+              )}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <TierDial tier={tier} />
+                <div className="min-w-0">
+                  <h3 className="flex items-center gap-2 text-lg font-bold text-foreground truncate">
+                    <Database className="h-4 w-4 text-primary shrink-0" />
+                    The Data Behind Your Result
+                  </h3>
+                  <p className={cn(
+                    'text-xs truncate',
+                    tier === 'balanced' ? 'text-emerald-700 dark:text-emerald-400'
+                      : tier === 'unbalanced' ? 'text-amber-700 dark:text-amber-400'
+                      : 'text-red-700 dark:text-red-400',
+                  )}>
+                    {tier === 'balanced' && 'Balanced, audited across all skin tones.'}
+                    {tier === 'unbalanced' && 'Skewed, no fairness audit on this slice.'}
+                    {tier === 'uncleaned' && 'Raw, noisy and unaudited training data.'}
+                  </p>
+                </div>
               </div>
+
+              {/* Bias Testing toggle, always visible. */}
+              {onToggleProtection && (
+                <button
+                  onClick={() => onToggleProtection('bias-testing')}
+                  className={cn(
+                    'shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider shadow-sm transition-all hover:shadow-md hover:scale-105',
+                    appliedProtections.includes('bias-testing')
+                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                      : 'bg-amber-600 text-white hover:bg-amber-700',
+                  )}
+                  title={appliedProtections.includes('bias-testing')
+                    ? 'Turn Bias Testing off, see the skewed neighbours'
+                    : 'Turn Bias Testing on, restore balanced sampling'}
+                >
+                  <Shield className="h-3.5 w-3.5" />
+                  {appliedProtections.includes('bias-testing') ? 'Show bias' : 'Hide bias'}
+                </button>
+              )}
+
               {shieldsMissing > 0 && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-red-950/60 border border-red-700 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-red-200">
+                <span className="hidden md:inline-flex items-center gap-1 rounded-full bg-red-950/40 border border-red-700/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-red-200 dark:bg-red-950/60">
                   <AlertTriangle className="h-3 w-3" />
-                  {shieldsMissing} shield{shieldsMissing > 1 ? 's' : ''} missing
+                  {shieldsMissing}
                 </span>
               )}
             </div>
 
-            {/* Top row — user image + training samples */}
+            {/* Top row, user image + training samples */}
             <div className="flex flex-wrap gap-6">
               <div className="flex-shrink-0">
                 <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Your Image</p>
@@ -320,7 +372,7 @@ export function Tile1Data({
               </div>
             </div>
 
-            {/* Distribution bars — wrapped in a redaction strip so Clinical
+            {/* Distribution bars, wrapped in a redaction strip so Clinical
                 Evaluation removal physically covers them with a black overlay
                 rather than just toggling a text label. */}
             <div className="mt-6 border-t border-border pt-5">
@@ -361,12 +413,12 @@ export function Tile1Data({
                 </RedactionStrip>
                 <span className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold ${composition.badgeColour}`}>
                   <BadgeIcon className="h-3.5 w-3.5" />
-                  {composition.label} — {composition.ratio}× ratio
+                  {composition.label}, {composition.ratio}× ratio
                 </span>
               </div>
             </div>
 
-            {/* Bottom callouts — these are inline "shield removed" notes that
+            {/* Bottom callouts, these are inline "shield removed" notes that
                 are not redactions but standalone warning blocks. Multiple
                 shields (e.g. HUM and BIAS) may both target this region. */}
             {bottomCallouts.length > 0 && (
@@ -377,7 +429,7 @@ export function Tile1Data({
               </div>
             )}
 
-            {/* IFU disclaimer — hidden when the rule says so, otherwise the
+            {/* IFU disclaimer, hidden when the rule says so, otherwise the
                 standard "not a diagnosis" line. */}
             {!ifuHidden && (
               <p className="mt-4 text-center text-[10px] italic text-muted-foreground">
@@ -385,18 +437,12 @@ export function Tile1Data({
               </p>
             )}
 
-            <div className="mt-5 flex justify-center border-t border-border pt-4">
-              <button
-                onClick={() => setState('flipped')}
-                className="inline-flex items-center gap-2 rounded-full bg-primary/15 px-4 py-2 text-xs font-semibold text-primary hover:bg-primary/25 transition-colors"
-              >
-                <RotateCw className="h-3.5 w-3.5" />
-                tap to flip — see the regulatory requirements
-              </button>
-            </div>
+            {/* DOG-EAR, bottom-right page curl invites the flip when
+                Explainability (xai) is applied. Sealed flat when off. */}
+            <DogEar visible={appliedProtections.includes('explainability')} onFlip={() => setState('flipped')} />
           </div>
 
-          {/* BACK — Regulatory view, mirrored on the Y-axis so it reads
+          {/* BACK, Regulatory view, mirrored on the Y-axis so it reads
               correctly once the card has rotated 180° */}
           <div
             className="absolute inset-0 rounded-2xl border-2 border-border bg-gradient-to-br from-card to-muted p-6 shadow-2xl"
@@ -410,9 +456,9 @@ export function Tile1Data({
             <div className="space-y-3">
               <div className="rounded-xl border-l-4 border-primary bg-muted/40 p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-                  MDR — Clinical Evaluation
+                  MDR, Clinical Evaluation
                 </p>
-                {/* Body text is redacted when Explainability is off — the
+                {/* Body text is redacted when Explainability is off, the
                     reasoning the regulator wants to see is what gets hidden. */}
                 <RedactionStrip active={!!flipMdrRedaction} label={flipMdrRedaction?.label}>
                   <p className="mt-1 text-sm text-foreground/80">
@@ -424,7 +470,7 @@ export function Tile1Data({
 
               <div className="rounded-xl border-l-4 border-accent bg-muted/40 p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-accent">
-                  AI Act — Article 10 (Data Governance)
+                  AI Act, Article 10 (Data Governance)
                 </p>
                 <RedactionStrip active={!!flipAiActRedaction} label={flipAiActRedaction?.label}>
                   <p className="mt-1 text-sm text-foreground/80">
@@ -439,18 +485,18 @@ export function Tile1Data({
                   {tier === 'balanced' ? (
                     <>
                       <strong>You're seeing the balanced model.</strong> Equal counts across all four classes,
-                      Fitzpatrick-balanced bare-skin images, and class weights — what compliance actually looks like.
+                      Fitzpatrick-balanced bare-skin images, and class weights, what compliance actually looks like.
                     </>
                   ) : tier === 'unbalanced' ? (
                     <>
-                      <strong>Without bias testing, this model scores 96.5% overall</strong> — but only because
+                      <strong>Without bias testing, this model scores 96.5% overall</strong>, but only because
                       it overfits to <code>real_tattoo</code> (99.6%) and barely sees <code>not_tattoo</code>
                       (47% on epoch 1, only 150 training images). The headline hides the bias.
                     </>
                   ) : (
                     <>
                       <strong>Without transparency, you can't even audit the data.</strong> This model was
-                      trained on noisy, unfiltered images mixed with edge cases like henna and body paint —
+                      trained on noisy, unfiltered images mixed with edge cases like henna and body paint -
                       labels themselves are unreliable.
                     </>
                   )}
@@ -587,5 +633,63 @@ function NeighbourGrid({ similarity, loading, baseURL, tier }: NeighbourGridProp
         </p>
       )}
     </div>
+  );
+}
+
+// ─── Helper: Tier dial (sits inside the header strip) ───────────────────
+function TierDial({ tier }: { tier: 'balanced' | 'unbalanced' | 'uncleaned' }) {
+  const config = {
+    balanced:   { color: '#15803d', light: '#22c55e',  label: 'BAL', icon: CheckCircle2 },
+    unbalanced: { color: '#b45309', light: '#f59e0b',  label: 'UNB', icon: AlertTriangle },
+    uncleaned:  { color: '#b91c1c', light: '#f87171',  label: 'RAW', icon: AlertTriangle },
+  } as const;
+  const c = config[tier];
+  const Icon = c.icon;
+  return (
+    <div
+      className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-[3px] shadow-medium"
+      style={{
+        background: `radial-gradient(circle at 30% 30%, ${c.light}, ${c.color} 70%)`,
+        borderColor: '#ffffffaa',
+      }}
+      title={`Dataset tier: ${tier}`}
+    >
+      <Icon className="h-7 w-7 text-white drop-shadow" strokeWidth={2.5} />
+      <span
+        className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-sm px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white shadow-sm"
+        style={{ backgroundColor: c.color }}
+      >
+        {c.label}
+      </span>
+    </div>
+  );
+}
+
+// ─── Helper: Dog-ear flip-invite (corner curl) ───────────────────────────
+function DogEar({ visible, onFlip }: { visible: boolean; onFlip: () => void }) {
+  if (!visible) return null;
+  return (
+    <motion.button
+      onClick={onFlip}
+      aria-label="Flip card, view regulatory rationale"
+      animate={{ y: [0, -2, 0] }}
+      transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+      className="group absolute bottom-0 right-0 h-14 w-14 cursor-pointer"
+      style={{ background: 'transparent' }}
+    >
+      <svg viewBox="0 0 56 56" className="absolute inset-0 h-full w-full">
+        <defs>
+          <linearGradient id="dogear-bg-t1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--muted))" />
+            <stop offset="100%" stopColor="hsl(var(--primary) / 0.4)" />
+          </linearGradient>
+        </defs>
+        <path d="M 56 56 L 56 22 L 22 56 Z" fill="url(#dogear-bg-t1)" stroke="hsl(var(--primary))" strokeWidth="1.5" />
+        <line x1="56" y1="22" x2="22" y2="56" stroke="hsl(var(--primary))" strokeWidth="1" strokeDasharray="2 2" opacity="0.6" />
+      </svg>
+      <span className="absolute bottom-1 right-1 text-[8px] font-bold uppercase tracking-widest text-primary group-hover:text-primary">
+        why?
+      </span>
+    </motion.button>
   );
 }
