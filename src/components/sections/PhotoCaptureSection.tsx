@@ -4,6 +4,7 @@ import { SpeechBubble } from '../SpeechBubble';
 import { Button } from '../ui/button';
 import { Camera, Upload, ArrowRight, X, Loader2, Shield, Brain, AlertTriangle, Clock, BarChart3 } from 'lucide-react';
 import { classifyAllTiers, type AllClassificationResults } from '@/config/huggingface';
+import { getDemoOverride, buildOverrideResult } from '@/config/demoOverrides';
 import { ProtectionGate } from '../ProtectionGate';
 import type { VizMode } from './HeroSection';
 import { allProtections, type RegState } from '../RegulationMenu';
@@ -247,7 +248,13 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
             // Preserve original filename so simulation can use hints if server is down
             const originalName = imageSrc.split('/').pop() || 'example.png';
             const file = new File([blob], originalName, { type: 'image/png' });
-            const results = await classifyAllTiers(file, setLoadingMessage, true);
+            // Demo examples are pinned to their canonical class — see
+            // src/config/demoOverrides.ts. Real uploads / camera captures
+            // (handled below) always use the live model.
+            const override = getDemoOverride(imageSrc);
+            const results = override
+              ? buildOverrideResult(override)
+              : await classifyAllTiers(file, setLoadingMessage, true);
             setAllResults(results);
           } catch (err) {
             console.error('Classification error:', err);

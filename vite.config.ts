@@ -8,6 +8,16 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "localhost",
     port: 8080,
+    // Without these ignores, Vite tries to watch the dataset_collection/ tree
+    // (tens of thousands of training images + venv) and exhausts the inotify
+    // watcher limit (ENOSPC), which silently breaks HMR.
+    watch: {
+      ignored: [
+        '**/dataset_collection/**',
+        '**/node_modules/**',
+        '**/.git/**',
+      ],
+    },
     proxy: {
       '/api/models': {
         target: 'http://localhost:8000',
