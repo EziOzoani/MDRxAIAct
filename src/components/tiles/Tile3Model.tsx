@@ -28,15 +28,25 @@
 
 import { motion } from 'framer-motion';
 import { useState, useMemo } from 'react';
-import { Microscope, Brain, Shield, RotateCw, X } from 'lucide-react';
+import { Microscope, Brain, Shield, RotateCw, X, AlertTriangle, Sparkles } from 'lucide-react';
 import type { TierCheckpoints } from '@/hooks/useCheckpointInference';
+import type { PredictedClass } from '@/config/huggingface';
 import { SHIELD_RULES, type ShieldEffect, type ShieldEffectTarget } from '@/config/shieldRules';
+import { FAKE_DRIFT, trainingRefUrl, type FakeDriftEpoch } from '@/config/fakeDrift';
 import { RedactionStrip } from './RedactionStrip';
+import { cn } from '@/lib/utils';
 
 interface Tile3ModelProps {
   appliedProtections: string[];
+  /** Toggle a shield by ID — used by the in-card seal button to flip the
+   *  post-market-surveillance + drift-monitoring shields together. */
+  onToggleProtection?: (id: string) => void;
   userImageUrl?: string | null;
-  /** Checkpoint trajectory for the active tier (from useCheckpointInference). */
+  /** Predicted class of the user's image, used to pick the drift trajectory. */
+  predictedClass?: PredictedClass;
+  /** Real per-checkpoint trajectory (currently unused while the fake-drift
+   *  config drives the visuals; preserved so the prop interface survives
+   *  the real-drift swap once the cluster job lands). */
   checkpoints?: TierCheckpoints | null;
 }
 
@@ -61,7 +71,35 @@ function blurForConfidence(c: number): number {
   return Math.max(0, 8 * (1 - c));
 }
 
-export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Tile3ModelProps) {
+// Per-phase decoration: short label + colour for the small tag under each
+// epoch tile. "drift" gets red so the eye lands on the failure at the right
+// moment in the row.
+const PHASE_META: Record<FakeDriftEpoch['phase'], { label: string; color: string }> = {
+  warmup:   { label: 'warming up',  color: '#94a3b8' },
+  learning: { label: 'learning',    color: '#3b82f6' },
+  peak:     { label: 'performing',  color: '#22c55e' },
+  drift:    { label: 'drifting',    color: '#ef4444' },
+};
+
+/**
+ * The "seal" is intact only when BOTH drift-related shields are applied:
+ * MDR Post-Market Surveillance (`pms`) AND AI Act Drift Monitoring
+ * (`drift-monitor`). Together they form the regulatory layer that catches
+ * model drift before it ships. Drop either one and the seal cracks — the
+ * card visibly reveals the unmonitored drift epochs.
+ */
+function isSealIntact(appliedProtections: string[]): boolean {
+  const s = new Set(appliedProtections);
+  return s.has('pms') && s.has('drift-monitor');
+}
+
+export function Tile3Model({
+  appliedProtections,
+  onToggleProtection,
+  userImageUrl,
+  predictedClass,
+  checkpoints,
+}: Tile3ModelProps) {
   const [state, setState] = useState<'resting' | 'expanded' | 'flipped'>('resting');
 
   // Shield effects that target the flip-back regulatory text (same system
@@ -79,10 +117,39 @@ export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Ti
   const flipMdrRedaction = effectFor('redact-flip-mdr');
   const flipAiActRedaction = effectFor('redact-flip-aiact');
 
-  const predictions = checkpoints?.predictions ?? [];
-  const loading = checkpoints?.loading ?? false;
-  const finalPrediction = predictions[predictions.length - 1];
   const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
+
+  // Drift trajectory: 8 fabricated epochs keyed off the predicted class.
+  // Falls back to sticker if no class has been classified yet so the tile
+  // preview always has data to render.
+  const cls: PredictedClass = predictedClass ?? 'sticker_tattoo';
+  const driftEpochs = FAKE_DRIFT[cls];
+  const peakEpoch = driftEpochs.reduce(
+    (a, b) => (b.confidence > a.confidence ? b : a),
+    driftEpochs[0],
+  );
+  const finalEpoch = driftEpochs[driftEpochs.length - 1];
+
+  // Sealed vs broken — drives whether drift is hidden or unfurled.
+  const sealed = isSealIntact(appliedProtections);
+  const xaiOn = appliedProtections.includes('explainability');
+  const loading = checkpoints?.loading ?? false;
+
+  // Tapping the seal toggles BOTH drift-related shields together. Sealed
+  // → broken: drop both. Broken → sealed: add whichever is missing.
+  const handleSealToggle = () => {
+    if (!onToggleProtection) return;
+    const s = new Set(appliedProtections);
+    if (sealed) {
+      // Sealed now — remove both to break it.
+      if (s.has('pms')) onToggleProtection('pms');
+      if (s.has('drift-monitor')) onToggleProtection('drift-monitor');
+    } else {
+      // Broken now — add whichever is missing.
+      if (!s.has('pms')) onToggleProtection('pms');
+      if (!s.has('drift-monitor')) onToggleProtection('drift-monitor');
+    }
+  };
 
   // ─── RESTING STATE — back of a poker card ────────────────────────────
   if (state === 'resting') {
@@ -154,17 +221,54 @@ export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Ti
             <X className="h-4 w-4" />
           </button>
 
-          {/* FRONT — checkpoint progression */}
+          {/* FRONT — checkpoint progression, gated by the post-market-
+              surveillance seal. */}
           <div
-            className="rounded-2xl border-2 border-border bg-card p-6 shadow-2xl"
+            className="relative rounded-2xl border-2 border-border bg-card p-6 shadow-2xl"
             style={{ backfaceVisibility: 'hidden' }}
           >
-            <div className="mb-4 flex items-center gap-2">
+            {/* WAX SEAL — top-left corner. Tappable: toggles the drift
+                shields (pms + drift-monitor) directly from the card.
+                Visitors can flip the seal without going back to the
+                top-of-page shield row. */}
+            <WaxSeal sealed={sealed} onClick={onToggleProtection ? handleSealToggle : undefined} />
+
+            {/* Companion toggle button — sits to the right of the title,
+                makes the seal's interactivity obvious (some visitors
+                won't notice the seal is tappable). */}
+            {onToggleProtection && (
+              <button
+                onClick={handleSealToggle}
+                className={cn(
+                  'absolute right-12 top-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors',
+                  sealed
+                    ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-900/60'
+                    : 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-900/60',
+                )}
+                title={sealed ? 'Break the seal to reveal drift' : 'Reseal — hide drift'}
+              >
+                <Shield className="h-3.5 w-3.5" />
+                {sealed ? 'Show drift' : 'Hide drift'}
+              </button>
+            )}
+
+            <div className="mb-4 ml-20 flex items-center gap-2">
               <Microscope className="h-5 w-5 text-accent" />
               <h3 className="text-xl font-bold text-foreground">How the Model Learned Your Image</h3>
             </div>
 
-            {loading && predictions.length === 0 ? (
+            {/* SEAL-BROKEN warning band — only visible when monitoring is OFF */}
+            {!sealed && (
+              <div className="mb-4 flex items-start gap-2 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                <div>
+                  <span className="font-semibold">Drift detected — unmonitored shipping path.</span>
+                  {' '}Without post-market surveillance + drift monitoring, the model below would have shipped at <span className="font-mono">{(finalEpoch.confidence * 100).toFixed(0)}%</span> confidence on the <em>wrong</em> class.
+                </div>
+              </div>
+            )}
+
+            {loading ? (
               <div className="flex flex-col items-center gap-3 py-10">
                 <motion.div
                   animate={{ rotate: 360 }}
@@ -173,79 +277,30 @@ export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Ti
                 />
                 <p className="text-sm text-muted-foreground">Running your image through each training checkpoint…</p>
               </div>
+            ) : sealed ? (
+              /* SEALED: only the peak epoch shown — calm, one confident answer. */
+              <SealedView
+                peakEpoch={peakEpoch}
+                userImageUrl={userImageUrl}
+                refUrl={trainingRefUrl(baseURL, predictedClass, 'canonical')}
+              />
             ) : (
-              <>
-                {/* Epoch image row */}
-                <div className="flex flex-wrap items-end justify-center gap-3">
-                  {predictions.map((p, i) => {
-                    const colour = confidenceColour(p.confidence);
-                    const blur = blurForConfidence(p.confidence);
-                    const isFinal = i === predictions.length - 1;
-                    return (
-                      <div key={p.step} className="text-center">
-                        <div className="mb-1 text-[10px] text-muted-foreground">
-                          Epoch {p.epoch ?? i + 1}{isFinal ? ' ★' : ''}
-                        </div>
-                        <div
-                          className="relative mx-auto h-20 w-20 overflow-hidden rounded-lg border-2"
-                          style={{ borderColor: isFinal ? '#22c55e' : '#475569' }}
-                        >
-                          {userImageUrl ? (
-                            <img
-                              src={userImageUrl}
-                              alt=""
-                              className="h-full w-full object-cover"
-                              style={{ filter: `blur(${blur}px)` }}
-                            />
-                          ) : (
-                            <div className="h-full w-full bg-muted" />
-                          )}
-                        </div>
-                        <div className="mt-1 text-[11px] font-semibold" style={{ color: colour }}>
-                          {CLASS_DISPLAY[p.predictedLabel] ?? p.predictedLabel}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">
-                          {(p.confidence * 100).toFixed(0)}%
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Confidence-over-time chart */}
-                {predictions.length > 1 && (
-                  <div className="mt-6 border-t border-border pt-4">
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Confidence in the final prediction, over training
-                    </p>
-                    <ConfidenceChart predictions={predictions} />
-                  </div>
-                )}
-
-                {finalPrediction && (
-                  <p className="mt-4 text-center text-xs text-muted-foreground">
-                    By the final epoch the model was{' '}
-                    <span className="font-mono text-foreground">
-                      {(finalPrediction.confidence * 100).toFixed(0)}%
-                    </span>{' '}
-                    confident your image is{' '}
-                    <span className="font-semibold text-foreground">
-                      {CLASS_DISPLAY[finalPrediction.predictedLabel] ?? finalPrediction.predictedLabel}
-                    </span>.
-                  </p>
-                )}
-              </>
+              /* BROKEN: full 8-epoch row + chart, drift visible at the tail. */
+              <BrokenView
+                driftEpochs={driftEpochs}
+                peakEpoch={peakEpoch}
+                finalEpoch={finalEpoch}
+                userImageUrl={userImageUrl}
+                predictedClass={predictedClass}
+                baseURL={baseURL}
+              />
             )}
 
-            <div className="mt-5 flex justify-center border-t border-border pt-4">
-              <button
-                onClick={() => setState('flipped')}
-                className="inline-flex items-center gap-2 rounded-full bg-accent/15 px-4 py-2 text-xs font-semibold text-accent transition-colors hover:bg-accent/25"
-              >
-                <RotateCw className="h-3.5 w-3.5" />
-                tap to flip — why checkpoints matter
-              </button>
-            </div>
+            {/* DOG-EAR — bottom-right page curl that invites the flip when
+                Explainability (xai) is applied. The curl breathes gently so
+                the eye notices it; tapping it (or anywhere on the curl
+                area) flips the card to the regulatory rationale. */}
+            <DogEar visible={xaiOn} onFlip={() => setState('flipped')} />
           </div>
 
           {/* BACK — regulatory rationale */}
@@ -313,6 +368,237 @@ export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Ti
   );
 }
 
+
+// ─── Helper: Wax seal corner indicator ───────────────────────────────────
+function WaxSeal({ sealed, onClick }: { sealed: boolean; onClick?: () => void }) {
+  const tone = sealed ? '#15803d' : '#b91c1c';
+  const Wrapper: any = onClick ? 'button' : 'div';
+  return (
+    <Wrapper
+      onClick={onClick}
+      className={cn(
+        'absolute -left-2 -top-2 z-10 flex h-16 w-16 items-center justify-center',
+        onClick && 'cursor-pointer hover:scale-105 transition-transform',
+      )}
+      title={sealed
+        ? 'Sealed: post-market surveillance + drift monitoring catches drift. Click to break the seal and reveal the drift.'
+        : 'Broken: model would ship drifted. Click to re-seal — restore monitoring.'}
+    >
+      <motion.div
+        animate={sealed ? { rotate: 0 } : { rotate: [-1, 1, -1], x: [-0.5, 0.5, -0.5] }}
+        transition={sealed
+          ? { duration: 0 }
+          : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+        className="relative flex h-14 w-14 items-center justify-center rounded-full border-[3px] shadow-medium"
+        style={{
+          background: sealed
+            ? 'radial-gradient(circle at 30% 30%, #22c55e, #15803d 70%)'
+            : 'radial-gradient(circle at 30% 30%, #f87171, #7f1d1d 70%)',
+          borderColor: sealed ? '#bbf7d0' : '#fecaca',
+        }}
+      >
+        <Shield className="h-7 w-7 text-white drop-shadow" strokeWidth={2.5} />
+        {!sealed && (
+          /* Crack line across the seal when broken. */
+          <span
+            aria-hidden
+            className="absolute left-0 right-0 top-1/2 -translate-y-1/2 mx-auto h-[2px] w-[110%] rotate-12 bg-yellow-50 mix-blend-screen"
+            style={{ boxShadow: '0 0 4px rgba(254, 240, 138, 0.85)' }}
+          />
+        )}
+      </motion.div>
+      <div
+        className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-sm px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white shadow-sm"
+        style={{ backgroundColor: tone }}
+      >
+        {sealed ? 'monitored' : 'unmonitored'}
+      </div>
+    </div>
+  );
+}
+
+// ─── Helper: Sealed view — quiet single-peak presentation ────────────────
+function SealedView({
+  peakEpoch,
+  userImageUrl,
+  refUrl,
+}: {
+  peakEpoch: FakeDriftEpoch;
+  userImageUrl?: string | null;
+  refUrl: string;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-4 py-4">
+      <div className="flex items-end gap-3">
+        {/* Training reference */}
+        <div className="text-center">
+          <p className="mb-1 text-[10px] uppercase tracking-wider text-muted-foreground">Training ref</p>
+          <div className="h-24 w-24 overflow-hidden rounded-lg border-2 border-emerald-300">
+            <img src={refUrl} alt="" className="h-full w-full object-cover" />
+          </div>
+        </div>
+        {/* Peak epoch — the prediction the regulator allowed to ship. */}
+        <div className="text-center">
+          <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">Shipped (epoch {peakEpoch.epoch} ★)</p>
+          <div className="relative h-28 w-28 overflow-hidden rounded-lg border-[3px] border-emerald-500 shadow-medium">
+            {userImageUrl ? (
+              <img src={userImageUrl} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <div className="h-full w-full bg-muted" />
+            )}
+            <Sparkles className="absolute right-1 top-1 h-4 w-4 text-emerald-300 drop-shadow" />
+          </div>
+        </div>
+      </div>
+      <p className="text-center text-sm">
+        <span className="font-bold text-emerald-700">
+          {(peakEpoch.confidence * 100).toFixed(0)}%
+        </span>{' '}
+        confident — <span className="font-semibold">{peakEpoch.predictedLabel}</span>
+      </p>
+      <p className="max-w-md text-center text-xs text-muted-foreground">
+        Post-market surveillance kept training from running past the peak. The model that shipped is the one above. Drift never reached users.
+      </p>
+    </div>
+  );
+}
+
+// ─── Helper: Broken view — the full 8-epoch drift unfurled ───────────────
+function BrokenView({
+  driftEpochs,
+  peakEpoch,
+  finalEpoch,
+  userImageUrl,
+  predictedClass,
+  baseURL,
+}: {
+  driftEpochs: FakeDriftEpoch[];
+  peakEpoch: FakeDriftEpoch;
+  finalEpoch: FakeDriftEpoch;
+  userImageUrl?: string | null;
+  predictedClass?: PredictedClass;
+  baseURL: string;
+}) {
+  return (
+    <>
+      {/* Epoch row — paired training-ref (top) + user image (bottom). */}
+      <div className="flex flex-wrap items-end justify-center gap-2.5">
+        {driftEpochs.map((p) => {
+          const meta = PHASE_META[p.phase];
+          const isPeak = p.step === peakEpoch.step;
+          const isDrift = p.phase === 'drift';
+          const refUrl = trainingRefUrl(baseURL, predictedClass, p.trainingRef);
+          const borderColor = isPeak ? '#22c55e' : isDrift ? '#ef4444' : '#475569';
+          return (
+            <div key={p.step} className="text-center">
+              <div className="mb-1 text-[10px] font-medium text-muted-foreground">
+                Epoch {p.epoch}{isPeak ? ' ★' : ''}
+              </div>
+              <div
+                className="relative mx-auto h-14 w-14 overflow-hidden rounded-md border"
+                style={{ borderColor }}
+                title={`Training ref at epoch ${p.epoch} (${p.trainingRef})`}
+              >
+                <img src={refUrl} alt="" className="h-full w-full object-cover opacity-90" />
+                <span className="absolute bottom-0 right-0 rounded-tl bg-black/55 px-1 text-[8px] font-semibold uppercase tracking-wider text-white">
+                  {p.trainingRef === 'canonical' ? 'ref' : 'edge'}
+                </span>
+              </div>
+              <div
+                className="relative mx-auto mt-1.5 h-14 w-14 overflow-hidden rounded-md border-2"
+                style={{ borderColor }}
+              >
+                {userImageUrl ? (
+                  <img
+                    src={userImageUrl}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    style={{ filter: `blur(${p.blurPx}px)` }}
+                  />
+                ) : (
+                  <div className="h-full w-full bg-muted" />
+                )}
+                {isDrift && (
+                  <AlertTriangle className="absolute right-0.5 top-0.5 h-3 w-3 text-red-500 drop-shadow" />
+                )}
+                {isPeak && (
+                  <Sparkles className="absolute right-0.5 top-0.5 h-3 w-3 text-emerald-400 drop-shadow" />
+                )}
+              </div>
+              <div
+                className="mt-1 text-[11px] font-semibold"
+                style={{ color: confidenceColour(p.confidence) }}
+              >
+                {CLASS_DISPLAY[p.predictedLabel] ?? p.predictedLabel}
+              </div>
+              <div className="text-[10px] text-muted-foreground">
+                {(p.confidence * 100).toFixed(0)}%
+              </div>
+              <div
+                className="mt-0.5 text-[9px] font-semibold uppercase tracking-wider"
+                style={{ color: meta.color }}
+              >
+                {meta.label}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 border-t border-border pt-4">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Confidence over training — peak then drift
+        </p>
+        <ConfidenceChart predictions={driftEpochs.map((p) => ({
+          confidence: p.confidence,
+          epoch: p.epoch,
+        }))} />
+      </div>
+
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        At epoch {peakEpoch.epoch} the model peaked at{' '}
+        <span className="font-mono text-emerald-600">{(peakEpoch.confidence * 100).toFixed(0)}%</span>
+        {' '}on{' '}
+        <span className="font-semibold text-foreground">{peakEpoch.predictedLabel}</span>
+        . By epoch {finalEpoch.epoch} it had drifted to{' '}
+        <span className="font-semibold text-red-600">{finalEpoch.predictedLabel}</span>{' '}
+        at {(finalEpoch.confidence * 100).toFixed(0)}%.
+      </p>
+    </>
+  );
+}
+
+// ─── Helper: Dog-ear flip-invite (corner curl) ───────────────────────────
+function DogEar({ visible, onFlip }: { visible: boolean; onFlip: () => void }) {
+  if (!visible) return null;   // No invitation when Explainability is off.
+  return (
+    <motion.button
+      onClick={onFlip}
+      aria-label="Flip card — view regulatory rationale"
+      animate={{ y: [0, -2, 0] }}
+      transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
+      className="group absolute bottom-0 right-0 h-14 w-14 cursor-pointer"
+      style={{ background: 'transparent' }}
+    >
+      {/* SVG folded-corner: a triangle of "back of card" peeking out. */}
+      <svg viewBox="0 0 56 56" className="absolute inset-0 h-full w-full">
+        <defs>
+          <linearGradient id="dogear-bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="hsl(var(--muted))" />
+            <stop offset="100%" stopColor="hsl(var(--accent) / 0.4)" />
+          </linearGradient>
+        </defs>
+        {/* The peeled corner */}
+        <path d="M 56 56 L 56 22 L 22 56 Z" fill="url(#dogear-bg)" stroke="hsl(var(--accent))" strokeWidth="1.5" />
+        {/* Fold crease */}
+        <line x1="56" y1="22" x2="22" y2="56" stroke="hsl(var(--accent))" strokeWidth="1" strokeDasharray="2 2" opacity="0.6" />
+      </svg>
+      <span className="absolute bottom-1 right-1 text-[8px] font-bold uppercase tracking-widest text-accent group-hover:text-accent">
+        why?
+      </span>
+    </motion.button>
+  );
+}
 
 // ─── Helper: SVG confidence-over-time line chart ───────────────────────────
 function ConfidenceChart({ predictions }: { predictions: { confidence: number; epoch: number | null }[] }) {

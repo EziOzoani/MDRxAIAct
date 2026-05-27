@@ -321,6 +321,7 @@ const Index = () => {
             vizMode="thermometer"
             regState={regState}
             appliedProtections={appliedProtections}
+            onToggleProtection={handleProtectionToggle}
             perspective={FEATURE_FLAGS.ENGINEER_VIEW_IN_UTH ? 'engineer' : perspective}
             userImageUrl={userImageUrl}
             classificationResult={classificationResult}

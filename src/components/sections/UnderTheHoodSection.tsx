@@ -54,6 +54,9 @@ interface UnderTheHoodSectionProps {
   regState?: RegState;
   vizMode?: VizMode;
   appliedProtections?: string[];
+  /** Toggle a shield by ID. Plumbed in so the in-card seal/tier buttons
+   *  can mutate shield state directly from the tile. */
+  onToggleProtection?: (id: string) => void;
   perspective?: Perspective;
   /** User's captured photo (data URL) lifted up from PhotoCaptureSection. */
   userImageUrl?: string | null;
@@ -62,7 +65,7 @@ interface UnderTheHoodSectionProps {
 }
 
 
-export function UnderTheHoodSection({ userName, onCardExpandedChange, regState = 'both', appliedProtections = [], userImageUrl, classificationResult }: UnderTheHoodSectionProps) {
+export function UnderTheHoodSection({ userName, onCardExpandedChange, regState = 'both', appliedProtections = [], onToggleProtection, userImageUrl, classificationResult }: UnderTheHoodSectionProps) {
   const [hasExpandedCard, setHasExpandedCard] = useState(false);
 
   // Pre-fetch nearest-neighbour images for all three tiers in parallel. Tier
@@ -222,7 +225,9 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           />
           <Tile3Model
             appliedProtections={appliedProtections}
+            onToggleProtection={onToggleProtection}
             userImageUrl={userImageUrl}
+            predictedClass={classificationResult?.predictedClass}
             checkpoints={checkpointInference.current}
           />
         </div>
