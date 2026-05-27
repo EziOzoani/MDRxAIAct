@@ -384,7 +384,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                   </p>
                   <p className="text-sm text-amber-700">
                     The inference server is not running, so uploaded photos can't be classified right now.
-                    Please choose one of the example images below — they work offline.
+                    Please choose one of the example images below, they work offline.
                   </p>
                 </div>
               )}
@@ -428,7 +428,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                     </div>
                   </div>
 
-                  {/* Best-result hint — the model is most accurate on a close,
+                  {/* Best-result hint, the model is most accurate on a close,
                       well-lit shot where the tattoo fills the frame. */}
                   <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-muted-foreground">
                     <Camera className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
@@ -499,7 +499,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                       className="w-full aspect-video object-cover"
                     />
                     {/*
-                      Framing guide — the model was trained on tight tattoo
+                      Framing guide, the model was trained on tight tattoo
                       crops, so it performs best when the tattoo fills the
                       frame. This square reticle nudges users toward a close
                       shot rather than a wide arm/selfie photo.
@@ -714,7 +714,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                             </div>
                           </div>
 
-                          {/* Raw confidence scores — 3-class */}
+                          {/* Raw confidence scores, 3-class */}
                           <div>
                             <span className="text-xs text-slate-500">Raw Confidence Scores</span>
                             <div className="mt-1 bg-slate-800 rounded p-2 space-y-1">
@@ -770,7 +770,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                                 { id: 'ifu', short: 'IFU', label: 'Instructions for Use', source: 'mdr',
                                   detail: 'User informed: "AI-assisted result. Not a diagnosis. Consult dermatologist for clinical decisions."' },
                                 { id: 'bias-testing', short: 'BIAS', label: 'Bias Testing', source: 'aiAct',
-                                  detail: 'Balanced model: 400/class, class weights, skin-tone sampling. Accuracy 82% with even recall across classes. Without balancing: 95.5% headline inflated by 86% majority class — minority class recall drops to 72%.' },
+                                  detail: 'Balanced model: 400/class, class weights, skin-tone sampling. Accuracy 82% with even recall across classes. Without balancing: 95.5% headline inflated by 86% majority class, minority class recall drops to 72%.' },
                                 { id: 'explainability', short: 'XAI', label: 'Explainability', source: 'aiAct',
                                   detail: 'Grad-CAM saliency map generated. Key features: ink depth patterns, edge sharpness, color saturation distribution.' },
                                 { id: 'drift-monitor', short: 'DRFT', label: 'Drift Monitoring', source: 'aiAct',

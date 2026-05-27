@@ -179,11 +179,11 @@ const Index = () => {
   return (
     <main className="min-h-screen relative">
       {/*
-        Perspective toggle — top right.
+        Perspective toggle, top right.
         Gated by FEATURE_FLAGS.PERSPECTIVE_TOGGLE so the whole Medical /
         Engineer view machinery can be toggled from one place. When the flag
         is on, the button still only renders inside Under-the-Hood (same
-        rationale as the shield widget below — exploration controls live in
+        rationale as the shield widget below, exploration controls live in
         the workshop step, not on every page).
       */}
       {FEATURE_FLAGS.PERSPECTIVE_TOGGLE && showHood && (
@@ -208,7 +208,7 @@ const Index = () => {
       {/*
         Risk Thermometer with integrated shield toggles (left side).
         Per the May 12 design decision, the shield controls only appear in the
-        Under-the-Hood step — toggling them next to the tiles is where the
+        Under-the-Hood step, toggling them next to the tiles is where the
         cause-and-effect is visible. We keep the same visual component, just
         gated to the 'hood' step. Doctor / Engineer perspective toggle stays
         at the top because it's a global lens, not a compliance control.
@@ -230,7 +230,7 @@ const Index = () => {
           - ENGINEER_VIEW_IN_UTH → engineering view is hardcoded for UTH only
         Either one will show the PiP overlay inside Under-the-Hood. The PiP
         shows the opposite of the `perspective` prop, so passing 'doctor'
-        here makes the corner show engineer details — which is what we want
+        here makes the corner show engineer details, which is what we want
         for the workshop step.
       */}
       {(FEATURE_FLAGS.PERSPECTIVE_TOGGLE || FEATURE_FLAGS.ENGINEER_VIEW_IN_UTH) && showHood && (

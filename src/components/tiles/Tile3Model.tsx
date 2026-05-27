@@ -38,7 +38,7 @@ import { cn } from '@/lib/utils';
 
 interface Tile3ModelProps {
   appliedProtections: string[];
-  /** Toggle a shield by ID — used by the in-card seal button to flip the
+  /** Toggle a shield by ID, used by the in-card seal button to flip the
    *  post-market-surveillance + drift-monitoring shields together. */
   onToggleProtection?: (id: string) => void;
   userImageUrl?: string | null;
@@ -221,48 +221,73 @@ export function Tile3Model({
             <X className="h-4 w-4" />
           </button>
 
-          {/* FRONT — checkpoint progression, gated by the post-market-
+          {/* FRONT, checkpoint progression, gated by the post-market-
               surveillance seal. */}
           <div
             className="relative rounded-2xl border-2 border-border bg-card p-6 shadow-2xl"
             style={{ backfaceVisibility: 'hidden' }}
           >
-            {/* WAX SEAL — top-left corner. Tappable: toggles the drift
-                shields (pms + drift-monitor) directly from the card.
-                Visitors can flip the seal without going back to the
-                top-of-page shield row. */}
-            <WaxSeal sealed={sealed} onClick={onToggleProtection ? handleSealToggle : undefined} />
+            {/* HEADER STRIP, looks like an official document header.
+                Seal sits inside, title runs across, status chip on the right
+                acts as the toggle. Feels integrated into the card rather
+                than a separate UI block. */}
+            <div
+              className={cn(
+                'mb-5 -mx-6 -mt-6 flex items-center justify-between gap-3 px-6 py-4 border-b-2 rounded-t-2xl',
+                sealed
+                  ? 'border-b-emerald-300/60 bg-gradient-to-r from-emerald-50/60 to-transparent dark:border-b-emerald-900/70 dark:from-emerald-950/30'
+                  : 'border-b-red-300/60 bg-gradient-to-r from-red-50/60 to-transparent dark:border-b-red-900/70 dark:from-red-950/30',
+              )}
+            >
+              {/* Left: the wax seal + the card title */}
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="relative flex h-14 w-14 shrink-0 items-center justify-center">
+                  <WaxSeal
+                    sealed={sealed}
+                    onClick={onToggleProtection ? handleSealToggle : undefined}
+                    inline
+                  />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="flex items-center gap-2 text-lg font-bold text-foreground truncate">
+                    <Microscope className="h-4 w-4 text-accent shrink-0" />
+                    How the Model Learned Your Image
+                  </h3>
+                  <p className={cn(
+                    'text-xs truncate',
+                    sealed ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400',
+                  )}>
+                    {sealed
+                      ? 'Monitored, drift caught before shipping.'
+                      : 'Unmonitored, drift visible below.'}
+                  </p>
+                </div>
+              </div>
 
-            {/* Companion toggle button — sits to the right of the title,
-                makes the seal's interactivity obvious (some visitors
-                won't notice the seal is tappable). */}
-            {onToggleProtection && (
-              <button
-                onClick={handleSealToggle}
-                className={cn(
-                  'absolute right-12 top-5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wider transition-colors',
-                  sealed
-                    ? 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:hover:bg-emerald-900/60'
-                    : 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-950/40 dark:text-red-300 dark:hover:bg-red-900/60',
-                )}
-                title={sealed ? 'Break the seal to reveal drift' : 'Reseal — hide drift'}
-              >
-                <Shield className="h-3.5 w-3.5" />
-                {sealed ? 'Show drift' : 'Hide drift'}
-              </button>
-            )}
-
-            <div className="mb-4 ml-20 flex items-center gap-2">
-              <Microscope className="h-5 w-5 text-accent" />
-              <h3 className="text-xl font-bold text-foreground">How the Model Learned Your Image</h3>
+              {/* Right: status chip = the toggle. Always visible. */}
+              {onToggleProtection && (
+                <button
+                  onClick={handleSealToggle}
+                  className={cn(
+                    'shrink-0 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider shadow-sm transition-all hover:shadow-md hover:scale-105',
+                    sealed
+                      ? 'bg-emerald-600 text-white hover:bg-emerald-700'
+                      : 'bg-red-600 text-white hover:bg-red-700',
+                  )}
+                  title={sealed ? 'Break the seal, see drift' : 'Reseal, hide drift'}
+                >
+                  <Shield className="h-3.5 w-3.5" />
+                  {sealed ? 'Show drift' : 'Hide drift'}
+                </button>
+              )}
             </div>
 
-            {/* SEAL-BROKEN warning band — only visible when monitoring is OFF */}
+            {/* SEAL-BROKEN warning band, only visible when monitoring is OFF */}
             {!sealed && (
               <div className="mb-4 flex items-start gap-2 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <div>
-                  <span className="font-semibold">Drift detected — unmonitored shipping path.</span>
+                  <span className="font-semibold">Drift detected, unmonitored shipping path.</span>
                   {' '}Without post-market surveillance + drift monitoring, the model below would have shipped at <span className="font-mono">{(finalEpoch.confidence * 100).toFixed(0)}%</span> confidence on the <em>wrong</em> class.
                 </div>
               </div>
@@ -278,7 +303,7 @@ export function Tile3Model({
                 <p className="text-sm text-muted-foreground">Running your image through each training checkpoint…</p>
               </div>
             ) : sealed ? (
-              /* SEALED: only the peak epoch shown — calm, one confident answer. */
+              /* SEALED: only the peak epoch shown, calm, one confident answer. */
               <SealedView
                 peakEpoch={peakEpoch}
                 userImageUrl={userImageUrl}
@@ -296,14 +321,14 @@ export function Tile3Model({
               />
             )}
 
-            {/* DOG-EAR — bottom-right page curl that invites the flip when
+            {/* DOG-EAR, bottom-right page curl that invites the flip when
                 Explainability (xai) is applied. The curl breathes gently so
                 the eye notices it; tapping it (or anywhere on the curl
                 area) flips the card to the regulatory rationale. */}
             <DogEar visible={xaiOn} onFlip={() => setState('flipped')} />
           </div>
 
-          {/* BACK — regulatory rationale */}
+          {/* BACK, regulatory rationale */}
           <div
             className="absolute inset-0 rounded-2xl border-2 border-border bg-gradient-to-br from-card to-muted p-6 shadow-2xl"
             style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
@@ -319,19 +344,19 @@ export function Tile3Model({
             <div className="space-y-3">
               <div className="rounded-xl border-l-4 border-accent bg-muted/40 p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-accent">
-                  AI Act — Article 15 (Accuracy &amp; Robustness)
+                  AI Act, Article 15 (Accuracy &amp; Robustness)
                 </p>
                 <RedactionStrip active={!!flipAiActRedaction} label={flipAiActRedaction?.label}>
                   <p className="mt-1 text-sm text-foreground/80">
                     Accuracy, robustness and cybersecurity must be validated throughout the
-                    development lifecycle — not just measured once at the end.
+                    development lifecycle, not just measured once at the end.
                   </p>
                 </RedactionStrip>
               </div>
 
               <div className="rounded-xl border-l-4 border-primary bg-muted/40 p-4">
                 <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-                  MDR — Annex II (Technical Documentation)
+                  MDR, Annex II (Technical Documentation)
                 </p>
                 <RedactionStrip active={!!flipMdrRedaction} label={flipMdrRedaction?.label}>
                   <p className="mt-1 text-sm text-foreground/80">
@@ -370,15 +395,27 @@ export function Tile3Model({
 
 
 // ─── Helper: Wax seal corner indicator ───────────────────────────────────
-function WaxSeal({ sealed, onClick }: { sealed: boolean; onClick?: () => void }) {
+function WaxSeal({
+  sealed,
+  onClick,
+  inline = false,
+}: {
+  sealed: boolean;
+  onClick?: () => void;
+  /** When true, sits inline (no absolute positioning) so it can live inside
+   *  the header strip. When false (default), floats at the top-left corner. */
+  inline?: boolean;
+}) {
   const tone = sealed ? '#15803d' : '#b91c1c';
   const wrapperClass = cn(
-    'absolute -left-2 -top-2 z-10 flex h-16 w-16 items-center justify-center',
+    inline
+      ? 'relative flex h-14 w-14 items-center justify-center'
+      : 'absolute -left-2 -top-2 z-10 flex h-16 w-16 items-center justify-center',
     onClick && 'cursor-pointer hover:scale-105 transition-transform',
   );
   const titleText = sealed
     ? 'Sealed: post-market surveillance + drift monitoring catches drift. Click to break the seal and reveal the drift.'
-    : 'Broken: model would ship drifted. Click to re-seal — restore monitoring.';
+    : 'Broken: model would ship drifted. Click to re-seal, restore monitoring.';
   const inner = (
     <>
       <motion.div
@@ -442,7 +479,7 @@ function SealedView({
             <img src={refUrl} alt="" className="h-full w-full object-cover" />
           </div>
         </div>
-        {/* Peak epoch — the prediction the regulator allowed to ship. */}
+        {/* Peak epoch, the prediction the regulator allowed to ship. */}
         <div className="text-center">
           <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-emerald-700">Shipped (epoch {peakEpoch.epoch} ★)</p>
           <div className="relative h-28 w-28 overflow-hidden rounded-lg border-[3px] border-emerald-500 shadow-medium">
@@ -459,7 +496,7 @@ function SealedView({
         <span className="font-bold text-emerald-700">
           {(peakEpoch.confidence * 100).toFixed(0)}%
         </span>{' '}
-        confident — <span className="font-semibold">{peakEpoch.predictedLabel}</span>
+        confident, <span className="font-semibold">{peakEpoch.predictedLabel}</span>
       </p>
       <p className="max-w-md text-center text-xs text-muted-foreground">
         Post-market surveillance kept training from running past the peak. The model that shipped is the one above. Drift never reached users.
@@ -486,7 +523,7 @@ function BrokenView({
 }) {
   return (
     <>
-      {/* Epoch row — paired training-ref (top) + user image (bottom). */}
+      {/* Epoch row, paired training-ref (top) + user image (bottom). */}
       <div className="flex flex-wrap items-end justify-center gap-2.5">
         {driftEpochs.map((p) => {
           const meta = PHASE_META[p.phase];
@@ -552,7 +589,7 @@ function BrokenView({
 
       <div className="mt-6 border-t border-border pt-4">
         <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Confidence over training — peak then drift
+          Confidence over training, peak then drift
         </p>
         <ConfidenceChart predictions={driftEpochs.map((p) => ({
           confidence: p.confidence,
@@ -579,7 +616,7 @@ function DogEar({ visible, onFlip }: { visible: boolean; onFlip: () => void }) {
   return (
     <motion.button
       onClick={onFlip}
-      aria-label="Flip card — view regulatory rationale"
+      aria-label="Flip card, view regulatory rationale"
       animate={{ y: [0, -2, 0] }}
       transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut' }}
       className="group absolute bottom-0 right-0 h-14 w-14 cursor-pointer"

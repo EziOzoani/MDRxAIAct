@@ -29,7 +29,7 @@ interface RedactionStripProps {
   active: boolean;
   /** Short label rendered on the overlay (e.g. "Explainability required"). */
   label?: string;
-  /** Children rendered underneath — kept mounted for layout. */
+  /** Children rendered underneath, kept mounted for layout. */
   children: React.ReactNode;
 }
 

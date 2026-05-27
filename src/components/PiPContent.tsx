@@ -41,6 +41,7 @@ const CLASS_DISPLAY: Record<PredictedClass, string> = {
   real_tattoo: 'Real Tattoo',
   sticker_tattoo: 'Sticker/Temporary Tattoo',
   pen_drawn: 'Pen/Marker Drawing',
+  not_tattoo: 'No Tattoo',
 };
 
 /** Derive which model tier the current protections imply. */
@@ -141,14 +142,14 @@ function PreAnalysisContent({
           <StatusRow
             label="MDR Baseline"
             active={mdrActive}
-            activeText="Active — Class IIa medical device"
+            activeText="Active, Class IIa medical device"
             inactiveText="Disabled"
           />
           <StatusRow
             label="AI Act Obligations"
             active={aiActActive}
-            activeText="Active — High-risk AI requirements"
-            inactiveText="Off — No additional AI safeguards"
+            activeText="Active, High-risk AI requirements"
+            inactiveText="Off, No additional AI safeguards"
           />
         </div>
 
@@ -196,8 +197,8 @@ function PreAnalysisContent({
       </div>
       <p className="text-xs text-slate-500">
         {perspective === 'engineer'
-          ? `Will classify using tattoo-${tier} model. 3-class output: real_tattoo, sticker_tattoo, pen_drawn.`
-          : 'Select or upload an image. The AI will determine if it is a real tattoo, sticker, or pen drawing.'}
+          ? `Will classify using tattoo-${tier} model. 4-class output: real_tattoo, sticker_tattoo, pen_drawn, not_tattoo.`
+          : 'Select or upload an image. The AI will determine if it is a real tattoo, sticker, pen drawing, or not a tattoo at all.'}
       </p>
       {perspective === 'engineer' && (
         <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg p-2 text-xs space-y-1">
@@ -245,15 +246,19 @@ function DoctorPiP({
 
   const verdictColour = predictedClass === 'real_tattoo'
     ? 'bg-green-50 text-green-700 border-green-200'
-    : predictedClass === 'pen_drawn'
-      ? 'bg-purple-50 text-purple-700 border-purple-200'
-      : 'bg-orange-50 text-orange-700 border-orange-200';
+    : predictedClass === 'not_tattoo'
+      ? 'bg-slate-50 text-slate-700 border-slate-200'
+      : predictedClass === 'pen_drawn'
+        ? 'bg-purple-50 text-purple-700 border-purple-200'
+        : 'bg-orange-50 text-orange-700 border-orange-200';
 
   const barColour = predictedClass === 'real_tattoo'
     ? 'bg-green-500'
-    : predictedClass === 'pen_drawn'
-      ? 'bg-purple-500'
-      : 'bg-orange-500';
+    : predictedClass === 'not_tattoo'
+      ? 'bg-slate-500'
+      : predictedClass === 'pen_drawn'
+        ? 'bg-purple-500'
+        : 'bg-orange-500';
 
   return (
     <div className="space-y-3">
@@ -281,7 +286,7 @@ function DoctorPiP({
           : getShortGuidance(predictedClass)}
       </p>
 
-      {/* Human oversight status — shown on results/hood steps */}
+      {/* Human oversight status, shown on results/hood steps */}
       {(currentStep === 'results' || currentStep === 'hood') && !hasHumanOversight && (
         <div className="p-2 bg-amber-50 dark:bg-amber-950/30 border border-amber-300 dark:border-amber-700 rounded-lg">
           <p className="text-xs text-amber-800 dark:text-amber-300 font-semibold">Human Oversight Off</p>
@@ -305,14 +310,16 @@ function DoctorPiP({
 
           <InfoCard icon={<AlertCircle className="w-3.5 h-3.5 text-blue-500" />} title="Risk Assessment">
             {predictedClass === 'real_tattoo' && 'Low risk. Tattoo ink appears stable. No signs of allergic reaction or irregular pigmentation changes.'}
-            {predictedClass === 'sticker_tattoo' && 'Minimal risk. Temporary marking — no ink penetration into dermis.'}
+            {predictedClass === 'sticker_tattoo' && 'Minimal risk. Temporary marking, no ink penetration into dermis.'}
             {predictedClass === 'pen_drawn' && 'Negligible risk. Marker or pen drawing on skin surface only.'}
+            {predictedClass === 'not_tattoo' && 'No tattoo detected in the image. The image does not appear to contain a tattoo, sticker, or pen drawing.'}
           </InfoCard>
 
           <InfoCard icon={<Clock className="w-3.5 h-3.5 text-blue-500" />} title="Recommended Action">
             {predictedClass === 'real_tattoo' && 'Routine monitoring. Include tattooed area in annual skin examination.'}
             {predictedClass === 'sticker_tattoo' && 'No action required. Temporary tattoos typically fade within 1-2 weeks.'}
             {predictedClass === 'pen_drawn' && 'No action required. Washes off with soap and water.'}
+            {predictedClass === 'not_tattoo' && 'No action required. Please upload an image containing a tattoo for analysis.'}
           </InfoCard>
 
           <InfoCard icon={<Shield className="w-3.5 h-3.5 text-blue-500" />} title="Regulatory Note">
@@ -348,7 +355,7 @@ function EngineerPiP({
 
   return (
     <div className="space-y-3">
-      {/* Model info — now shows real tier */}
+      {/* Model info, now shows real tier */}
       <div className="flex items-center gap-2 text-sm">
         <Cpu className="w-4 h-4 text-indigo-500" />
         <span className="text-slate-500">Model:</span>
@@ -445,7 +452,7 @@ function EngineerPiP({
             </div>
           )}
 
-          {/* Per-protection breakdown — only on results/hood steps to avoid clutter */}
+          {/* Per-protection breakdown, only on results/hood steps to avoid clutter */}
           {(currentStep === 'results' || currentStep === 'hood') && (
             <ProtectionDetailList appliedProtections={appliedProtections} />
           )}
@@ -516,11 +523,11 @@ function MetricBox({ label, value, warn }: { label: string; value: string; warn?
 function ProtectionDetailList({ appliedProtections }: { appliedProtections: string[] }) {
   const protectionDetails = [
     { id: 'ce-marking', short: 'CE', detail: 'Class IIa. Software version validated.', source: 'mdr' },
-    { id: 'clinical-eval', short: 'CLIN', detail: 'ViT-base on 1,200 balanced images. F1: 0.82.', source: 'mdr' },
+    { id: 'clinical-eval', short: 'CLIN', detail: 'ViT-base on balanced 4-class dataset. Validated per MDR.', source: 'mdr' },
     { id: 'pms', short: 'PMS', detail: 'Prediction logged. PSUR tracking active.', source: 'mdr' },
     { id: 'incident', short: 'INC', detail: 'MDR Art. 87 pathway ready.', source: 'mdr' },
     { id: 'ifu', short: 'IFU', detail: 'AI-assisted disclaimer shown to user.', source: 'mdr' },
-    { id: 'bias-testing', short: 'BIAS', detail: '82% balanced vs 95.5% unbalanced. Headline hides bias.', source: 'aiAct' },
+    { id: 'bias-testing', short: 'BIAS', detail: 'Balanced 4-class model vs unbalanced. Headline accuracy hides bias.', source: 'aiAct' },
     { id: 'explainability', short: 'XAI', detail: 'Grad-CAM saliency map generated.', source: 'aiAct' },
     { id: 'drift-monitor', short: 'DRFT', detail: 'KL div: 0.02. Threshold: 0.15.', source: 'aiAct' },
     { id: 'transparency', short: 'TRNS', detail: 'Model card and data docs public.', source: 'aiAct' },
@@ -564,6 +571,7 @@ function ProtectionDetailList({ appliedProtections }: { appliedProtections: stri
 function getShortGuidance(cls: PredictedClass): string {
   if (cls === 'real_tattoo') return 'Real tattoo detected. Regular skin checks recommended.';
   if (cls === 'sticker_tattoo') return 'Temporary tattoo detected. No clinical follow-up required.';
+  if (cls === 'not_tattoo') return 'No tattoo detected in the image.';
   return 'Pen/marker drawing detected. No clinical concern.';
 }
 
@@ -573,6 +581,9 @@ function getDetailedGuidance(cls: PredictedClass): string {
   }
   if (cls === 'sticker_tattoo') {
     return 'Temporary sticker tattoo identified. No ink penetration into dermis. Typically fades within 1-2 weeks without intervention.';
+  }
+  if (cls === 'not_tattoo') {
+    return 'The image does not appear to contain a tattoo, sticker, or pen drawing. Please upload an image of the area you would like analysed.';
   }
   return 'Pen or marker drawing on skin surface only. Washes off with soap and water. No clinical action needed.';
 }

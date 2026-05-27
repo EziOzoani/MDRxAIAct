@@ -394,11 +394,11 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
 
                 {/*
                   Action buttons.
-                  When Human Oversight is OFF we don't hard-block navigation —
+                  When Human Oversight is OFF we don't hard-block navigation -
                   the shield toggles only live in Under-the-Hood, so trapping
                   the user here would leave them with no way out. Instead, we
                   reframe the primary button as "Go under the hood (enable
-                  Human Oversight there)" — same action as Confirm, just a
+                  Human Oversight there)", same action as Confirm, just a
                   message that teaches the lesson instead of stonewalling.
                 */}
                 <div className="flex flex-col gap-4 pt-6 border-t border-border">
@@ -407,7 +407,7 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                       <p className="font-semibold">Human Oversight is disabled</p>
                       <p className="text-xs mt-1">
                         Without human-in-the-loop review, AI results cannot be <em>confirmed</em> for clinical use.
-                        In this demo you can still continue — head under the hood to re-enable Human Oversight
+                        In this demo you can still continue, head under the hood to re-enable Human Oversight
                         and other protections, then come back to confirm.
                       </p>
                     </div>

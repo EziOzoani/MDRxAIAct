@@ -60,7 +60,7 @@ interface UnderTheHoodSectionProps {
   perspective?: Perspective;
   /** User's captured photo (data URL) lifted up from PhotoCaptureSection. */
   userImageUrl?: string | null;
-  /** Active classification result — gives us the predicted class for the tile. */
+  /** Active classification result, gives us the predicted class for the tile. */
   classificationResult?: any;
 }
 
@@ -97,7 +97,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
   return (
     <section className="min-h-screen bg-gradient-to-b from-secondary/30 to-background relative overflow-hidden pt-4 pb-16">
       {/*
-        Transient "shield just changed" toast stack — slides in at the top
+        Transient "shield just changed" toast stack, slides in at the top
         of the page whenever the user toggles a protection. Fixed-position
         so it survives the section's own scroll/transform context.
       */}
@@ -140,7 +140,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
             Pick a card to flip it over. Toggle the shields and watch the
             <span className="text-primary font-medium"> data</span> and the
-            <span className="text-accent font-medium"> model</span> react in real time — to your own image.
+            <span className="text-accent font-medium"> model</span> react in real time, to your own image.
           </p>
 
           {/* Final Protection Summary */}
@@ -180,7 +180,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
         </motion.div>
 
         {/*
-          Bear speech bubble — fixed at the bear's MOUTH height (he's centred
+          Bear speech bubble, fixed at the bear's MOUTH height (he's centred
           vertically, face in the upper third → ~mouth at ~42% of viewport),
           just to his right with the tail pointing back at him. The content
           block is padded right (xl:pl on the container) so cards/text never
@@ -199,7 +199,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
                 Put on your lab coat, {userName}! 🔬
               </p>
               <p className="text-muted-foreground mt-1 text-xs">
-                Flip a card and toggle the shields — watch how the data and model
+                Flip a card and toggle the shields, watch how the data and model
                 react to your own image.
               </p>
             </SpeechBubble>
@@ -211,13 +211,14 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
             same size (aspect 5/7), centred as a pair. Stacks to one column
             on narrow screens.
 
-            Tile 1 — the data the model learned from (KNN neighbours + bars)
-            Tile 3 — how the model learned the user's image (checkpoints)
+            Tile 1, the data the model learned from (KNN neighbours + bars)
+            Tile 3, how the model learned the user's image (checkpoints)
         ──────────────────────────────────────────────────────────────── */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
           <Tile1Data
             regState={regState}
             appliedProtections={appliedProtections}
+            onToggleProtection={onToggleProtection}
             userImageUrl={userImageUrl}
             predictedClass={classificationResult?.predictedClass}
             similarity={currentTierSimilarity}
