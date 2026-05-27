@@ -28,15 +28,20 @@
 
 import { motion } from 'framer-motion';
 import { useState, useMemo } from 'react';
-import { Microscope, Brain, Shield, RotateCw, X } from 'lucide-react';
+import { Microscope, Brain, Shield, RotateCw, X, AlertTriangle, Sparkles } from 'lucide-react';
 import type { TierCheckpoints } from '@/hooks/useCheckpointInference';
+import type { PredictedClass } from '@/config/huggingface';
 import { SHIELD_RULES, type ShieldEffect, type ShieldEffectTarget } from '@/config/shieldRules';
 import { RedactionStrip } from './RedactionStrip';
+import { FAKE_DRIFT, trainingRefUrl, type FakeDriftEpoch } from '@/config/fakeDrift';
 
 interface Tile3ModelProps {
   appliedProtections: string[];
   userImageUrl?: string | null;
-  /** Checkpoint trajectory for the active tier (from useCheckpointInference). */
+  /** Predicted class of the user's image, used to pick the drift trajectory. */
+  predictedClass?: PredictedClass;
+  /** Real per-checkpoint trajectory (currently unused while we ship fake
+   *  drift; preserved so the prop interface survives the real-drift swap). */
   checkpoints?: TierCheckpoints | null;
 }
 
@@ -61,7 +66,17 @@ function blurForConfidence(c: number): number {
   return Math.max(0, 8 * (1 - c));
 }
 
-export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Tile3ModelProps) {
+// Per-phase decoration: badge text + colour for the small tag under each
+// epoch tile. "drift" gets red so a visitor's eye lands on the failure
+// at the right time.
+const PHASE_META: Record<FakeDriftEpoch['phase'], { label: string; color: string }> = {
+  warmup:   { label: 'warming up',  color: '#94a3b8' },
+  learning: { label: 'learning',    color: '#3b82f6' },
+  peak:     { label: 'performing',  color: '#22c55e' },
+  drift:    { label: 'drifting',    color: '#ef4444' },
+};
+
+export function Tile3Model({ appliedProtections, userImageUrl, predictedClass, checkpoints }: Tile3ModelProps) {
   const [state, setState] = useState<'resting' | 'expanded' | 'flipped'>('resting');
 
   // Shield effects that target the flip-back regulatory text (same system
@@ -79,10 +94,19 @@ export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Ti
   const flipMdrRedaction = effectFor('redact-flip-mdr');
   const flipAiActRedaction = effectFor('redact-flip-aiact');
 
-  const predictions = checkpoints?.predictions ?? [];
-  const loading = checkpoints?.loading ?? false;
-  const finalPrediction = predictions[predictions.length - 1];
   const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
+
+  // Drift trajectory: 8 fabricated epochs keyed to the predicted class.
+  // Defaults to the sticker trajectory if no class is known yet (e.g. before
+  // the user has classified anything) so the tile preview still has data.
+  const cls: PredictedClass = predictedClass ?? 'sticker_tattoo';
+  const driftEpochs = FAKE_DRIFT[cls];
+  // Loading state retained from the real-checkpoint path so the tile still
+  // shows a spinner if a future swap reintroduces async data.
+  const loading = checkpoints?.loading ?? false;
+  const finalPrediction = driftEpochs[driftEpochs.length - 1];
+  // Best epoch — what the model *could* have shipped under proper oversight.
+  const peakEpoch = driftEpochs.reduce((a, b) => (b.confidence > a.confidence ? b : a), driftEpochs[0]);
 
   // ─── RESTING STATE — back of a poker card ────────────────────────────
   if (state === 'resting') {
@@ -164,7 +188,7 @@ export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Ti
               <h3 className="text-xl font-bold text-foreground">How the Model Learned Your Image</h3>
             </div>
 
-            {loading && predictions.length === 0 ? (
+            {loading ? (
               <div className="flex flex-col items-center gap-3 py-10">
                 <motion.div
                   animate={{ rotate: 360 }}
@@ -175,63 +199,102 @@ export function Tile3Model({ appliedProtections, userImageUrl, checkpoints }: Ti
               </div>
             ) : (
               <>
-                {/* Epoch image row */}
-                <div className="flex flex-wrap items-end justify-center gap-3">
-                  {predictions.map((p, i) => {
-                    const colour = confidenceColour(p.confidence);
-                    const blur = blurForConfidence(p.confidence);
-                    const isFinal = i === predictions.length - 1;
+                {/* Epoch row — two stacked thumbnails per epoch: training
+                    reference (top) + the user's image (bottom). The
+                    "frost" lifts then comes back, signalling drift. */}
+                <div className="flex flex-wrap items-end justify-center gap-2.5">
+                  {driftEpochs.map((p) => {
+                    const phaseMeta = PHASE_META[p.phase];
+                    const isPeak = p.step === peakEpoch.step;
+                    const isDrift = p.phase === 'drift';
+                    const refUrl = trainingRefUrl(baseURL, predictedClass, p.trainingRef);
+                    const borderColor = isPeak ? '#22c55e' : isDrift ? '#ef4444' : '#475569';
                     return (
                       <div key={p.step} className="text-center">
-                        <div className="mb-1 text-[10px] text-muted-foreground">
-                          Epoch {p.epoch ?? i + 1}{isFinal ? ' ★' : ''}
+                        <div className="mb-1 text-[10px] font-medium text-muted-foreground">
+                          Epoch {p.epoch}{isPeak ? ' ★' : ''}
                         </div>
+
+                        {/* Training reference — what the model is learning from. */}
                         <div
-                          className="relative mx-auto h-20 w-20 overflow-hidden rounded-lg border-2"
-                          style={{ borderColor: isFinal ? '#22c55e' : '#475569' }}
+                          className="relative mx-auto h-14 w-14 overflow-hidden rounded-md border"
+                          style={{ borderColor }}
+                          title={`Training ref (${p.trainingRef}) at epoch ${p.epoch}`}
+                        >
+                          <img src={refUrl} alt="" className="h-full w-full object-cover opacity-90" />
+                          <span className="absolute bottom-0 right-0 rounded-tl bg-black/55 px-1 text-[8px] font-semibold uppercase tracking-wider text-white">
+                            {p.trainingRef === 'canonical' ? 'ref' : 'edge'}
+                          </span>
+                        </div>
+
+                        {/* User's image — frost reflects model "vision". */}
+                        <div
+                          className="relative mx-auto mt-1.5 h-14 w-14 overflow-hidden rounded-md border-2"
+                          style={{ borderColor }}
                         >
                           {userImageUrl ? (
                             <img
                               src={userImageUrl}
                               alt=""
                               className="h-full w-full object-cover"
-                              style={{ filter: `blur(${blur}px)` }}
+                              style={{ filter: `blur(${p.blurPx}px)` }}
                             />
                           ) : (
                             <div className="h-full w-full bg-muted" />
                           )}
+                          {isDrift && (
+                            <AlertTriangle className="absolute right-0.5 top-0.5 h-3 w-3 text-red-500 drop-shadow" />
+                          )}
+                          {isPeak && (
+                            <Sparkles className="absolute right-0.5 top-0.5 h-3 w-3 text-emerald-400 drop-shadow" />
+                          )}
                         </div>
-                        <div className="mt-1 text-[11px] font-semibold" style={{ color: colour }}>
+
+                        <div
+                          className="mt-1 text-[11px] font-semibold"
+                          style={{ color: confidenceColour(p.confidence) }}
+                        >
                           {CLASS_DISPLAY[p.predictedLabel] ?? p.predictedLabel}
                         </div>
                         <div className="text-[10px] text-muted-foreground">
                           {(p.confidence * 100).toFixed(0)}%
+                        </div>
+                        <div
+                          className="mt-0.5 text-[9px] font-semibold uppercase tracking-wider"
+                          style={{ color: phaseMeta.color }}
+                        >
+                          {phaseMeta.label}
                         </div>
                       </div>
                     );
                   })}
                 </div>
 
-                {/* Confidence-over-time chart */}
-                {predictions.length > 1 && (
-                  <div className="mt-6 border-t border-border pt-4">
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      Confidence in the final prediction, over training
-                    </p>
-                    <ConfidenceChart predictions={predictions} />
-                  </div>
-                )}
+                {/* Confidence-over-time chart — now reflects the drift curve. */}
+                <div className="mt-6 border-t border-border pt-4">
+                  <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Confidence over training — note the dip after the peak
+                  </p>
+                  <ConfidenceChart predictions={driftEpochs.map((p) => ({
+                    confidence: p.confidence, epoch: p.epoch,
+                  }))} />
+                </div>
 
                 {finalPrediction && (
                   <p className="mt-4 text-center text-xs text-muted-foreground">
-                    By the final epoch the model was{' '}
-                    <span className="font-mono text-foreground">
-                      {(finalPrediction.confidence * 100).toFixed(0)}%
-                    </span>{' '}
-                    confident your image is{' '}
+                    At epoch {peakEpoch.epoch} the model peaked at{' '}
+                    <span className="font-mono text-emerald-600">
+                      {(peakEpoch.confidence * 100).toFixed(0)}%
+                    </span>
+                    {' '}on{' '}
                     <span className="font-semibold text-foreground">
+                      {CLASS_DISPLAY[peakEpoch.predictedLabel] ?? peakEpoch.predictedLabel}
+                    </span>
+                    . By epoch {finalPrediction.epoch} it had drifted to{' '}
+                    <span className="font-semibold text-red-600">
                       {CLASS_DISPLAY[finalPrediction.predictedLabel] ?? finalPrediction.predictedLabel}
-                    </span>.
+                    </span>{' '}
+                    at {(finalPrediction.confidence * 100).toFixed(0)}%.
                   </p>
                 )}
               </>

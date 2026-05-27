@@ -223,6 +223,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           <Tile3Model
             appliedProtections={appliedProtections}
             userImageUrl={userImageUrl}
+            predictedClass={classificationResult?.predictedClass}
             checkpoints={checkpointInference.current}
           />
         </div>
