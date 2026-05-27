@@ -213,7 +213,11 @@ const Index = () => {
         gated to the 'hood' step. Doctor / Engineer perspective toggle stays
         at the top because it's a global lens, not a compliance control.
       */}
-      {showHood && (
+      {/* RiskThermometer hidden in Under-the-Hood: the in-card shield
+          chips (Show drift / Show bias on Tile 1 and Tile 3) are now the
+          primary shield control surface. Removed clutter on the left side
+          so the cards are the focus. */}
+      {false && showHood && (
         <RiskThermometer
           currentStep={currentStep}
           regState={regState}
