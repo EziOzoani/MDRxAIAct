@@ -94,6 +94,10 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
     onCardExpandedChange?.(isExpanded);
   };
 
+  // BASE_URL respects Vite's deployment base path (e.g. '/MDRxAIAct/' on
+  // GitHub Pages, '/' locally) so the logo resolves in both contexts.
+  const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
+
   return (
     <section className="min-h-screen bg-gradient-to-b from-secondary/30 to-background relative overflow-hidden pt-4 pb-16">
       {/*
@@ -233,35 +237,52 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           />
         </div>
 
-        {/* Acknowledgement, compact and centred at the foot of the page.
-            Source: https://practical-ai-act.eu/latest/Acknowledgment
-            (BAIAA logo asset slot, replace the text badge with the official
-            SVG/PNG once we have it). */}
-        <div className="mt-12 mx-auto max-w-xl">
-          <div className="flex items-center gap-3 justify-center mb-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary/15 to-accent/15 border border-primary/30">
-              <span className="text-sm font-extrabold tracking-tight text-primary">BAIAA</span>
+        {/* Acknowledgement footer. Compact, centred, with a themed border
+            so it sits as a distinct element at the foot of the page
+            without competing with the tiles. BAIAA logo + appliedAI lead.
+            Source: https://practical-ai-act.eu/latest/Acknowledgment */}
+        <div className="mt-14 flex justify-center">
+          <div
+            className="relative max-w-xl rounded-2xl bg-card/80 backdrop-blur-sm px-6 py-5 shadow-soft"
+            style={{
+              borderTop: '3px solid hsl(var(--primary) / 0.55)',
+              borderLeft: '1px solid hsl(var(--border))',
+              borderRight: '1px solid hsl(var(--border))',
+              borderBottom: '1px solid hsl(var(--border))',
+            }}
+          >
+            <p className="mb-3 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
+              Acknowledgement
+            </p>
+
+            {/* BAIAA logo, centred. Black variant works on the light theme. */}
+            <div className="flex justify-center mb-3">
+              <img
+                src={`${baseURL}images/brand/baiaa-logo-black.svg`}
+                alt="Bavarian AI Act Accelerator"
+                className="h-9 w-auto opacity-90"
+              />
             </div>
-            <div className="text-left">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Acknowledgement</p>
-              <p className="text-xs font-semibold text-foreground">Bavarian AI Act Accelerator</p>
-            </div>
+
+            <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+              A two-year project funded by the Bavarian State Ministry of Digital
+              Affairs, led by the{' '}
+              <span className="font-semibold text-primary">appliedAI Institute for Europe</span>
+              {' '}with LMU, TUM, and TH Nuremberg, supporting SMEs, start-ups, and the
+              public sector in complying with the EU AI Act.
+            </p>
+
+            <p className="mt-3 text-center text-[10px]">
+              <a
+                href="https://practical-ai-act.eu/latest/Acknowledgment"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline-offset-2 hover:underline"
+              >
+                practical-ai-act.eu/latest/Acknowledgment
+              </a>
+            </p>
           </div>
-          <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
-            A two-year project funded by the Bavarian State Ministry of Digital Affairs,
-            led by the <span className="font-semibold text-primary">appliedAI Institute for Europe</span>{' '}
-            in collaboration with LMU, TUM, and TH Nuremberg, supporting SMEs, start-ups,
-            and the public sector in complying with the EU AI Act.
-            {' '}
-            <a
-              href="https://practical-ai-act.eu/latest/Acknowledgment"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary underline-offset-2 hover:underline"
-            >
-              Read more
-            </a>
-          </p>
         </div>
       </div>
     </section>
