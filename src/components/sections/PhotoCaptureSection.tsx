@@ -4,7 +4,6 @@ import { SpeechBubble } from '../SpeechBubble';
 import { Button } from '../ui/button';
 import { Camera, Upload, ArrowRight, X, Loader2, Shield, Brain, AlertTriangle, Clock, BarChart3 } from 'lucide-react';
 import { classifyAllTiers, type AllClassificationResults } from '@/config/huggingface';
-import { getDemoOverride, buildOverrideResult } from '@/config/demoOverrides';
 import { ProtectionGate } from '../ProtectionGate';
 import type { VizMode } from './HeroSection';
 import { allProtections, type RegState } from '../RegulationMenu';
@@ -63,7 +62,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
 
   // Example images for UI display (images 6, 7, 8 as requested)
   const exampleImages = [
-    { id: 1, src: `${import.meta.env.BASE_URL}images/examples/fake_tattoo_example.png`, label: 'Example 1' },
+    { id: 1, src: `${import.meta.env.BASE_URL}images/examples/sticker_tattoo_example.png`, label: 'Example 1' },
     { id: 2, src: `${import.meta.env.BASE_URL}images/examples/sharpie_tattoo_example.png`, label: 'Example 2' },
     { id: 3, src: `${import.meta.env.BASE_URL}images/examples/real_tattoo_1.png`, label: 'Example 3' },
   ];
@@ -248,13 +247,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
             // Preserve original filename so simulation can use hints if server is down
             const originalName = imageSrc.split('/').pop() || 'example.png';
             const file = new File([blob], originalName, { type: 'image/png' });
-            // Demo examples are pinned to their canonical class — see
-            // src/config/demoOverrides.ts. Real uploads / camera captures
-            // (handled below) always use the live model.
-            const override = getDemoOverride(imageSrc);
-            const results = override
-              ? buildOverrideResult(override)
-              : await classifyAllTiers(file, setLoadingMessage, true);
+            const results = await classifyAllTiers(file, setLoadingMessage, true);
             setAllResults(results);
           } catch (err) {
             console.error('Classification error:', err);

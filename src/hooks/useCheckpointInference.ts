@@ -30,7 +30,6 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { SimTier } from './useKnnSimilarity';
-import { getDemoOverride } from '@/config/demoOverrides';
 
 const API_BASE = '/api/models';
 
@@ -166,26 +165,6 @@ export function useCheckpointInference(
     const key = `${userImageUrl}::${tier}`;
     if (startedRef.current.has(key)) return; // already fetching / fetched
     startedRef.current.add(key);
-
-    // Demo example short-circuit: if this image is one of the curated demo
-    // examples, populate the trajectory synchronously from the override and
-    // skip network entirely. See src/config/demoOverrides.ts for the why.
-    const override = getDemoOverride(userImageUrl);
-    if (override) {
-      const predictions: CheckpointPrediction[] = override.trajectory.map((p) => ({
-        step: p.step,
-        epoch: p.epoch,
-        predictedLabel: p.predictedLabel,
-        confidence: p.confidence,
-        scores: p.scores,
-        metrics: { eval_accuracy: p.confidence },   // chart uses confidence
-      }));
-      setByTier((prev) => ({
-        ...prev,
-        [tier]: { tier, predictions, loading: false, error: null },
-      }));
-      return;
-    }
 
     const controller = new AbortController();
 
