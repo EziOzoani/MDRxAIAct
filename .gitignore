@@ -37,3 +37,25 @@ src/components/mockups/
 src/pages/MockupsGallery.tsx
 src/pages/IntegratedDemo.tsx
 src/pages/demos/
+
+# ML artefacts — too large for git, regenerable from the cluster
+dataset_collection/venv/
+dataset_collection/data/
+dataset_collection/checkpoints/
+dataset_collection/embeddings/
+*.npz
+*.safetensors
+
+# Generated session artefacts
+tile_doc_samples.json
+under_the_hood_tiles_spec.html
+/tmp_*
+
+# Augmented models (regenerable from cluster output_aug/)
+dataset_collection/models_aug/
+
+# Camera test fixtures (large y4m, regenerable via tests/make_camera_fixtures.sh)
+tests/fixtures/camera/*.y4m
+
+# Planning/reference docs — never push (per branch-first workflow rule)
+dataset_collection/docs/

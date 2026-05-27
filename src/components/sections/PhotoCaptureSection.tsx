@@ -23,9 +23,15 @@ interface PhotoCaptureSectionProps {
   perspective?: Perspective;
   classificationResult?: any;
   onClassificationResult?: (result: AllClassificationResults | null) => void;
+  /**
+   * Lifts the captured / uploaded photo URL up to the page level so
+   * downstream sections (Under-the-Hood tiles, KNN similarity grid) can
+   * display the user's own image. Fired whenever selectedImage changes.
+   */
+  onUserImageChange?: (dataUrl: string | null) => void;
 }
 
-export function PhotoCaptureSection({ userName, onContinue, appliedProtections = [], perspective = 'doctor', classificationResult, onClassificationResult }: PhotoCaptureSectionProps) {
+export function PhotoCaptureSection({ userName, onContinue, appliedProtections = [], perspective = 'doctor', classificationResult, onClassificationResult, onUserImageChange }: PhotoCaptureSectionProps) {
   // Check protections relevant to this step
   const hasBiasTesting = appliedProtections.includes('bias-testing');
   const hasTransparency = appliedProtections.includes('transparency');
@@ -42,6 +48,13 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
   const setAllResults = (result: AllClassificationResults | null) => {
     onClassificationResult?.(result);
   };
+
+  // Lift selectedImage up to the page so Under-the-Hood can use it for the
+  // KNN-similarity tile and any future engineer-view detail panels. We fire
+  // the callback whenever the local state changes — including clear (null).
+  useEffect(() => {
+    onUserImageChange?.(selectedImage);
+  }, [selectedImage, onUserImageChange]);
   
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -49,7 +62,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
 
   // Example images for UI display (images 6, 7, 8 as requested)
   const exampleImages = [
-    { id: 1, src: `${import.meta.env.BASE_URL}images/examples/fake_tattoo_example.png`, label: 'Example 1' },
+    { id: 1, src: `${import.meta.env.BASE_URL}images/examples/sticker_tattoo_example.png`, label: 'Example 1' },
     { id: 2, src: `${import.meta.env.BASE_URL}images/examples/sharpie_tattoo_example.png`, label: 'Example 2' },
     { id: 3, src: `${import.meta.env.BASE_URL}images/examples/real_tattoo_1.png`, label: 'Example 3' },
   ];
@@ -415,6 +428,16 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                     </div>
                   </div>
 
+                  {/* Best-result hint — the model is most accurate on a close,
+                      well-lit shot where the tattoo fills the frame. */}
+                  <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs text-muted-foreground">
+                    <Camera className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" />
+                    <span>
+                      For the best result, get <strong>close</strong> so the tattoo fills most of
+                      the frame, in good light. Wide arm or full-body shots are harder for the model.
+                    </span>
+                  </div>
+
                   {/* Action buttons */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <Button
@@ -475,6 +498,26 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                       muted
                       className="w-full aspect-video object-cover"
                     />
+                    {/*
+                      Framing guide — the model was trained on tight tattoo
+                      crops, so it performs best when the tattoo fills the
+                      frame. This square reticle nudges users toward a close
+                      shot rather than a wide arm/selfie photo.
+                    */}
+                    <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                      <div className="relative aspect-square h-[78%] max-h-[78%]">
+                        {/* dashed reticle */}
+                        <div className="absolute inset-0 rounded-lg border-2 border-dashed border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]" />
+                        {/* corner ticks */}
+                        <span className="absolute -top-px -left-px h-5 w-5 border-t-2 border-l-2 border-primary rounded-tl-lg" />
+                        <span className="absolute -top-px -right-px h-5 w-5 border-t-2 border-r-2 border-primary rounded-tr-lg" />
+                        <span className="absolute -bottom-px -left-px h-5 w-5 border-b-2 border-l-2 border-primary rounded-bl-lg" />
+                        <span className="absolute -bottom-px -right-px h-5 w-5 border-b-2 border-r-2 border-primary rounded-br-lg" />
+                      </div>
+                    </div>
+                    <div className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                      Fill the frame with your tattoo
+                    </div>
                     {/* Camera switch button (useful on phones with two cameras) */}
                     <button
                       onClick={switchCamera}
@@ -600,15 +643,18 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                       <div className={`p-6 rounded-xl border ${
                         (classificationResult.predictedClass || (classificationResult.isRealTattoo ? 'real_tattoo' : 'sticker_tattoo')) === 'real_tattoo'
                           ? 'bg-green-50 border-green-300'
-                          : (classificationResult.predictedClass === 'pen_drawn'
-                            ? 'bg-purple-50 border-purple-300'
-                            : 'bg-orange-50 border-orange-300')
+                          : classificationResult.predictedClass === 'not_tattoo'
+                            ? 'bg-slate-50 border-slate-300'
+                            : (classificationResult.predictedClass === 'pen_drawn'
+                              ? 'bg-purple-50 border-purple-300'
+                              : 'bg-orange-50 border-orange-300')
                       }`}>
                         <p className="text-lg font-semibold">
                           {(() => {
                             const cls = classificationResult.predictedClass || (classificationResult.isRealTattoo ? 'real_tattoo' : 'sticker_tattoo');
                             if (cls === 'real_tattoo') return 'Real Tattoo Detected';
                             if (cls === 'sticker_tattoo') return 'Sticker/Temporary Tattoo Detected';
+                            if (cls === 'not_tattoo') return 'No Tattoo Detected';
                             return 'Pen/Marker Drawing Detected';
                           })()}
                         </p>

@@ -28,9 +28,24 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
   const hasDriftMonitor = appliedProtections.includes('drift-monitor');
   const sectionProtections = ['incident', 'drift-monitor'];
   const activeCount = sectionProtections.filter(p => appliedProtections.includes(p)).length;
+  // Derive the displayed detection from the ACTUAL model result so Step 3
+  // matches what Step 2 showed. Previously this card hard-coded
+  // "Tattoo Detected: Yes" + 82%, which contradicted Step 2 whenever the
+  // model said pen / sticker / not_tattoo.
+  const DETECTION_LABELS: Record<string, string> = {
+    real_tattoo: 'Real Tattoo',
+    sticker_tattoo: 'Sticker / Temporary',
+    pen_drawn: 'Pen / Marker Drawing',
+    not_tattoo: 'No Tattoo',
+  };
+  const predictedClass: string = classificationResult?.predictedClass ?? 'real_tattoo';
+  const detectionLabel = DETECTION_LABELS[predictedClass] ?? 'Real Tattoo';
+  const confidencePct = Math.round((classificationResult?.confidence ?? 0.82) * 100);
+  const confidenceBand = confidencePct >= 80 ? 'High' : confidencePct >= 55 ? 'Medium' : 'Low';
+
   const results = {
-    tattooDetected: true,
-    confidence: 82.0,
+    tattooDetected: predictedClass !== 'not_tattoo',
+    confidence: confidencePct,
     skinLesionRisk: 'low',
     recommendations: [
       'No concerning skin lesions detected in the analyzed area',
@@ -180,8 +195,8 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                         <Check className="w-7 h-7 text-primary" />
                       </div>
                       <div>
-                        <p className="text-lg text-muted-foreground">Tattoo Detected</p>
-                        <p className="text-2xl font-bold text-foreground">Yes</p>
+                        <p className="text-lg text-muted-foreground">Detection</p>
+                        <p className="text-2xl font-bold text-foreground">{detectionLabel}</p>
                       </div>
                     </div>
                   </div>
@@ -195,11 +210,11 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                     )}
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
-                        <span className="text-primary font-bold text-lg">{results.confidence}%</span>
+                        <span className="text-primary font-bold text-lg">{confidencePct}%</span>
                       </div>
                       <div>
                         <p className="text-lg text-muted-foreground">Confidence</p>
-                        <p className="text-2xl font-bold text-foreground">High</p>
+                        <p className="text-2xl font-bold text-foreground">{confidenceBand}</p>
                       </div>
                     </div>
                   </div>
@@ -377,30 +392,35 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                   </motion.div>
                 )}
 
-                {/* Action buttons — human oversight controls whether confirm is allowed */}
+                {/*
+                  Action buttons.
+                  When Human Oversight is OFF we don't hard-block navigation —
+                  the shield toggles only live in Under-the-Hood, so trapping
+                  the user here would leave them with no way out. Instead, we
+                  reframe the primary button as "Go under the hood (enable
+                  Human Oversight there)" — same action as Confirm, just a
+                  message that teaches the lesson instead of stonewalling.
+                */}
                 <div className="flex flex-col gap-4 pt-6 border-t border-border">
                   {!appliedProtections.includes('human-oversight') && (
                     <div className="p-3 bg-amber-50 border border-amber-300 rounded-lg text-amber-800 text-sm">
                       <p className="font-semibold">Human Oversight is disabled</p>
                       <p className="text-xs mt-1">
-                        Without human-in-the-loop review, AI results cannot be confirmed for clinical use.
-                        You can still view the results and retake, but confirmation requires enabling Human Oversight
-                        in the shield controls.
+                        Without human-in-the-loop review, AI results cannot be <em>confirmed</em> for clinical use.
+                        In this demo you can still continue — head under the hood to re-enable Human Oversight
+                        and other protections, then come back to confirm.
                       </p>
                     </div>
                   )}
                   <div className="flex flex-col sm:flex-row gap-4">
                     <Button
                       onClick={onConfirm}
-                      disabled={!appliedProtections.includes('human-oversight')}
-                      className={`flex-1 h-16 text-lg font-bold rounded-xl shadow-soft hover:shadow-medium transition-all duration-300 ${
-                        appliedProtections.includes('human-oversight')
-                          ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                          : 'bg-slate-300 text-slate-500 cursor-not-allowed'
-                      }`}
+                      className="flex-1 h-16 text-lg font-bold rounded-xl shadow-soft hover:shadow-medium transition-all duration-300 bg-primary hover:bg-primary/90 text-primary-foreground"
                     >
                       <Check className="mr-2 w-5 h-5" />
-                      {appliedProtections.includes('human-oversight') ? 'Confirm Results' : 'Confirm Blocked'}
+                      {appliedProtections.includes('human-oversight')
+                        ? 'Confirm Results'
+                        : 'Go under the hood to enable'}
                     </Button>
                     <Button
                       onClick={onDecline}

@@ -35,7 +35,10 @@ interface PiPWindowProps {
 }
 
 export function PiPWindow({ perspective, currentStep, classificationResult, appliedProtections, regState }: PiPWindowProps) {
-  const [isMinimized, setIsMinimized] = useState(false);
+  // Start collapsed so the engineering-view panel doesn't cover the Under-the-
+  // Hood cards on arrival. The user opens it from the small corner button when
+  // they want the technical detail. (PiP only renders in the hood step now.)
+  const [isMinimized, setIsMinimized] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const constraintRef = useRef<HTMLDivElement>(null);
 

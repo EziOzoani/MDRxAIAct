@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Fine-tune a ViT model for tattoo classification (real / sticker / pen-drawn).
+Fine-tune a ViT model for tattoo classification (real / sticker / pen-drawn / not-tattoo).
 
 Handles class imbalance via:
   1. Inverse-frequency class weights in the loss function
@@ -27,8 +27,8 @@ import torch.nn as nn
 import numpy as np
 from datasets import load_dataset, DatasetDict
 from transformers import (
-    ViTForImageClassification,
-    ViTImageProcessor,
+    AutoModelForImageClassification,
+    AutoImageProcessor,
     TrainingArguments,
     Trainer,
 )
@@ -38,7 +38,7 @@ from sklearn.metrics import accuracy_score, f1_score, classification_report
 DATA_DIR = Path(__file__).parent / "data"
 OUTPUT_DIR = Path(os.environ.get("OUTPUT_DIR", str(Path(__file__).parent / "model_output")))
 
-LABEL2ID = {"real_tattoo": 0, "sticker_tattoo": 1, "pen_drawn": 2}
+LABEL2ID = {"real_tattoo": 0, "sticker_tattoo": 1, "pen_drawn": 2, "not_tattoo": 3}
 ID2LABEL = {v: k for k, v in LABEL2ID.items()}
 
 
@@ -122,6 +122,10 @@ def main():
     parser.add_argument("--lr", type=float, default=2e-5, help="Learning rate")
     parser.add_argument("--no-class-weights", action="store_true",
                         help="Disable class weights (use uniform loss)")
+    parser.add_argument("--max-samples", type=int, default=0,
+                        help="Max total samples (0=unlimited, useful for CPU training)")
+    parser.add_argument("--freeze-backbone", action="store_true",
+                        help="Freeze backbone, only train classifier head (much faster on CPU)")
     parser.add_argument("--push-to-hub", action="store_true", help="Push to HuggingFace Hub")
     parser.add_argument("--hub-model-id", default=None, help="HF Hub model ID")
     args = parser.parse_args()
@@ -164,8 +168,14 @@ def main():
     print(f"\nLoading dataset from {data_dir}...")
     dataset = load_dataset("imagefolder", data_dir=str(data_dir))
 
+    # Subsample if --max-samples specified (for CPU training)
+    full_ds = dataset["train"]
+    if args.max_samples > 0 and len(full_ds) > args.max_samples:
+        print(f"  Subsampling from {len(full_ds)} to {args.max_samples} images")
+        full_ds = full_ds.shuffle(seed=42).select(range(args.max_samples))
+
     # Split into train/val (80/20)
-    dataset = dataset["train"].train_test_split(test_size=0.2, seed=42, stratify_by_column="label")
+    dataset = full_ds.train_test_split(test_size=0.2, seed=42, stratify_by_column="label")
     dataset = DatasetDict({
         "train": dataset["train"],
         "validation": dataset["test"],
@@ -184,15 +194,24 @@ def main():
 
     # Load processor and model
     print(f"\nLoading model: {args.model_name}")
-    processor = ViTImageProcessor.from_pretrained(args.model_name)
+    processor = AutoImageProcessor.from_pretrained(args.model_name)
 
-    model = ViTForImageClassification.from_pretrained(
+    model = AutoModelForImageClassification.from_pretrained(
         args.model_name,
         num_labels=len(LABEL2ID),
         id2label=ID2LABEL,
         label2id=LABEL2ID,
         ignore_mismatched_sizes=True,
     )
+
+    if args.freeze_backbone:
+        print("  Freezing backbone (only training classifier head)")
+        for name, param in model.named_parameters():
+            if "classifier" not in name:
+                param.requires_grad = False
+        trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        total = sum(p.numel() for p in model.parameters())
+        print(f"  Trainable params: {trainable:,} / {total:,} ({100*trainable/total:.1f}%)")
 
     # Preprocess
     def preprocess(examples):
@@ -217,6 +236,7 @@ def main():
         weight_decay=0.01,
         eval_strategy="epoch",
         save_strategy="epoch",
+        save_total_limit=None,
         load_best_model_at_end=True,
         metric_for_best_model="f1",
         logging_steps=10,
