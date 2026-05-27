@@ -233,57 +233,35 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           />
         </div>
 
-        {/* Acknowledgement section, project context for the demo.
-            Sits at the very bottom of the Under-the-Hood step, themed to
-            match the rest of the demo (muted card, soft border, the
-            applieAI accent palette). Source text:
-            https://practical-ai-act.eu/latest/Acknowledgment */}
-        <div className="mt-16 max-w-3xl mx-auto">
-          <div className="rounded-2xl border border-border bg-card/70 backdrop-blur-sm p-6 md:p-8 shadow-soft">
-            <div className="flex flex-col sm:flex-row sm:items-start gap-5">
-              <div className="shrink-0">
-                <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-gradient-to-br from-primary/15 to-accent/15 border-2 border-primary/30">
-                  <span className="text-2xl font-extrabold tracking-tight text-primary">BAIAA</span>
-                </div>
-                <p className="mt-2 text-center text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                  Bavarian AI Act Accelerator
-                </p>
-              </div>
-              <div className="text-sm leading-relaxed text-foreground/85">
-                <p className="font-semibold text-foreground mb-2">Acknowledgement</p>
-                <p>
-                  The Bavarian AI Act Accelerator is a two-year project funded by the
-                  Bavarian State Ministry of Digital Affairs to support SMEs, start-ups,
-                  and the public sector in Bavaria in complying with the EU AI Act.
-                </p>
-                <p className="mt-3">
-                  Under the leadership of the{' '}
-                  <span className="font-semibold text-primary">appliedAI Institute for Europe</span>{' '}
-                  and in collaboration with Ludwig Maximilian University, the
-                  Technical University of Munich, and the Technical University of
-                  Nuremberg, training, resources, and events are being offered.
-                </p>
-                <p className="mt-3">
-                  The project objectives include reducing compliance costs, shortening
-                  the time to compliance, and strengthening AI innovation. To achieve
-                  these objectives, the project is divided into five work packages:
-                  project management, research, education, tools and infrastructure,
-                  and community.
-                </p>
-                <p className="mt-4 text-xs text-muted-foreground">
-                  Source:{' '}
-                  <a
-                    href="https://practical-ai-act.eu/latest/Acknowledgment"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary underline-offset-2 hover:underline"
-                  >
-                    practical-ai-act.eu/latest/Acknowledgment
-                  </a>
-                </p>
-              </div>
+        {/* Acknowledgement, compact and centred at the foot of the page.
+            Source: https://practical-ai-act.eu/latest/Acknowledgment
+            (BAIAA logo asset slot, replace the text badge with the official
+            SVG/PNG once we have it). */}
+        <div className="mt-12 mx-auto max-w-xl">
+          <div className="flex items-center gap-3 justify-center mb-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-primary/15 to-accent/15 border border-primary/30">
+              <span className="text-sm font-extrabold tracking-tight text-primary">BAIAA</span>
+            </div>
+            <div className="text-left">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Acknowledgement</p>
+              <p className="text-xs font-semibold text-foreground">Bavarian AI Act Accelerator</p>
             </div>
           </div>
+          <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+            A two-year project funded by the Bavarian State Ministry of Digital Affairs,
+            led by the <span className="font-semibold text-primary">appliedAI Institute for Europe</span>{' '}
+            in collaboration with LMU, TUM, and TH Nuremberg, supporting SMEs, start-ups,
+            and the public sector in complying with the EU AI Act.
+            {' '}
+            <a
+              href="https://practical-ai-act.eu/latest/Acknowledgment"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline-offset-2 hover:underline"
+            >
+              Read more
+            </a>
+          </p>
         </div>
       </div>
     </section>
