@@ -372,18 +372,15 @@ export function Tile3Model({
 // ─── Helper: Wax seal corner indicator ───────────────────────────────────
 function WaxSeal({ sealed, onClick }: { sealed: boolean; onClick?: () => void }) {
   const tone = sealed ? '#15803d' : '#b91c1c';
-  const Wrapper: any = onClick ? 'button' : 'div';
-  return (
-    <Wrapper
-      onClick={onClick}
-      className={cn(
-        'absolute -left-2 -top-2 z-10 flex h-16 w-16 items-center justify-center',
-        onClick && 'cursor-pointer hover:scale-105 transition-transform',
-      )}
-      title={sealed
-        ? 'Sealed: post-market surveillance + drift monitoring catches drift. Click to break the seal and reveal the drift.'
-        : 'Broken: model would ship drifted. Click to re-seal — restore monitoring.'}
-    >
+  const wrapperClass = cn(
+    'absolute -left-2 -top-2 z-10 flex h-16 w-16 items-center justify-center',
+    onClick && 'cursor-pointer hover:scale-105 transition-transform',
+  );
+  const titleText = sealed
+    ? 'Sealed: post-market surveillance + drift monitoring catches drift. Click to break the seal and reveal the drift.'
+    : 'Broken: model would ship drifted. Click to re-seal — restore monitoring.';
+  const inner = (
+    <>
       <motion.div
         animate={sealed ? { rotate: 0 } : { rotate: [-1, 1, -1], x: [-0.5, 0.5, -0.5] }}
         transition={sealed
@@ -399,7 +396,6 @@ function WaxSeal({ sealed, onClick }: { sealed: boolean; onClick?: () => void })
       >
         <Shield className="h-7 w-7 text-white drop-shadow" strokeWidth={2.5} />
         {!sealed && (
-          /* Crack line across the seal when broken. */
           <span
             aria-hidden
             className="absolute left-0 right-0 top-1/2 -translate-y-1/2 mx-auto h-[2px] w-[110%] rotate-12 bg-yellow-50 mix-blend-screen"
@@ -413,6 +409,15 @@ function WaxSeal({ sealed, onClick }: { sealed: boolean; onClick?: () => void })
       >
         {sealed ? 'monitored' : 'unmonitored'}
       </div>
+    </>
+  );
+  return onClick ? (
+    <button type="button" onClick={onClick} className={wrapperClass} title={titleText}>
+      {inner}
+    </button>
+  ) : (
+    <div className={wrapperClass} title={titleText}>
+      {inner}
     </div>
   );
 }
