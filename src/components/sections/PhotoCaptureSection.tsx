@@ -183,7 +183,9 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
     setIsCameraActive(false);
   }, []);
 
-  // Capture photo from camera
+  // Capture photo from camera. Matches the preview orientation, so if the
+  // front camera is mirrored on screen (scaleX(-1)), the captured image is
+  // mirrored too. What you see is what gets analysed.
   const capturePhoto = useCallback(() => {
     if (!videoRef.current) return;
 
@@ -194,6 +196,12 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
 
     const context = canvas.getContext('2d');
     if (context) {
+      // Mirror the captured frame for front-camera so the saved image
+      // matches the preview the user just looked at.
+      if (cameraFacing === 'user') {
+        context.translate(canvas.width, 0);
+        context.scale(-1, 1);
+      }
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       canvas.toBlob(blob => {
@@ -204,7 +212,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
         }
       }, 'image/jpeg', 0.92);
     }
-  }, [stopCamera]);
+  }, [cameraFacing, stopCamera]);
 
   // Handle file upload
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -497,6 +505,12 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                       playsInline
                       muted
                       className="w-full aspect-video object-cover"
+                      // Front cameras (laptop / phone selfie) get mirrored so
+                      // the preview behaves like a real mirror, easier to
+                      // position a tattoo. Rear camera passes through raw.
+                      // The captured image (capturePhoto) un-mirrors so the
+                      // saved photo matches reality, not the preview.
+                      style={cameraFacing === 'user' ? { transform: 'scaleX(-1)' } : undefined}
                     />
                     {/*
                       Framing guide, the model was trained on tight tattoo
