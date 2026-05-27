@@ -53,3 +53,9 @@ under_the_hood_tiles_spec.html
 
 # Augmented models (regenerable from cluster output_aug/)
 dataset_collection/models_aug/
+
+# Camera test fixtures (large y4m, regenerable via tests/make_camera_fixtures.sh)
+tests/fixtures/camera/*.y4m
+
+# Planning/reference docs — never push (per branch-first workflow rule)
+dataset_collection/docs/

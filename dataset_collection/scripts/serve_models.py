@@ -42,6 +42,7 @@ import argparse
 import base64
 import io
 import json
+import os
 import re
 import time
 from pathlib import Path
@@ -57,10 +58,20 @@ from transformers import (
     ViTModel,
 )
 
-# All four directories sit alongside scripts/ inside dataset_collection/
+# All directories sit alongside scripts/ inside dataset_collection/.
+# Choose the active model lineage via env var so we can switch between
+# original/augmented/LP-FT *without* moving any files — every model dir is
+# preserved side-by-side. Default is the LP-FT v1 lineage (best wide-shot
+# accuracy: 71% on balanced, with not_tattoo at 100% — see the wide-shot
+# validation matrix in val_heldout_manifest.json).
 BASE_DIR = Path(__file__).parent.parent
-MODEL_DIR = BASE_DIR / "models"
-CHECKPOINT_DIR = BASE_DIR / "checkpoints"
+ACTIVE_MODEL_LINEAGE = os.environ.get("ACTIVE_MODEL_LINEAGE", "models_lpft")
+MODEL_DIR = BASE_DIR / ACTIVE_MODEL_LINEAGE
+# LP-FT keeps checkpoints INSIDE each tier dir (models_lpft/balanced/checkpoint-1/...)
+# whereas the original split used a sibling "checkpoints/" tree. So checkpoint
+# discovery follows the model dir for the LP-FT layout, falling back to the
+# legacy sibling tree if it exists.
+CHECKPOINT_DIR = MODEL_DIR if (MODEL_DIR / "balanced" / "checkpoint-1").exists() else BASE_DIR / "checkpoints"
 EMBEDDINGS_DIR = BASE_DIR / "embeddings"
 DATA_DIR = BASE_DIR / "data"
 

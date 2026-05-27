@@ -1,0 +1,63 @@
+{
+  "val_per_class": 12,
+  "seed": 1234,
+  "heldout_crops": {
+    "real_tattoo": [
+      "drozdik_sample_001.png",
+      "drozdik_sample_002.png",
+      "drozdik_sample_004.png",
+      "tatvton_00032.png",
+      "tatvton_00036.png",
+      "tatvton_00053.png",
+      "tatvton_00061.png",
+      "tatvton_00063.png",
+      "tatvton_00064.png",
+      "tatvton_00068.png",
+      "tatvton_00087.png",
+      "tatvton_00109.png"
+    ],
+    "sticker_tattoo": [
+      "023ea45adce9_4123733_cottonbro_studio.png",
+      "024af87aa67a_4123724_cottonbro_studio.png",
+      "03105815f408_15097582_Ramdas_Aswale.png",
+      "047b2e865bdc_5616993_Monsieur__Sylvain.png",
+      "06164282b51f_4125687_cottonbro_studio.png",
+      "06496016440d_7147761_Michael_Burrows.png",
+      "07f3e74c669a_1550340_Element5_Digital.png",
+      "096a3881762c_7217906_Blue_Bird.png",
+      "098c2a2dee19_7113500_Kindel_Media.png",
+      "0cc2aae6c9b0_31828301_Selvin_Esteban.png",
+      "0e81e034d177_4246108_Ketut_Subiyanto.png",
+      "0ec8390e9515_7203741_Tima_Miroshnichenko.png"
+    ],
+    "pen_drawn": [
+      "0097c65bc70a_4125666_cottonbro_studio.png",
+      "00ad5f0fd245_9257253_Keijiro_Takahashi.png",
+      "01022aa0699b_8501573_Liliana_Drew.png",
+      "0148bafb8666_7067_Startup_Stock_Photos.png",
+      "01708986faf0_4348072_Antoni_Shkraba_Studi.png",
+      "029cde185042_6340720_Pavel_Danilyuk.png",
+      "02c1c70f441a_7951207_Felicity_Tai.png",
+      "034e86888100_8506328_Liliana_Drew.png",
+      "0399eb7e15fe_10474383_RDNE_Stock_project.png",
+      "04bf0da1f02c_13060576_Lucas_Guimar\u00e3es_Buen.png",
+      "06164282b51f_4125687_cottonbro_studio.png",
+      "079f11cf046b_7956417_Damla__K\u0131r\u00e7i\u00e7ek.png"
+    ],
+    "not_tattoo": [
+      "scin_-1002039107727665188_1.png",
+      "scin_-1003844406100696311_1.png",
+      "scin_-1003844406100696311_2.png",
+      "scin_-1003844406100696311_3.png",
+      "scin_-1056272893472010635_1.png",
+      "scin_-1101392520794914783_1.png",
+      "scin_-1101392520794914783_2.png",
+      "scin_-1101392520794914783_3.png",
+      "scin_-1131745754224368828_1.png",
+      "scin_-1147365175896762601_1.png",
+      "scin_-1147365175896762601_2.png",
+      "scin_-1147365175896762601_3.png"
+    ]
+  },
+  "note": "Training must EXCLUDE these crop filenames to keep validation honest."
+}
