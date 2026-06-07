@@ -20,9 +20,15 @@ OUT=tests/fixtures/camera
 mkdir -p "$OUT"
 
 make_y4m () {  # $1 = source image, $2 = output class name
+  # Pre-flip the source horizontally so the y4m simulates the natural
+  # left-right reversal a real front camera applies. The app mirrors the
+  # preview + capture for front cameras; with a pre-flipped y4m the test
+  # ends up with the SAME final orientation as a real camera capture,
+  # so classifications behave the same.
   ffmpeg -y -loop 1 -i "$1" -t 1.5 -r 15 -pix_fmt yuv420p -s 640x480 \
+    -vf hflip \
     "$OUT/$2.y4m" -loglevel error
-  echo "  $2.y4m"
+  echo "  $2.y4m (pre-flipped to simulate front-camera lens reversal)"
 }
 
 echo "Generating camera fixtures:"

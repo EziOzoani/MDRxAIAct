@@ -108,22 +108,26 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
     };
 
     try {
-      // Try rear camera first (ideal for phones)
+      // Try rear camera first (ideal for phones), front next, any after.
       let stream: MediaStream;
       try {
         stream = await tryGetCamera('environment');
-        setCameraFacing('environment');
       } catch {
-        // Rear camera failed — try front camera
         try {
           stream = await tryGetCamera('user');
-          setCameraFacing('user');
         } catch {
-          // Both failed — try any available camera
           stream = await tryGetCamera(undefined);
-          setCameraFacing('user');
         }
       }
+
+      // Use the ACTUAL facing mode of the granted track, not the one we
+      // requested: on most laptops only one camera exists and the browser
+      // will return it regardless of the `ideal` hint. If the track
+      // reports nothing (Firefox, some webcams), default to 'user' since
+      // that is overwhelmingly the laptop case.
+      const settings = stream.getVideoTracks()[0]?.getSettings?.() ?? {};
+      const reportedFacing = settings.facingMode as 'environment' | 'user' | undefined;
+      setCameraFacing(reportedFacing ?? 'user');
 
       streamRef.current = stream;
       setIsCameraActive(true);
@@ -164,7 +168,9 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
         audio: false,
       });
       streamRef.current = stream;
-      setCameraFacing(newFacing);
+      const settings = stream.getVideoTracks()[0]?.getSettings?.() ?? {};
+      const reportedFacing = settings.facingMode as 'environment' | 'user' | undefined;
+      setCameraFacing(reportedFacing ?? newFacing);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
