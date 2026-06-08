@@ -14,7 +14,7 @@ export const HUGGING_FACE_CONFIG = {
   UNCLEANED_MODEL_ID: 'tattoo-uncleaned',
 
   // API endpoint — local proxy in dev, Cloudflare-tunneled GCP VM in production
-  API_URL: import.meta.env.DEV ? '/api/models/' : 'https://whats-parcel-view-acoustic.trycloudflare.com/models/',
+  API_URL: import.meta.env.DEV ? '/api/models/' : 'https://accommodation-experiencing-planned-climate.trycloudflare.com/models/',
 
   MAX_RETRIES: 3,
   RETRY_DELAY_MS: 15000,
