@@ -11,12 +11,14 @@
   "id2label": {
     "0": "real_tattoo",
     "1": "sticker_tattoo",
-    "2": "pen_drawn"
+    "2": "pen_drawn",
+    "3": "not_tattoo"
   },
   "image_size": 224,
   "initializer_range": 0.02,
   "intermediate_size": 3072,
   "label2id": {
+    "not_tattoo": 3,
     "pen_drawn": 2,
     "real_tattoo": 0,
     "sticker_tattoo": 1

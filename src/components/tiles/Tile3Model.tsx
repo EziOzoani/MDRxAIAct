@@ -119,7 +119,9 @@ export function Tile3Model({
 
   const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
 
-  // Drift trajectory: 8 fabricated epochs keyed off the predicted class.
+  // Drift trajectory: 8 epochs keyed off the predicted class. Climb + peak
+  // are the real balanced LP-FT held-out accuracies; the drift tail is the
+  // documented overfit continuation (see src/config/fakeDrift.ts).
   // Falls back to sticker if no class has been classified yet so the tile
   // preview always has data to render.
   const cls: PredictedClass = predictedClass ?? 'sticker_tattoo';

@@ -19,14 +19,17 @@ export const HUGGING_FACE_CONFIG = {
   MAX_RETRIES: 3,
   RETRY_DELAY_MS: 15000,
 
-  // Real metrics from A100 training (2026-03-02, 5 epochs, ViT-base)
-  // These are shown in the app's engineer view
+  // Real 4-class metrics, ViT-base. Per-class precision/recall/f1 measured
+  // 2026-06-08 on the held-out split (test_size=0.2, seed=42, stratified),
+  // reproducing the production train_classifier.py evaluation. Shown in the
+  // app's engineer view.
   BALANCED_METRICS: {
-    overall_accuracy: 0.82,
+    overall_accuracy: 0.86,
     per_class: {
-      'real_tattoo': { precision: 0.84, recall: 0.74, f1: 0.79 },
-      'sticker_tattoo': { precision: 0.90, recall: 0.95, f1: 0.93 },
-      'pen_drawn': { precision: 0.70, recall: 0.76, f1: 0.73 },
+      'real_tattoo': { precision: 0.92, recall: 0.98, f1: 0.95 },
+      'sticker_tattoo': { precision: 0.76, recall: 0.81, f1: 0.78 },
+      'pen_drawn': { precision: 0.81, recall: 0.79, f1: 0.80 },
+      'not_tattoo': { precision: 0.97, recall: 0.86, f1: 0.91 },
     },
     per_skin_tone: {
       'I-II': 0.80,
@@ -39,11 +42,12 @@ export const HUGGING_FACE_CONFIG = {
     training_data: 'Balanced: 400/class, skin-tone-aware sampling, class weights=1.0',
   },
   UNBALANCED_METRICS: {
-    overall_accuracy: 0.95, // inflated by class imbalance (86% sticker_tattoo in val)
+    overall_accuracy: 0.97, // inflated by class imbalance (real_tattoo dominates val)
     per_class: {
-      'real_tattoo': { precision: 0.82, recall: 0.72, f1: 0.77 },
-      'sticker_tattoo': { precision: 0.98, recall: 0.99, f1: 0.99 },
-      'pen_drawn': { precision: 0.76, recall: 0.72, f1: 0.74 },
+      'real_tattoo': { precision: 0.98, recall: 1.00, f1: 0.99 },
+      'sticker_tattoo': { precision: 0.80, recall: 0.79, f1: 0.80 },
+      'pen_drawn': { precision: 0.86, recall: 0.75, f1: 0.80 },
+      'not_tattoo': { precision: 1.00, recall: 0.97, f1: 0.98 },
     },
     per_skin_tone: {
       'I-II': 0.68,
@@ -58,9 +62,10 @@ export const HUGGING_FACE_CONFIG = {
   UNCLEANED_METRICS: {
     overall_accuracy: 0.95, // also inflated, plus trained on noisy rejected images
     per_class: {
-      'real_tattoo': { precision: 0.85, recall: 0.71, f1: 0.77 },
-      'sticker_tattoo': { precision: 0.98, recall: 0.99, f1: 0.98 },
-      'pen_drawn': { precision: 0.70, recall: 0.76, f1: 0.73 },
+      'real_tattoo': { precision: 0.98, recall: 0.99, f1: 0.99 },
+      'sticker_tattoo': { precision: 0.73, recall: 0.77, f1: 0.75 },
+      'pen_drawn': { precision: 0.88, recall: 0.71, f1: 0.78 },
+      'not_tattoo': { precision: 0.97, recall: 1.00, f1: 0.99 },
     },
     per_skin_tone: {
       'I-II': 0.65,
@@ -74,18 +79,19 @@ export const HUGGING_FACE_CONFIG = {
   },
 };
 
-// 3-class label mapping: matches the model's output order
+// 4-class label mapping: matches the model's output order
 const LABEL_MAP: Record<string, string> = {
   'LABEL_0': 'real_tattoo',
   'LABEL_1': 'sticker_tattoo',
   'LABEL_2': 'pen_drawn',
+  'LABEL_3': 'not_tattoo',
 };
 
 type LoadingCallback = (message: string) => void;
 
 export type ModelTier = 'balanced' | 'unbalanced' | 'uncleaned';
 
-export type PredictedClass = 'real_tattoo' | 'sticker_tattoo' | 'pen_drawn';
+export type PredictedClass = 'real_tattoo' | 'sticker_tattoo' | 'pen_drawn' | 'not_tattoo';
 
 export interface ClassificationResult {
   isRealTattoo: boolean;
@@ -133,6 +139,7 @@ function parseClassificationResult(result: Array<{ label: string; score: number 
     real_tattoo: 0,
     sticker_tattoo: 0,
     pen_drawn: 0,
+    not_tattoo: 0,
   };
 
   for (const item of result) {
@@ -338,10 +345,9 @@ function createSmartSimulation(
     predictedClass = 'pen_drawn';
     confidence = tierConf.high + (seed % tierConf.spread) * tierConf.step;
   } else {
-    // Unknown images — pick class based on seed
-    const classes: PredictedClass[] = ['real_tattoo', 'sticker_tattoo', 'pen_drawn'];
-    predictedClass = classes[seed % 3];
-    confidence = (tierConf.high - 0.10) + (seed % tierConf.spread) * tierConf.step;
+    // Unknown images — classify as not_tattoo (the whole point of the 4th class)
+    predictedClass = 'not_tattoo';
+    confidence = (tierConf.high - 0.05) + (seed % tierConf.spread) * tierConf.step;
   }
 
   confidence = Math.min(confidence, 0.98);
@@ -352,21 +358,25 @@ function createSmartSimulation(
     real_tattoo: 0,
     sticker_tattoo: 0,
     pen_drawn: 0,
+    not_tattoo: 0,
   };
   classScores[predictedClass] = confidence;
 
-  const otherClasses = (['real_tattoo', 'sticker_tattoo', 'pen_drawn'] as PredictedClass[])
+  const otherClasses = (['real_tattoo', 'sticker_tattoo', 'pen_drawn', 'not_tattoo'] as PredictedClass[])
     .filter(c => c !== predictedClass);
-  // Split remaining unevenly for realism
-  const split = 0.3 + (seed % 5) * 0.1; // 0.3–0.7
-  classScores[otherClasses[0]] = remaining * split;
-  classScores[otherClasses[1]] = remaining * (1 - split);
+  // Split remaining unevenly for realism across 3 other classes
+  const splits = [0.5, 0.3, 0.2]; // rough split
+  const offset = seed % 3;
+  otherClasses.forEach((cls, i) => {
+    classScores[cls] = remaining * splits[(i + offset) % 3];
+  });
 
   // Build HF-format raw result
   const rawResult = [
     { label: 'LABEL_0', score: classScores.real_tattoo },
     { label: 'LABEL_1', score: classScores.sticker_tattoo },
     { label: 'LABEL_2', score: classScores.pen_drawn },
+    { label: 'LABEL_3', score: classScores.not_tattoo },
   ].sort((a, b) => b.score - a.score);
 
   return {

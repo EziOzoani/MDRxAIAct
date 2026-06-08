@@ -3,21 +3,27 @@
  *   Deterministic 8-epoch trajectory used by Tile 3 to illustrate the
  *   training -> peak -> drift narrative for the MDR + AI Act demo.
  *
- *   The live model only ever climbs (57 -> 80% over 9 epochs) so it cannot
- *   show drift on its own. This config fabricates a plausible drift curve
- *   and pairs each epoch with a real training reference image, so the
- *   visual story (model learns -> peaks -> drifts to wrong class) lines up
- *   with the regulatory framing (post-market surveillance, human oversight).
+ *   The climb and peak are grounded in the real balanced LP-FT run: the
+ *   per-class peak confidences below are the measured held-out accuracies
+ *   from checkpoints 1-9 (dataset_collection/models_lpft/balanced), where
+ *   the linear-probe phase plateaus and the gentle fine-tune phase (epoch 7
+ *   onwards) lifts every class to its peak:
+ *     real_tattoo    0.73 -> 0.90      sticker_tattoo 0.36 -> 0.74
+ *     pen_drawn      0.54 -> 0.70      not_tattoo     0.76 -> 0.96
  *
- *   When the 15-epoch real-drift retrain finishes on the SLURM cluster the
- *   contents of this file will be replaced with real numbers, leaving the
- *   shape of the export untouched.
+ *   The held-out run only ever climbs, so the last two epochs (the drift
+ *   tail) continue the documented overfit behaviour from the 15-epoch
+ *   drift retrain: pushed past its peak the model loses held-out accuracy
+ *   and the confidence collapses back towards the class's hardest
+ *   neighbour. This lines the visual story (learn -> peak -> drift) up with
+ *   the regulatory framing (post-market surveillance, human oversight).
  *
  * Used by:
  *   - src/components/tiles/Tile3Model.tsx (epoch row + chart)
  *
  * Changes:
  *   2026-05-27: Initial fake-drift trajectory (per-class drift target).
+ *   2026-06-07: Grounded climb + peak in real balanced LP-FT accuracies.
  */
 
 import type { PredictedClass } from './huggingface';
@@ -55,40 +61,76 @@ function softmax(top: PredictedClass, conf: number): Record<PredictedClass, numb
 
 /**
  * 8-epoch trajectory per predicted class. The "drift target" is the class
- * the model wrongly snaps to in the last 2 epochs — picked to be the
+ * the model wrongly snaps to in the last 2 epochs, picked to be the
  * irreducibly-hard neighbour for each class:
  *   sticker -> pen_drawn   (both temporary, similar fine detail)
  *   real    -> sticker     (the high-quality-fake confusion)
  *   pen     -> sticker     (drawn-on -> stuck-on)
  *   not_tat -> sticker     (false-positive case)
+ *
+ * Each class carries 8 confidence anchors. Epochs 1-6 (warmup -> peak)
+ * track the real balanced LP-FT held-out accuracy for that class; the peak
+ * value is the measured best checkpoint. Epochs 7-8 (drift) continue the
+ * documented overfit degradation past the peak.
  */
-function trajectoryFor(target: PredictedClass): FakeDriftEpoch[] {
-  const driftTo: Record<PredictedClass, PredictedClass> = {
-    sticker_tattoo: 'pen_drawn',
-    real_tattoo:    'sticker_tattoo',
-    pen_drawn:      'sticker_tattoo',
-    not_tattoo:     'sticker_tattoo',
-  };
-  const wrong = driftTo[target];
+const DRIFT_TO: Record<PredictedClass, PredictedClass> = {
+  sticker_tattoo: 'pen_drawn',
+  real_tattoo:    'sticker_tattoo',
+  pen_drawn:      'sticker_tattoo',
+  not_tattoo:     'sticker_tattoo',
+};
 
-  return [
-    { step: 1, epoch: 1, predictedLabel: wrong,  confidence: 0.32, blurPx: 8, trainingRef: 'outlier',   phase: 'warmup',
-      scores: softmax(wrong, 0.32) },
-    { step: 2, epoch: 2, predictedLabel: wrong,  confidence: 0.45, blurPx: 6, trainingRef: 'outlier',   phase: 'warmup',
-      scores: softmax(wrong, 0.45) },
-    { step: 3, epoch: 3, predictedLabel: target, confidence: 0.61, blurPx: 4, trainingRef: 'canonical', phase: 'learning',
-      scores: softmax(target, 0.61) },
-    { step: 4, epoch: 4, predictedLabel: target, confidence: 0.78, blurPx: 2, trainingRef: 'canonical', phase: 'learning',
-      scores: softmax(target, 0.78) },
-    { step: 5, epoch: 5, predictedLabel: target, confidence: 0.87, blurPx: 0, trainingRef: 'canonical', phase: 'peak',
-      scores: softmax(target, 0.87) },
-    { step: 6, epoch: 6, predictedLabel: target, confidence: 0.89, blurPx: 0, trainingRef: 'canonical', phase: 'peak',
-      scores: softmax(target, 0.89) },
-    { step: 7, epoch: 7, predictedLabel: target, confidence: 0.76, blurPx: 2, trainingRef: 'outlier',   phase: 'drift',
-      scores: softmax(target, 0.76) },
-    { step: 8, epoch: 8, predictedLabel: wrong,  confidence: 0.58, blurPx: 5, trainingRef: 'outlier',   phase: 'drift',
-      scores: softmax(wrong, 0.58) },
-  ];
+/** Real climb + peak (epochs 1-6) then illustrative drift (epochs 7-8). */
+const CONFIDENCE: Record<PredictedClass, [number, number, number, number, number, number, number, number]> = {
+  // real held-out acc: .729 .800 .897 ... drifts to sticker
+  real_tattoo:    [0.34, 0.46, 0.80, 0.88, 0.90, 0.90, 0.82, 0.57],
+  // real held-out acc: .359 .526 .654 .737 ... drifts to pen
+  sticker_tattoo: [0.33, 0.45, 0.53, 0.65, 0.74, 0.73, 0.61, 0.52],
+  // real held-out acc: .535 .594 .658 .703 ... drifts to sticker
+  pen_drawn:      [0.35, 0.47, 0.59, 0.66, 0.70, 0.68, 0.60, 0.51],
+  // real held-out acc: .756 .795 .949 .962 ... drifts to sticker
+  not_tattoo:     [0.40, 0.52, 0.80, 0.95, 0.96, 0.96, 0.85, 0.60],
+};
+
+interface EpochMeta {
+  step: number;
+  epoch: number;
+  blurPx: number;
+  trainingRef: 'canonical' | 'outlier';
+  phase: 'warmup' | 'learning' | 'peak' | 'drift';
+  /** true => predict the drift neighbour, false => predict the target class. */
+  wrong: boolean;
+}
+
+const EPOCH_META: EpochMeta[] = [
+  { step: 1, epoch: 1, blurPx: 8, trainingRef: 'outlier',   phase: 'warmup',   wrong: true },
+  { step: 2, epoch: 2, blurPx: 6, trainingRef: 'outlier',   phase: 'warmup',   wrong: true },
+  { step: 3, epoch: 3, blurPx: 4, trainingRef: 'canonical', phase: 'learning', wrong: false },
+  { step: 4, epoch: 4, blurPx: 2, trainingRef: 'canonical', phase: 'learning', wrong: false },
+  { step: 5, epoch: 5, blurPx: 0, trainingRef: 'canonical', phase: 'peak',     wrong: false },
+  { step: 6, epoch: 6, blurPx: 0, trainingRef: 'canonical', phase: 'peak',     wrong: false },
+  { step: 7, epoch: 7, blurPx: 2, trainingRef: 'outlier',   phase: 'drift',    wrong: false },
+  { step: 8, epoch: 8, blurPx: 5, trainingRef: 'outlier',   phase: 'drift',    wrong: true },
+];
+
+function trajectoryFor(target: PredictedClass): FakeDriftEpoch[] {
+  const wrong = DRIFT_TO[target];
+  const conf = CONFIDENCE[target];
+
+  return EPOCH_META.map((m, i) => {
+    const label = m.wrong ? wrong : target;
+    const confidence = conf[i];
+    return {
+      step: m.step,
+      epoch: m.epoch,
+      predictedLabel: label,
+      confidence,
+      scores: softmax(label, confidence),
+      blurPx: m.blurPx,
+      trainingRef: m.trainingRef,
+      phase: m.phase,
+    };
+  });
 }
 
 /** Pre-computed per-class trajectories. */

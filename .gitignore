@@ -59,3 +59,5 @@ tests/fixtures/camera/*.y4m
 
 # Planning/reference docs — never push (per branch-first workflow rule)
 dataset_collection/docs/
+claude_rules.md
+**/claude_rules.md

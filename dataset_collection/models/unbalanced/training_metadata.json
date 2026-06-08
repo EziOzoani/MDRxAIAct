@@ -1,31 +1,35 @@
 {
-  "data_dir": "data",
+  "data_dir": "/shared/ezi/mdr_aiact/data/unbalanced",
   "class_counts": {
     "real_tattoo": 5444,
     "sticker_tattoo": 438,
-    "pen_drawn": 433
+    "pen_drawn": 433,
+    "not_tattoo": 150
   },
   "class_weights": null,
-  "imbalance_ratio": 12.572748267898383,
+  "imbalance_ratio": 36.29333333333334,
   "metrics": {
-    "eval_loss": 0.14317192137241364,
-    "eval_accuracy": 0.9548693586698337,
-    "eval_f1": 0.9534944414943566,
-    "eval_acc_real_tattoo": 0.7195121951219512,
-    "eval_acc_sticker_tattoo": 0.9944547134935305,
-    "eval_acc_pen_drawn": 0.7171717171717171,
-    "eval_runtime": 19.2568,
-    "eval_samples_per_second": 65.587,
-    "eval_steps_per_second": 2.077,
+    "eval_loss": 0.14546500146389008,
+    "eval_accuracy": 0.9651972157772621,
+    "eval_f1": 0.964299437541638,
+    "eval_acc_real_tattoo": 0.9963269054178145,
+    "eval_acc_sticker_tattoo": 0.7931034482758621,
+    "eval_acc_pen_drawn": 0.7471264367816092,
+    "eval_acc_not_tattoo": 0.9666666666666667,
+    "eval_runtime": 12.0074,
+    "eval_samples_per_second": 107.684,
+    "eval_steps_per_second": 3.415,
     "epoch": 5.0
   },
   "args": {
     "model_name": "google/vit-base-patch16-224-in21k",
-    "data_dir": "data",
+    "data_dir": "/shared/ezi/mdr_aiact/data/unbalanced",
     "epochs": 5,
     "batch_size": 32,
     "lr": 2e-05,
     "no_class_weights": true,
+    "max_samples": 0,
+    "freeze_backbone": false,
     "push_to_hub": false,
     "hub_model_id": null
   }
