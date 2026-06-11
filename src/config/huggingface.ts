@@ -21,8 +21,10 @@ export const HUGGING_FACE_CONFIG = {
 
   // Real 4-class metrics, ViT-base. Per-class precision/recall/f1 measured
   // 2026-06-08 on the held-out split (test_size=0.2, seed=42, stratified),
-  // reproducing the production train_classifier.py evaluation. Shown in the
-  // app's engineer view.
+  // reproducing the production train_classifier.py evaluation. The
+  // per_skin_tone / max_gap figures are retained from the earlier skin-tone
+  // bias study and have not yet been re-measured for the not_tattoo class.
+  // Shown in the app's engineer view.
   BALANCED_METRICS: {
     overall_accuracy: 0.86,
     per_class: {
@@ -57,7 +59,7 @@ export const HUGGING_FACE_CONFIG = {
       'VI': 0.62,
     },
     max_gap: 0.34, // 34% gap — this is the bias the AI Act catches
-    training_data: 'Unbalanced: 5444/438/433 (12.6:1 ratio), no class weights',
+    training_data: 'Unbalanced: 5444/438/433/150 (36:1 ratio), no class weights',
   },
   UNCLEANED_METRICS: {
     overall_accuracy: 0.95, // also inflated, plus trained on noisy rejected images
@@ -75,7 +77,7 @@ export const HUGGING_FACE_CONFIG = {
       'VI': 0.58,
     },
     max_gap: 0.38, // 38% gap — noisy data + no balancing = worst bias
-    training_data: 'Uncleaned: 4902/481/494 (10.2:1 ratio), includes rejected noisy images, no class weights',
+    training_data: 'Uncleaned: 4902/481/494/350 (14:1 ratio), includes rejected noisy images, no class weights',
   },
 };
 

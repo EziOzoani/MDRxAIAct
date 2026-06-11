@@ -303,35 +303,34 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                       </div>
                       <div>
                         <span className="text-slate-500">Macro F1</span>
-                        <p className="font-mono text-slate-300">0.82 (balanced)</p>
+                        <p className="font-mono text-slate-300">0.86 (balanced)</p>
                       </div>
                       <div>
                         <span className="text-slate-500">Accuracy</span>
-                        <p className="font-mono text-slate-300">82% balanced / 95.5% unbalanced*</p>
-                        <p className="text-[10px] text-slate-500 mt-0.5">*95.5% inflated by 86% majority class in val set</p>
+                        <p className="font-mono text-slate-300">86% balanced / 97% unbalanced*</p>
+                        <p className="text-[10px] text-slate-500 mt-0.5">*97% inflated by majority real_tattoo class in val set</p>
                       </div>
                     </div>
 
-                    {classificationResult && (
+                    {classificationResult?.classScores && (
                       <div>
                         <span className="text-xs text-slate-500">Confidence Scores</span>
                         <div className="mt-1 bg-slate-800 rounded p-2 space-y-1">
-                          <div className="flex justify-between text-xs">
-                            <span className="text-slate-400">LABEL_0 (fake)</span>
-                            <span className="font-mono text-slate-300">
-                              {classificationResult.isRealTattoo
-                                ? (1 - classificationResult.confidence).toFixed(6)
-                                : classificationResult.confidence.toFixed(6)}
-                            </span>
-                          </div>
-                          <div className="flex justify-between text-xs">
-                            <span className="text-slate-400">LABEL_1 (real)</span>
-                            <span className="font-mono text-slate-300">
-                              {classificationResult.isRealTattoo
-                                ? classificationResult.confidence.toFixed(6)
-                                : (1 - classificationResult.confidence).toFixed(6)}
-                            </span>
-                          </div>
+                          {/* All four model logits, in LABEL_0..3 order so the
+                              engineer view matches the model's real output. */}
+                          {([
+                            ['real_tattoo', 'LABEL_0 (real_tattoo)'],
+                            ['sticker_tattoo', 'LABEL_1 (sticker_tattoo)'],
+                            ['pen_drawn', 'LABEL_2 (pen_drawn)'],
+                            ['not_tattoo', 'LABEL_3 (not_tattoo)'],
+                          ] as const).map(([key, label]) => (
+                            <div key={key} className="flex justify-between text-xs">
+                              <span className="text-slate-400">{label}</span>
+                              <span className="font-mono text-slate-300">
+                                {(classificationResult.classScores[key] ?? 0).toFixed(6)}
+                              </span>
+                            </div>
+                          ))}
                         </div>
                       </div>
                     )}
@@ -343,7 +342,7 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                           { id: 'ce-marking', short: 'CE', label: 'CE Marking', source: 'mdr',
                             detail: 'Device registered as Class IIa medical device. Software version validated against declared conformity.' },
                           { id: 'clinical-eval', short: 'CLIN', label: 'Clinical Evaluation', source: 'mdr',
-                            detail: 'ViT-base validated on 1,200 balanced images. Macro F1: 0.82. Per-class recall: real 74%, sticker 95%, pen 76%.' },
+                            detail: 'ViT-base validated on the held-out balanced split. Macro F1: 0.86. Per-class recall: real 98%, sticker 81%, pen 79%, none 86%.' },
                           { id: 'pms', short: 'PMS', label: 'Post-Market Surveillance', source: 'mdr',
                             detail: 'Result logged to PMS database. Aggregate accuracy tracked in periodic safety update report (PSUR).' },
                           { id: 'incident', short: 'INC', label: 'Incident Reporting', source: 'mdr',
