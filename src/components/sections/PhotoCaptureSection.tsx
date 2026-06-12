@@ -141,11 +141,11 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
     } catch (err) {
       console.error('Camera error:', err);
       if (err instanceof DOMException && err.name === 'NotAllowedError') {
-        setError('Camera permission denied. Please allow camera access in your browser settings.');
+        setError('Camera permission denied. Please allow camera access in your browser settings, or try one of the example images below.');
       } else if (err instanceof DOMException && err.name === 'NotFoundError') {
-        setError('No camera found on this device. Try uploading an image instead.');
+        setError('No camera found on this device. Try one of the example images below instead.');
       } else {
-        setError('Unable to access camera. Please check permissions or try uploading an image.');
+        setError('Unable to access camera. Please check permissions, or try one of the example images below.');
       }
     } finally {
       setIsCameraLoading(false);
@@ -385,10 +385,25 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
               className="glass-card p-8 space-y-6 lg:ml-auto"
               style={{ marginLeft: '50%', width: '50%' }}
             >
-              {/* Error display */}
+              {/* Error display. Camera errors get a one-tap retry that
+                  re-triggers the browser permission prompt (when the state is
+                  still askable); if it was hard-denied the message points to
+                  the address-bar camera icon, the only thing that can re-grant. */}
               {error && error !== 'server-unavailable' && (
-                <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                  {error}
+                <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg space-y-3">
+                  <p>{error}</p>
+                  {/^(Camera permission|No camera|Unable to access)/.test(error) && (
+                    <Button
+                      onClick={startCamera}
+                      disabled={isCameraLoading}
+                      variant="outline"
+                      size="sm"
+                      className="gap-2 border-red-400 text-red-700 hover:bg-red-50"
+                    >
+                      <Camera className="h-4 w-4" />
+                      {isCameraLoading ? 'Opening camera...' : 'Try camera again'}
+                    </Button>
+                  )}
                 </div>
               )}
               {error === 'server-unavailable' && (
