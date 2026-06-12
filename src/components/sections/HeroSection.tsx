@@ -23,28 +23,32 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full z-20 border-b border-border/60 bg-card/70 backdrop-blur-sm"
+        className="w-full z-20 border-b-2 bg-gradient-to-r from-blue-50/90 via-card/70 to-blue-50/60 backdrop-blur-sm"
+        style={{ borderBottomColor: '#146EF5' }}
       >
-        <div className="container mx-auto flex items-center justify-between gap-4 px-2 py-3">
-          <div className="flex items-center gap-3">
+        <div className="container mx-auto flex items-center justify-between gap-4 px-2 py-4">
+          <div className="flex items-center gap-3 sm:gap-5">
             <img
               src={`${baseURL}images/brand/appliedai-logo.svg`}
               alt="appliedAI Institute for Europe"
-              className="h-7 w-auto"
+              className="h-9 md:h-10 w-auto"
             />
-            <span className="hidden sm:block h-5 w-px bg-border" />
-            <span className="hidden sm:block text-sm font-semibold text-foreground/75">
-              MDR × AI Act Demonstrator
+            <span className="hidden sm:block h-8 w-px bg-blue-500/30" />
+            <span
+              className="hidden sm:block text-lg md:text-2xl font-extrabold tracking-tight"
+              style={{ color: '#146EF5' }}
+            >
+              Medical AI Dashboard
             </span>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <span className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
               Prototype
             </span>
             <img
-              src={`${baseURL}images/brand/baiaa-icon.svg`}
+              src={`${baseURL}images/brand/baiaa-logo-black.svg`}
               alt="Bavarian AI Act Accelerator"
-              className="h-7 w-auto opacity-90"
+              className="h-8 md:h-9 w-auto opacity-90"
             />
           </div>
         </div>

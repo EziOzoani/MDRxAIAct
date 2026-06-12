@@ -243,7 +243,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
             Source: https://practical-ai-act.eu/latest/Acknowledgment */}
         <div className="mt-14 flex justify-center">
           <div
-            className="relative max-w-xl rounded-2xl bg-card/80 backdrop-blur-sm px-6 py-5 shadow-soft"
+            className="relative max-w-2xl rounded-2xl bg-card/80 backdrop-blur-sm px-7 py-6 shadow-soft"
             style={{
               borderTop: '3px solid hsl(var(--primary) / 0.55)',
               borderLeft: '1px solid hsl(var(--border))',
@@ -271,6 +271,11 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
               />
             </div>
 
+            {/* Partner captions, mirroring the reference footer. */}
+            <p className="mb-3 text-center text-[10px] font-medium text-muted-foreground/90">
+              Bayerisches Staatsministerium für Digitales&ensp;·&ensp;appliedAI Institute for Europe gGmbH
+            </p>
+
             <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
               A two-year project funded by the Bavarian State Ministry of Digital
               Affairs, led by the{' '}
@@ -279,16 +284,40 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
               public sector in complying with the EU AI Act.
             </p>
 
-            <p className="mt-3 text-center text-[10px]">
+            <p className="mt-2 text-center text-[10px] leading-relaxed text-muted-foreground">
+              The appliedAI Institute for Europe gGmbH is supported by the IPAI Foundation gGmbH.
+            </p>
+
+            {/* Copyright / licence / legal, matching practical-ai-act.eu. */}
+            <div className="mt-4 border-t border-border pt-3 text-center text-[10px] leading-relaxed text-muted-foreground">
+              Copyright © 2025 appliedAI Institute for Europe gGmbH, licensed under the{' '}
               <a
-                href="https://practical-ai-act.eu/latest/Acknowledgment"
+                href="https://creativecommons.org/licenses/by-sa/4.0/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary underline-offset-2 hover:underline"
               >
-                practical-ai-act.eu/latest/Acknowledgment
+                CC BY-SA 4.0 license
               </a>
-            </p>
+              {' · '}
+              <a
+                href="https://practical-ai-act.eu/latest/imprint/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline-offset-2 hover:underline"
+              >
+                Imprint
+              </a>
+              {' · '}
+              <a
+                href="https://practical-ai-act.eu/latest/privacy/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline-offset-2 hover:underline"
+              >
+                Privacy Policy
+              </a>
+            </div>
           </div>
         </div>
       </div>
