@@ -452,8 +452,8 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                     </span>
                   </div>
 
-                  {/* Action buttons */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {/* Action button — camera only (upload removed). */}
+                  <div className="mx-auto grid max-w-sm grid-cols-1 gap-6">
                     <Button
                       onClick={startCamera}
                       disabled={isCameraLoading}
@@ -469,26 +469,6 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                         {isCameraLoading ? 'Opening...' : 'Take Photo'}
                       </span>
                     </Button>
-                    <label>
-                      <Button
-                        variant="outline"
-                        className="h-32 w-full flex-col gap-3 border-2 border-dashed border-accent/30 hover:border-accent hover:bg-accent/5 rounded-xl transition-all text-lg cursor-pointer"
-                        asChild
-                      >
-                        <span>
-                          <Upload className="w-8 h-8 text-accent" />
-                          <span className="font-semibold text-lg">Upload Image</span>
-                        </span>
-                      </Button>
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        capture="environment"
-                        onChange={handleFileUpload}
-                        className="hidden"
-                      />
-                    </label>
                   </div>
                 </>
               )}

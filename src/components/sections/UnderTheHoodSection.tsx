@@ -97,6 +97,12 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
   // BASE_URL respects Vite's deployment base path (e.g. '/MDRxAIAct/' on
   // GitHub Pages, '/' locally) so the logo resolves in both contexts.
   const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
+  // Footer accent matches the chosen header scheme (?hdr= preview switch).
+  const FOOTER_ACCENT: Record<string, string> = {
+    blue: '#146EF5', teal: '#0F766E', deepteal: '#084059', neutral: '#0F2A3A',
+  };
+  const hdrKey = (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('hdr')) || 'teal';
+  const ACCENT = FOOTER_ACCENT[hdrKey] || FOOTER_ACCENT.deepteal;
 
   return (
     <section className="min-h-screen bg-gradient-to-b from-secondary/30 to-background relative overflow-hidden pt-4 pb-16">
@@ -237,90 +243,62 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
           />
         </div>
 
-        {/* Acknowledgement footer. Compact, centred, with a themed border
-            so it sits as a distinct element at the foot of the page
-            without competing with the tiles. BAIAA logo + appliedAI lead.
-            Source: https://practical-ai-act.eu/latest/Acknowledgment */}
-        <div className="mt-14 flex justify-center">
-          <div
-            className="relative max-w-2xl rounded-2xl bg-card/80 backdrop-blur-sm px-7 py-6 shadow-soft"
-            style={{
-              borderTop: '3px solid hsl(var(--primary) / 0.55)',
-              borderLeft: '1px solid hsl(var(--border))',
-              borderRight: '1px solid hsl(var(--border))',
-              borderBottom: '1px solid hsl(var(--border))',
-            }}
-          >
-            <p className="mb-3 text-center text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">
-              Acknowledgement
-            </p>
+        {/* (Full-width site footer lives below, outside this offset
+            container, so it spans the whole page like a real footer.) */}
+      </div>
 
-            {/* Logo lockup: appliedAI lead + BAIAA partner, centred and divided.
-                Black/RGB variants both read well on the light theme. */}
-            <div className="flex items-center justify-center gap-4 mb-3">
+      {/* Full-width site footer, mirroring practical-ai-act.eu: partner logos
+          + captions, the funding + IPAI lines, and a legal bar. The accent
+          (top rule, lead name, links) matches the chosen header scheme. */}
+      <footer
+        className="relative z-10 mt-12 border-t-4 bg-card/70 backdrop-blur-sm"
+        style={{ borderTopColor: ACCENT }}
+      >
+        <div className="container mx-auto px-6 py-6">
+          <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
               <img
                 src={`${baseURL}images/brand/appliedai-logo.svg`}
                 alt="appliedAI Institute for Europe"
                 className="h-7 w-auto"
               />
-              <span className="h-8 w-px bg-border" />
+              <span className="hidden text-[11px] text-muted-foreground sm:inline">appliedAI Institute for Europe gGmbH</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="hidden text-[11px] text-muted-foreground sm:inline">Bayerisches Staatsministerium für Digitales</span>
               <img
                 src={`${baseURL}images/brand/baiaa-logo-black.svg`}
                 alt="Bavarian AI Act Accelerator"
-                className="h-9 w-auto opacity-90"
+                className="h-8 w-auto opacity-90"
               />
             </div>
+          </div>
 
-            {/* Partner captions, mirroring the reference footer. */}
-            <p className="mb-3 text-center text-[10px] font-medium text-muted-foreground/90">
-              Bayerisches Staatsministerium für Digitales&ensp;·&ensp;appliedAI Institute for Europe gGmbH
-            </p>
-
-            <p className="text-center text-[11px] leading-relaxed text-muted-foreground">
+          <div className="mx-auto mt-5 max-w-3xl text-center">
+            <p className="text-[12px] leading-relaxed text-muted-foreground">
               A two-year project funded by the Bavarian State Ministry of Digital
               Affairs, led by the{' '}
-              <span className="font-semibold text-primary">appliedAI Institute for Europe</span>
+              <span className="font-semibold" style={{ color: ACCENT }}>appliedAI Institute for Europe</span>
               {' '}with LMU, TUM, and TH Nuremberg, supporting SMEs, start-ups, and the
               public sector in complying with the EU AI Act.
             </p>
-
-            <p className="mt-2 text-center text-[10px] leading-relaxed text-muted-foreground">
+            <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
               The appliedAI Institute for Europe gGmbH is supported by the IPAI Foundation gGmbH.
             </p>
-
-            {/* Copyright / licence / legal, matching practical-ai-act.eu. */}
-            <div className="mt-4 border-t border-border pt-3 text-center text-[10px] leading-relaxed text-muted-foreground">
-              Copyright © 2025 appliedAI Institute for Europe gGmbH, licensed under the{' '}
-              <a
-                href="https://creativecommons.org/licenses/by-sa/4.0/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline-offset-2 hover:underline"
-              >
-                CC BY-SA 4.0 license
-              </a>
-              {' · '}
-              <a
-                href="https://practical-ai-act.eu/latest/imprint/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline-offset-2 hover:underline"
-              >
-                Imprint
-              </a>
-              {' · '}
-              <a
-                href="https://practical-ai-act.eu/latest/privacy/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline-offset-2 hover:underline"
-              >
-                Privacy Policy
-              </a>
-            </div>
           </div>
         </div>
-      </div>
+
+        <div className="border-t border-border/70">
+          <div className="container mx-auto px-6 py-3 text-center text-[11px] leading-relaxed text-muted-foreground">
+            Copyright © 2025 appliedAI Institute for Europe gGmbH, licensed under the{' '}
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline" style={{ color: ACCENT }}>CC BY-SA 4.0 license</a>
+            {' · '}
+            <a href="https://practical-ai-act.eu/latest/imprint/" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline" style={{ color: ACCENT }}>Imprint</a>
+            {' · '}
+            <a href="https://practical-ai-act.eu/latest/privacy/" target="_blank" rel="noopener noreferrer" className="underline-offset-2 hover:underline" style={{ color: ACCENT }}>Privacy Policy</a>
+          </div>
+        </div>
+      </footer>
     </section>
   );
 }

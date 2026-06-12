@@ -20,27 +20,27 @@ const BEAR_IMAGES: Record<Step, string> = {
 export function PersistentBear({ currentStep }: PersistentBearProps) {
   const [isScrolling, setIsScrolling] = useState(false);
   const [scrollOpacity, setScrollOpacity] = useState(1);
-  
+
   // Handle scroll for opacity
   useEffect(() => {
     let scrollTimeout: NodeJS.Timeout;
-    
+
     const handleScroll = () => {
       setIsScrolling(true);
-      
+
       // Calculate opacity based on scroll position
       const scrollY = window.scrollY;
       const maxScroll = 200; // Fade starts after 200px
       const opacity = Math.max(0.3, 1 - (scrollY - maxScroll) / 500);
       setScrollOpacity(opacity);
-      
+
       // Reset scrolling state after scroll stops
       clearTimeout(scrollTimeout);
       scrollTimeout = setTimeout(() => {
         setIsScrolling(false);
       }, 150);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);

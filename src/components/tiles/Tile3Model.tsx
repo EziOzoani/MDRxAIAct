@@ -198,7 +198,7 @@ export function Tile3Model({
   return (
     <motion.div
       layout
-      className="fixed inset-0 z-40 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-slate-950/80 px-4 py-6 backdrop-blur-sm"
       onClick={() => setState('resting')}
     >
       <motion.div

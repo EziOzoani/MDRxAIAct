@@ -12,6 +12,15 @@ interface HeroSectionProps {
 
 export function HeroSection({ onGetStarted }: HeroSectionProps) {
   const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
+  // TEMP preview: header colour scheme via ?hdr= (blue|teal|deepteal|neutral)
+  const HDR: Record<string, { title: string; from: string; to: string; border: string; divider: string }> = {
+    blue:     { title: '#146EF5', from: 'rgba(219,234,254,0.9)',  to: 'rgba(219,234,254,0.5)', border: '#146EF5', divider: 'rgba(20,110,245,0.30)' },
+    teal:     { title: '#0F766E', from: 'rgba(204,251,241,0.85)', to: 'rgba(204,251,241,0.45)', border: '#0F766E', divider: 'rgba(15,118,110,0.30)' },
+    deepteal: { title: '#084059', from: 'rgba(207,243,245,0.85)', to: 'rgba(224,242,254,0.5)', border: '#084059', divider: 'rgba(8,64,89,0.30)' },
+    neutral:  { title: '#0F2A3A', from: 'rgba(255,255,255,0.95)', to: 'rgba(248,250,252,0.8)', border: '#CBD5E1', divider: 'rgba(148,163,184,0.5)' },
+  };
+  const hdrKey = (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('hdr')) || 'teal';
+  const S = HDR[hdrKey] || HDR.blue;
 
   return (
     <section className="min-h-screen hero-gradient flex flex-col relative overflow-hidden px-4">
@@ -23,8 +32,8 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
         initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full z-20 border-b-2 bg-gradient-to-r from-blue-50/90 via-card/70 to-blue-50/60 backdrop-blur-sm"
-        style={{ borderBottomColor: '#146EF5' }}
+        className="w-full z-20 border-b-2 backdrop-blur-sm"
+        style={{ background: `linear-gradient(to right, ${S.from}, rgba(255,255,255,0.45), ${S.to})`, borderBottomColor: S.border }}
       >
         <div className="container mx-auto flex items-center justify-between gap-4 px-2 py-4">
           <div className="flex items-center gap-3 sm:gap-5">
@@ -33,10 +42,10 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
               alt="appliedAI Institute for Europe"
               className="h-9 md:h-10 w-auto"
             />
-            <span className="hidden sm:block h-8 w-px bg-blue-500/30" />
+            <span className="hidden sm:block h-8 w-px" style={{ background: S.divider }} />
             <span
-              className="hidden sm:block text-lg md:text-2xl font-extrabold tracking-tight"
-              style={{ color: '#146EF5' }}
+              className="hidden sm:block text-lg md:text-2xl font-bold tracking-tight"
+              style={{ color: S.title, fontFamily: "'Work Sans', sans-serif", letterSpacing: '-0.01em' }}
             >
               Medical AI Dashboard
             </span>
