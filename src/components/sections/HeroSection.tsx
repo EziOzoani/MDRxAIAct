@@ -12,15 +12,15 @@ interface HeroSectionProps {
 
 export function HeroSection({ onGetStarted }: HeroSectionProps) {
   const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
-  // TEMP preview: header colour scheme via ?hdr= (blue|teal|deepteal|neutral)
-  const HDR: Record<string, { title: string; from: string; to: string; border: string; divider: string }> = {
-    blue:     { title: '#146EF5', from: 'rgba(219,234,254,0.9)',  to: 'rgba(219,234,254,0.5)', border: '#146EF5', divider: 'rgba(20,110,245,0.30)' },
-    teal:     { title: '#0F766E', from: 'rgba(204,251,241,0.85)', to: 'rgba(204,251,241,0.45)', border: '#0F766E', divider: 'rgba(15,118,110,0.30)' },
-    deepteal: { title: '#084059', from: 'rgba(207,243,245,0.85)', to: 'rgba(224,242,254,0.5)', border: '#084059', divider: 'rgba(8,64,89,0.30)' },
-    neutral:  { title: '#0F2A3A', from: 'rgba(255,255,255,0.95)', to: 'rgba(248,250,252,0.8)', border: '#CBD5E1', divider: 'rgba(148,163,184,0.5)' },
+  // Teal brand scheme (appliedAI): darker-teal title + accent on a light-teal
+  // tint. Matches the footer accent in UnderTheHoodSection.
+  const S = {
+    title: '#0F766E',
+    from: 'rgba(204,251,241,0.85)',
+    to: 'rgba(204,251,241,0.45)',
+    border: '#0F766E',
+    divider: 'rgba(15,118,110,0.30)',
   };
-  const hdrKey = (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('hdr')) || 'teal';
-  const S = HDR[hdrKey] || HDR.blue;
 
   return (
     <section className="min-h-screen hero-gradient flex flex-col relative overflow-hidden px-4">

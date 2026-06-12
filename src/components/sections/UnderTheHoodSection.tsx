@@ -97,12 +97,8 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
   // BASE_URL respects Vite's deployment base path (e.g. '/MDRxAIAct/' on
   // GitHub Pages, '/' locally) so the logo resolves in both contexts.
   const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
-  // Footer accent matches the chosen header scheme (?hdr= preview switch).
-  const FOOTER_ACCENT: Record<string, string> = {
-    blue: '#146EF5', teal: '#0F766E', deepteal: '#084059', neutral: '#0F2A3A',
-  };
-  const hdrKey = (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('hdr')) || 'teal';
-  const ACCENT = FOOTER_ACCENT[hdrKey] || FOOTER_ACCENT.deepteal;
+  // Footer accent — darker teal, matching the header (HeroSection).
+  const ACCENT = '#0F766E';
 
   return (
     <section className="min-h-screen bg-gradient-to-b from-secondary/30 to-background relative overflow-hidden pt-4 pb-16">
