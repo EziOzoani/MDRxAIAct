@@ -11,18 +11,44 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onGetStarted }: HeroSectionProps) {
+  const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
 
   return (
     <section className="min-h-screen hero-gradient flex flex-col relative overflow-hidden px-4">
-      {/* Warning Banner */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
+      {/* Branded top bar. Replaces the old yellow "work in progress" banner:
+          appliedAI lead on the left, BAIAA partner mark on the right, and a
+          discreet "Prototype" chip that keeps the honest demo signal without
+          the jarring full-width yellow. Mirrors practical-ai-act.eu's header. */}
+      <motion.header
+        initial={{ opacity: 0, y: -16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full bg-yellow-500 text-black py-3 px-4 text-center font-bold text-lg shadow-lg z-20"
+        className="w-full z-20 border-b border-border/60 bg-card/70 backdrop-blur-sm"
       >
-        ⚠️ !! WORK IN PROGRESS !! ⚠️
-      </motion.div>
+        <div className="container mx-auto flex items-center justify-between gap-4 px-2 py-3">
+          <div className="flex items-center gap-3">
+            <img
+              src={`${baseURL}images/brand/appliedai-logo.svg`}
+              alt="appliedAI Institute for Europe"
+              className="h-7 w-auto"
+            />
+            <span className="hidden sm:block h-5 w-px bg-border" />
+            <span className="hidden sm:block text-sm font-semibold text-foreground/75">
+              MDR × AI Act Demonstrator
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-medium text-amber-700">
+              Prototype
+            </span>
+            <img
+              src={`${baseURL}images/brand/baiaa-icon.svg`}
+              alt="Bavarian AI Act Accelerator"
+              className="h-7 w-auto opacity-90"
+            />
+          </div>
+        </div>
+      </motion.header>
 
             
       {/* Background decorations */}

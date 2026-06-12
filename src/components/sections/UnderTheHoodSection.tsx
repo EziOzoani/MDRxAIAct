@@ -255,8 +255,15 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
               Acknowledgement
             </p>
 
-            {/* BAIAA logo, centred. Black variant works on the light theme. */}
-            <div className="flex justify-center mb-3">
+            {/* Logo lockup: appliedAI lead + BAIAA partner, centred and divided.
+                Black/RGB variants both read well on the light theme. */}
+            <div className="flex items-center justify-center gap-4 mb-3">
+              <img
+                src={`${baseURL}images/brand/appliedai-logo.svg`}
+                alt="appliedAI Institute for Europe"
+                className="h-7 w-auto"
+              />
+              <span className="h-8 w-px bg-border" />
               <img
                 src={`${baseURL}images/brand/baiaa-logo-black.svg`}
                 alt="Bavarian AI Act Accelerator"
