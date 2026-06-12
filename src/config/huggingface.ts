@@ -13,8 +13,10 @@ export const HUGGING_FACE_CONFIG = {
   // Used when transparency protection is OFF
   UNCLEANED_MODEL_ID: 'tattoo-uncleaned',
 
-  // API endpoint — local proxy in dev, Cloudflare-tunneled GCP VM in production
-  API_URL: import.meta.env.DEV ? '/api/models/' : 'https://accommodation-experiencing-planned-climate.trycloudflare.com/models/',
+  // API endpoint — local proxy in dev, stable HTTPS on the GCP VM in production.
+  // The VM has a static public IP (35.206.143.54); nip.io maps it to a hostname
+  // so Caddy can serve a real Let's Encrypt cert. No tunnel, survives reboot.
+  API_URL: import.meta.env.DEV ? '/api/models/' : 'https://35.206.143.54.nip.io/models/',
 
   MAX_RETRIES: 3,
   RETRY_DELAY_MS: 15000,
