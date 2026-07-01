@@ -29,7 +29,7 @@
 import { motion } from 'framer-motion';
 import { useState, useMemo } from 'react';
 import { Microscope, Brain, Shield, RotateCw, X, AlertTriangle, Sparkles } from 'lucide-react';
-import type { TierCheckpoints } from '@/hooks/useCheckpointInference';
+import type { TierCheckpoints, CheckpointPrediction } from '@/hooks/useCheckpointInference';
 import type { PredictedClass } from '@/config/huggingface';
 import { SHIELD_RULES, type ShieldEffect, type ShieldEffectTarget } from '@/config/shieldRules';
 import { FAKE_DRIFT, trainingRefUrl, type FakeDriftEpoch } from '@/config/fakeDrift';
@@ -93,6 +93,54 @@ function isSealIntact(appliedProtections: string[]): boolean {
   return s.has('pms') && s.has('drift-monitor');
 }
 
+/**
+ * Build the epoch trajectory for the tile. When the real per-image checkpoint
+ * inference is available (`predictions`), use it: each epoch's confidence is
+ * the checkpoint's score for `focus` — the class the STRONG production model
+ * chose (the "meta input") — so the chart reads "how the model's belief in
+ * your final answer built up, epoch by epoch". The predicted label per epoch
+ * is the checkpoint's own argmax, so early disagreement is visible.
+ *
+ * The real 9-epoch run only climbs, so we append the fabricated drift tail
+ * (the `drift`-phase rows of `fake`) as a clearly-illustrative "what unchecked
+ * training would do" continuation, until the real overfit checkpoints are
+ * deployed. Falls back to the fully-fabricated `fake` when no real data yet.
+ */
+function buildDriftEpochs(
+  predictions: CheckpointPrediction[] | undefined,
+  focus: PredictedClass,
+  fake: FakeDriftEpoch[],
+): FakeDriftEpoch[] {
+  if (!predictions || predictions.length === 0) return fake;
+
+  const real: FakeDriftEpoch[] = predictions.map((p, i) => {
+    const focusConf = p.scores[focus] ?? p.confidence;
+    const frac = predictions.length > 1 ? i / (predictions.length - 1) : 1;
+    const phase: FakeDriftEpoch['phase'] =
+      frac < 0.3 ? 'warmup' : frac < 0.7 ? 'learning' : 'peak';
+    return {
+      step: i + 1,
+      epoch: p.epoch ?? p.step,
+      predictedLabel: p.predictedLabel as PredictedClass,
+      confidence: focusConf,
+      scores: p.scores as Record<PredictedClass, number>,
+      blurPx: blurForConfidence(focusConf),
+      trainingRef: 'canonical',
+      phase,
+    };
+  });
+
+  const tail = fake
+    .filter((e) => e.phase === 'drift')
+    .map((e, j) => ({
+      ...e,
+      step: real.length + j + 1,
+      epoch: (real[real.length - 1]?.epoch ?? real.length) + j + 1,
+    }));
+
+  return [...real, ...tail];
+}
+
 export function Tile3Model({
   appliedProtections,
   onToggleProtection,
@@ -119,13 +167,13 @@ export function Tile3Model({
 
   const baseURL = (import.meta as any).env?.BASE_URL ?? '/';
 
-  // Drift trajectory: 8 epochs keyed off the predicted class. Climb + peak
-  // are the real balanced LP-FT held-out accuracies; the drift tail is the
-  // documented overfit continuation (see src/config/fakeDrift.ts).
-  // Falls back to sticker if no class has been classified yet so the tile
-  // preview always has data to render.
+  // Epoch trajectory. When the real per-image checkpoint inference has landed
+  // (checkpoints.predictions), the climb is this user's actual image scored at
+  // every training checkpoint, focused on the strong model's class; otherwise
+  // we fall back to the fabricated per-class curve so the preview always
+  // renders. See buildDriftEpochs. Falls back to sticker if nothing classified.
   const cls: PredictedClass = predictedClass ?? 'sticker_tattoo';
-  const driftEpochs = FAKE_DRIFT[cls];
+  const driftEpochs = buildDriftEpochs(checkpoints?.predictions, cls, FAKE_DRIFT[cls]);
   const peakEpoch = driftEpochs.reduce(
     (a, b) => (b.confidence > a.confidence ? b : a),
     driftEpochs[0],

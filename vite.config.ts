@@ -20,8 +20,13 @@ export default defineConfig(({ mode }) => ({
     },
     proxy: {
       '/api/models': {
-        target: 'http://localhost:8000',
+        // Dev inference target. Defaults to the live GCP-VM backend over
+        // HTTPS so `npm run dev` works anywhere (no local model server
+        // needed). Override with INFERENCE_TARGET=http://localhost:8000 if
+        // you run the backend yourself.
+        target: process.env.INFERENCE_TARGET || 'https://35.206.143.54.nip.io',
         changeOrigin: true,
+        secure: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
