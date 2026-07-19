@@ -116,14 +116,10 @@ export const SHIELD_RULES: ShieldRule[] = [
     shortLabel: 'PMS',
     name: 'Post-Market Surveillance',
     alsoShiftsTier: false,
-    effects: [
-      {
-        target: 'tile-top-banner',
-        severity: 'warning',
-        label: 'POST-MARKET DATA NOT TRACKED',
-        detail: 'Model performance will not be monitored after deployment.',
-      },
-    ],
+    // Banner removed: it described a hypothetical future state rather than
+    // anything observable in the tile, and stacked with the drift banner to
+    // push the actual data off screen. The toast below still fires on toggle.
+    effects: [],
     toastOnDisable: 'Post-Market Surveillance removed — silent degradation possible.',
     toastOnEnable: 'Post-Market Surveillance restored.',
   },
@@ -203,14 +199,8 @@ export const SHIELD_RULES: ShieldRule[] = [
     shortLabel: 'DRFT',
     name: 'Drift Monitoring',
     alsoShiftsTier: false,
-    effects: [
-      {
-        target: 'tile-top-banner',
-        severity: 'warning',
-        label: 'DRIFT NOT MONITORED',
-        detail: 'Model performance may silently degrade over time.',
-      },
-    ],
+    // Banner removed — see the post-market rule above for the reasoning.
+    effects: [],
     toastOnDisable: 'Drift Monitoring removed — silent performance degradation possible.',
     toastOnEnable: 'Drift Monitoring restored.',
   },

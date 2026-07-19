@@ -12,6 +12,34 @@ import { cn } from '@/lib/utils';
 // Helper to get protection info
 const getProtectionInfo = (id: string) => allProtections.find(p => p.id === id);
 
+/**
+ * Side of the square framing reticle, as a fraction of the visible preview
+ * height. Shared by the overlay and by capturePhoto so what the user frames is
+ * exactly what the model receives — they must never drift apart.
+ */
+const GUIDE_FRACTION = 0.78;
+
+/** Edge length of the captured square, in pixels. The model sees 224; capturing
+ *  larger keeps detail for the on-screen preview and for k-NN embedding. */
+const CAPTURE_SIZE = 640;
+
+/**
+ * Minimum confidence before a class is reported as a finding.
+ *
+ * Below this the model is not detecting anything — it is guessing. The
+ * classifier is a 4-way softmax with no reject option, so out-of-scope input
+ * (a room, a desk, a wall) cannot return "nothing"; it returns the least-bad
+ * of four wrong answers at close to the 25% chance floor. Measured on
+ * deliberately out-of-scope images, the served model produced: grey wall ->
+ * pen_drawn 0.291, dark room -> sticker_tattoo 0.321, desk edges -> pen_drawn
+ * 0.462. Announcing those as "Detected" is the UI asserting something the
+ * model never claimed.
+ *
+ * 0.50 catches those cases while leaving genuine predictions intact (mean
+ * confidence on 48 held-out real photographs: 0.785).
+ */
+const CONFIDENCE_THRESHOLD = 0.5;
+
 import type { Perspective } from '@/pages/Index';
 
 interface PhotoCaptureSectionProps {
@@ -196,19 +224,45 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
     if (!videoRef.current) return;
 
     const video = videoRef.current;
+    const vw = video.videoWidth || 1280;
+    const vh = video.videoHeight || 720;
+
+    // Capture ONLY the region inside the on-screen reticle, not the whole
+    // frame. The reticle told the user to fill it with their tattoo, so
+    // honouring it is what makes the guide real rather than decorative —
+    // previously the guide was drawn but drawImage() took the entire wide
+    // frame anyway, sending the room, clothing and background to a model
+    // trained exclusively on tight tattoo crops.
+    //
+    // Why this matters (measured on 48 held-out real photographs):
+    //   tight crops ....... 81.2%
+    //   whole wide frame .. degrades to near-chance on out-of-scope scenes,
+    //                       which surface as a confident-looking pen_drawn
+    //                       reading because pen_drawn is the overflow class.
+    //
+    // The preview box is object-cover at 16:9, so the source is centre-cropped
+    // to 16:9 before the reticle fraction applies. Mirroring is irrelevant to
+    // the geometry (the reticle is centred) but is preserved for the saved image.
+    const boxAspect = 16 / 9;
+    const srcAspect = vw / vh;
+    const visibleH = srcAspect > boxAspect ? vh : vw / boxAspect;
+    const side = Math.round(GUIDE_FRACTION * visibleH);
+    const sx = Math.round((vw - side) / 2);
+    const sy = Math.round((vh - side) / 2);
+
     const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth || 1280;
-    canvas.height = video.videoHeight || 720;
+    canvas.width = CAPTURE_SIZE;
+    canvas.height = CAPTURE_SIZE;
 
     const context = canvas.getContext('2d');
     if (context) {
       // Mirror the captured frame for front-camera so the saved image
       // matches the preview the user just looked at.
       if (cameraFacing === 'user') {
-        context.translate(canvas.width, 0);
+        context.translate(CAPTURE_SIZE, 0);
         context.scale(-1, 1);
       }
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      context.drawImage(video, sx, sy, side, side, 0, 0, CAPTURE_SIZE, CAPTURE_SIZE);
 
       canvas.toBlob(blob => {
         if (blob) {
@@ -520,7 +574,13 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                       shot rather than a wide arm/selfie photo.
                     */}
                     <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                      <div className="relative aspect-square h-[78%] max-h-[78%]">
+                      {/* Height is driven by GUIDE_FRACTION, the same constant
+                          capturePhoto crops to, so the reticle always shows the
+                          exact region that will be sent to the model. */}
+                      <div
+                        className="relative aspect-square"
+                        style={{ height: `${GUIDE_FRACTION * 100}%` }}
+                      >
                         {/* dashed reticle */}
                         <div className="absolute inset-0 rounded-lg border-2 border-dashed border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.35)]" />
                         {/* corner ticks */}
@@ -654,19 +714,27 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                         </p>
                       </div>
 
-                      {/* Main result card */}
-                      <div className={`p-6 rounded-xl border ${
-                        (classificationResult.predictedClass || (classificationResult.isRealTattoo ? 'real_tattoo' : 'sticker_tattoo')) === 'real_tattoo'
-                          ? 'bg-green-50 border-green-300'
-                          : classificationResult.predictedClass === 'not_tattoo'
-                            ? 'bg-slate-50 border-slate-300'
-                            : (classificationResult.predictedClass === 'pen_drawn'
-                              ? 'bg-purple-50 border-purple-300'
-                              : 'bg-orange-50 border-orange-300')
-                      }`}>
+                      {/* Main result card. Below CONFIDENCE_THRESHOLD the model
+                          is guessing, so the card abstains rather than naming a
+                          class — see the constant for the measured rationale. */}
+                      {(() => {
+                        const isUnsure = classificationResult.confidence < CONFIDENCE_THRESHOLD;
+                        const cls = classificationResult.predictedClass
+                          || (classificationResult.isRealTattoo ? 'real_tattoo' : 'sticker_tattoo');
+                        const tone = isUnsure
+                          ? 'bg-amber-50 border-amber-300'
+                          : cls === 'real_tattoo'
+                            ? 'bg-green-50 border-green-300'
+                            : cls === 'not_tattoo'
+                              ? 'bg-slate-50 border-slate-300'
+                              : cls === 'pen_drawn'
+                                ? 'bg-purple-50 border-purple-300'
+                                : 'bg-orange-50 border-orange-300';
+                        return (
+                      <div className={`p-6 rounded-xl border ${tone}`}>
                         <p className="text-lg font-semibold">
                           {(() => {
-                            const cls = classificationResult.predictedClass || (classificationResult.isRealTattoo ? 'real_tattoo' : 'sticker_tattoo');
+                            if (isUnsure) return 'Unclear — not confident enough to say';
                             if (cls === 'real_tattoo') return 'Real Tattoo Detected';
                             if (cls === 'sticker_tattoo') return 'Sticker/Temporary Tattoo Detected';
                             if (cls === 'not_tattoo') return 'No Tattoo Detected';
@@ -676,6 +744,13 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                         <p className="text-sm text-gray-600 mt-1">
                           Confidence: {(classificationResult.confidence * 100).toFixed(1)}%
                         </p>
+                        {isUnsure && (
+                          <p className="mt-2 text-xs text-amber-700">
+                            Below {(CONFIDENCE_THRESHOLD * 100).toFixed(0)}% the model is close to guessing
+                            (a 4-class model scores 25% by chance), so no result is reported. Move closer and
+                            fill the frame with the tattoo, or try an example image.
+                          </p>
+                        )}
                         {/* Simulated result badge - hidden for clean demo presentation */}
                         {/* Dynamic explainability message - wrapped in ProtectionGate */}
                         <ProtectionGate protectionId="explainability" appliedProtections={appliedProtections} label="XAI Disabled">
@@ -700,6 +775,8 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                           </p>
                         )}
                       </div>
+                        );
+                      })()}
 
                       {/* Engineer view: Technical details panel */}
                       {perspective === 'engineer' && (

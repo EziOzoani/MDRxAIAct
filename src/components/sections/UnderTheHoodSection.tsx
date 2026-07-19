@@ -25,7 +25,7 @@
  */
 
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Eye } from 'lucide-react';
 import { allProtections, type RegState } from '../RegulationMenu';
@@ -72,7 +72,19 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
   // toggles then become a client-side array swap with no network round-trip,
   // which is what makes the shield→tile feedback feel instantaneous.
   const knn = useKnnSimilarity(userImageUrl, classificationResult?.predictedClass);
-  const tier = activeTier(appliedProtections);
+  // Shield state for the tiles only — see the note above the component.
+  const [localProtections, setLocalProtections] = useState<string[]>(appliedProtections);
+  useEffect(() => {
+    setLocalProtections(appliedProtections);
+  }, [appliedProtections]);
+
+  const toggleLocalProtection = useCallback((id: string) => {
+    setLocalProtections((prev) =>
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id],
+    );
+  }, []);
+
+  const tier = activeTier(localProtections);
   const currentTierSimilarity = knn[tier];
 
   // Run the user's photo through the active tier's epoch checkpoints. Lazy
@@ -83,7 +95,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
   // Emit "what just changed" toasts whenever a shield is toggled. The toast
   // text lives in shieldRules.ts so adding a new shield is a single-row
   // change in the rule table.
-  const toasts = useShieldToast(appliedProtections);
+  const toasts = useShieldToast(localProtections);
 
   // Check human oversight (final protection)
   const hasHumanOversight = appliedProtections.includes('human-oversight');
@@ -223,16 +235,16 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
           <Tile1Data
             regState={regState}
-            appliedProtections={appliedProtections}
-            onToggleProtection={onToggleProtection}
+            appliedProtections={localProtections}
+            onToggleProtection={toggleLocalProtection}
             userImageUrl={userImageUrl}
             predictedClass={classificationResult?.predictedClass}
             similarity={currentTierSimilarity}
             similarityLoading={knn.loading}
           />
           <Tile3Model
-            appliedProtections={appliedProtections}
-            onToggleProtection={onToggleProtection}
+            appliedProtections={localProtections}
+            onToggleProtection={toggleLocalProtection}
             userImageUrl={userImageUrl}
             predictedClass={classificationResult?.predictedClass}
             checkpoints={checkpointInference.current}
