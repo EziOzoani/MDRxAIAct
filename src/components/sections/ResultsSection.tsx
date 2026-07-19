@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { SpeechBubble } from '../SpeechBubble';
 import { Button } from '../ui/button';
-import { Check, X, AlertCircle, AlertTriangle, ShieldOff, TrendingDown } from 'lucide-react';
+import { Check, X, AlertCircle, AlertTriangle, ShieldOff, TrendingDown, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { VizMode } from './HeroSection';
 import { allProtections, type RegState } from '../RegulationMenu';
@@ -38,20 +38,34 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
     pen_drawn: 'Pen / Marker Drawing',
     not_tattoo: 'No Tattoo',
   };
-  const predictedClass: string = classificationResult?.predictedClass ?? 'real_tattoo';
-  const detectionLabel = DETECTION_LABELS[predictedClass] ?? 'Real Tattoo';
-  const confidencePct = Math.round((classificationResult?.confidence ?? 0.82) * 100);
+  // No fabricated fallback: without a real classification there is nothing
+  // honest to show, so the panel renders an empty state instead of inventing
+  // one. The previous defaults ('real_tattoo', 0.82) displayed a confident
+  // verdict for an image the model had never seen.
+  const hasResult = Boolean(classificationResult?.predictedClass);
+  const predictedClass: string = classificationResult?.predictedClass ?? '';
+  const detectionLabel = DETECTION_LABELS[predictedClass] ?? '—';
+  const confidencePct = Math.round((classificationResult?.confidence ?? 0) * 100);
   const confidenceBand = confidencePct >= 80 ? 'High' : confidencePct >= 55 ? 'Medium' : 'Low';
 
+  // All four class probabilities, already carried on the result. Showing them
+  // is the honest version of "confidence": a headline 55% hides that the
+  // runner-up was 40%, which is exactly the near-miss a visitor should see.
+  const classScores = classificationResult?.classScores as Record<string, number> | undefined;
+  const rankedScores = classScores
+    ? Object.entries(classScores).sort((a, b) => b[1] - a[1])
+    : [];
+
+  // No clinical claims. This classifier distinguishes tattoo types; it does not
+  // assess skin health, and it has never been evaluated for that. Statements
+  // such as "no concerning skin lesions detected" or "no signs of allergic
+  // reaction" asserted a diagnostic capability the model does not have — in a
+  // demonstrator whose whole subject is medical-device regulation, that is
+  // precisely the overclaim the MDR exists to prevent. The panel now reports
+  // what the model actually did and states its limits.
   const results = {
     tattooDetected: predictedClass !== 'not_tattoo',
     confidence: confidencePct,
-    skinLesionRisk: 'low',
-    recommendations: [
-      'No concerning skin lesions detected in the analyzed area',
-      'Tattoo ink appears healthy with no signs of allergic reaction',
-      'Consider regular skin checks for tattooed areas'
-    ]
   };
 
   return (
@@ -138,51 +152,9 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                 <h3 className="text-2xl font-bold text-foreground">Detection Results</h3>
                 <p className="text-lg text-muted-foreground">AI Model Analysis Report</p>
 
-                {/* Protection status for this step */}
-                <div className={cn(
-                  "mt-4 p-3 rounded-lg border transition-all",
-                  activeCount === 2 ? "bg-green-50 border-green-200 dark:bg-green-950/30" :
-                  activeCount === 1 ? "bg-amber-50 border-amber-200 dark:bg-amber-950/30" :
-                  "bg-red-50 border-red-200 dark:bg-red-950/30"
-                )}>
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="group relative">
-                      <div className={cn(
-                        "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium cursor-help",
-                        hasIncident ? "bg-blue-500 text-white" : "bg-slate-200 text-slate-500"
-                      )}>
-                        <AlertCircle className="w-3 h-3" />
-                        INC
-                      </div>
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-lg">
-                        <div className="font-bold text-blue-300">{getProtectionInfo('incident')?.label}</div>
-                        <div className="text-slate-300">{getProtectionInfo('incident')?.description}</div>
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
-                      </div>
-                    </div>
-                    <div className="group relative">
-                      <div className={cn(
-                        "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium cursor-help",
-                        hasDriftMonitor ? "bg-green-500 text-white" : "bg-slate-200 text-slate-500"
-                      )}>
-                        <TrendingDown className="w-3 h-3" />
-                        DRFT
-                      </div>
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-lg">
-                        <div className="font-bold text-green-300">{getProtectionInfo('drift-monitor')?.label}</div>
-                        <div className="text-slate-300">{getProtectionInfo('drift-monitor')?.description}</div>
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
-                      </div>
-                    </div>
-                    <span className="text-xs text-muted-foreground ml-auto">Monitoring: {activeCount}/2</span>
-                  </div>
-                  <p className="text-xs">
-                    {activeCount === 2 && "✓ Results monitored with incident reporting and drift detection active."}
-                    {activeCount === 1 && hasIncident && "⚠ Incident reporting on, but no drift detection - model may degrade unnoticed."}
-                    {activeCount === 1 && hasDriftMonitor && "⚠ Drift monitored, but no incident reporting pathway for problems."}
-                    {activeCount === 0 && "⛔ No monitoring - if this result is wrong, no one will ever know."}
-                  </p>
-                </div>
+                {/* Monitoring status panel removed: it restated shield state
+                    already shown in the regulation menu and announced by toast,
+                    and pushed the actual detection result down the page. */}
               </div>
 
               {/* Results grid */}
@@ -210,11 +182,17 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                     )}
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 rounded-full bg-primary/20 flex items-center justify-center">
-                        <span className="text-primary font-bold text-lg">{confidencePct}%</span>
+                        <span className="text-primary font-bold text-lg">
+                          {hasResult ? `${confidencePct}%` : '—'}
+                        </span>
                       </div>
                       <div>
                         <p className="text-lg text-muted-foreground">Confidence</p>
-                        <p className="text-2xl font-bold text-foreground">{confidenceBand}</p>
+                        <p className={`text-2xl font-bold ${
+                          confidenceBand === 'High' ? 'text-emerald-600 dark:text-emerald-400'
+                            : confidenceBand === 'Medium' ? 'text-amber-600 dark:text-amber-400'
+                            : 'text-red-600 dark:text-red-400'
+                        }`}>{hasResult ? confidenceBand : '—'}</p>
                       </div>
                     </div>
                   </div>
@@ -241,46 +219,60 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                         <p className={`text-xl font-semibold ${
                           regState === 'mdrOnly' ? 'text-amber-800' : 'text-green-800 dark:text-green-200'
                         }`}>
-                          {regState === 'mdrOnly' ? 'Result: Low Risk' : 'Low Risk Assessment'}
+                          {regState === 'mdrOnly' ? 'Result recorded' : 'Classification complete'}
                         </p>
                         <p className={`text-lg mt-1 ${
                           regState === 'mdrOnly' ? 'text-amber-600' : 'text-green-600 dark:text-green-400'
                         }`}>
                           {regState === 'mdrOnly'
                             ? 'No explanation provided. AI Act would require explainability.'
-                            : 'No concerning skin lesions detected in the analyzed area.'}
+                            : 'Tattoo type classified. This is not a medical assessment.'}
                         </p>
                       </div>
                     </div>
                   </div>
                 </ProtectionGate>
 
-                {/* Recommendations - only with full regulation or MDR */}
-                {(regState === 'both' || regState === 'mdrOnly') && (
-                  <div className={regState === 'mdrOnly' ? 'opacity-60' : ''}>
+                {/* Replaces the former clinical-advice list with what the
+                    model actually produced: the full probability distribution.
+                    A single headline number implies more certainty than a
+                    4-way softmax carries. */}
+                {rankedScores.length > 0 && (
+                  <div>
                     <h4 className="font-semibold text-foreground mb-3 flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 text-primary" />
-                      Recommendations
-                      {regState === 'mdrOnly' && <span className="text-xs text-amber-600">(Limited - no AI context)</span>}
+                      <BarChart3 className="w-4 h-4 text-primary" />
+                      What else the model considered
                     </h4>
-                    <ul className="space-y-2">
-                      {results.recommendations.map((rec, index) => (
-                        <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                          {rec}
-                        </li>
+                    <div className="space-y-2">
+                      {rankedScores.map(([cls, score], i) => (
+                        <div key={cls} className="flex items-center gap-3">
+                          <span className={`text-sm w-40 flex-shrink-0 ${
+                            i === 0 ? 'font-semibold text-foreground' : 'text-muted-foreground'
+                          }`}>
+                            {DETECTION_LABELS[cls] ?? cls}
+                          </span>
+                          <div className="flex-1 h-3 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className={`h-full rounded-full transition-all duration-500 ${
+                                i === 0 ? 'bg-primary' : 'bg-muted-foreground/30'
+                              }`}
+                              style={{ width: `${Math.max(1, score * 100)}%` }}
+                            />
+                          </div>
+                          <span className={`text-sm tabular-nums w-12 text-right ${
+                            i === 0 ? 'font-semibold text-foreground' : 'text-muted-foreground'
+                          }`}>
+                            {(score * 100).toFixed(0)}%
+                          </span>
+                        </div>
                       ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* AI Act only - missing clinical guidance */}
-                {regState === 'aiActOnly' && (
-                  <div className="p-4 bg-amber-50 border border-amber-300 rounded-xl">
-                    <p className="text-amber-800 font-medium flex items-center gap-2">
-                      <AlertTriangle className="w-5 h-5" />
-                      Missing: Clinical follow-up recommendations (requires MDR)
-                    </p>
+                    </div>
+                    {rankedScores.length > 1 &&
+                     rankedScores[0][1] - rankedScores[1][1] < 0.25 && (
+                      <p className="text-xs text-amber-600 mt-3">
+                        The top two are close — the model is not clearly separating them.
+                      </p>
+                    )}
                   </div>
                 )}
 

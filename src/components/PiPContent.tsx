@@ -306,20 +306,26 @@ function DoctorPiP({
       {/* Expanded: clinical summary cards */}
       {expanded && (
         <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-          <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">Clinical Summary</h4>
+          {/* Was "Clinical Summary" with risk levels and monitoring advice. The
+              model classifies tattoo type; it has never been evaluated against
+              any clinical endpoint, so phrases like "low risk", "no signs of
+              allergic reaction" and "include in annual skin examination"
+              asserted a competence it does not have. In a demonstrator about
+              medical-device regulation that is the exact failure mode being
+              taught, so the panel now describes the classification only. */}
+          <h4 className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">What the model determined</h4>
 
-          <InfoCard icon={<AlertCircle className="w-3.5 h-3.5 text-blue-500" />} title="Risk Assessment">
-            {predictedClass === 'real_tattoo' && 'Low risk. Tattoo ink appears stable. No signs of allergic reaction or irregular pigmentation changes.'}
-            {predictedClass === 'sticker_tattoo' && 'Minimal risk. Temporary marking, no ink penetration into dermis.'}
-            {predictedClass === 'pen_drawn' && 'Negligible risk. Marker or pen drawing on skin surface only.'}
-            {predictedClass === 'not_tattoo' && 'No tattoo detected in the image. The image does not appear to contain a tattoo, sticker, or pen drawing.'}
+          <InfoCard icon={<AlertCircle className="w-3.5 h-3.5 text-blue-500" />} title="Classification">
+            {predictedClass === 'real_tattoo' && 'Classified as a permanent tattoo — ink judged to sit under the skin.'}
+            {predictedClass === 'sticker_tattoo' && 'Classified as a temporary transfer applied to the skin surface.'}
+            {predictedClass === 'pen_drawn' && 'Classified as pen or marker drawn on the skin surface.'}
+            {predictedClass === 'not_tattoo' && 'No tattoo, transfer or drawing detected in this image.'}
           </InfoCard>
 
-          <InfoCard icon={<Clock className="w-3.5 h-3.5 text-blue-500" />} title="Recommended Action">
-            {predictedClass === 'real_tattoo' && 'Routine monitoring. Include tattooed area in annual skin examination.'}
-            {predictedClass === 'sticker_tattoo' && 'No action required. Temporary tattoos typically fade within 1-2 weeks.'}
-            {predictedClass === 'pen_drawn' && 'No action required. Washes off with soap and water.'}
-            {predictedClass === 'not_tattoo' && 'No action required. Please upload an image containing a tattoo for analysis.'}
+          <InfoCard icon={<Clock className="w-3.5 h-3.5 text-blue-500" />} title="Scope">
+            This system distinguishes tattoo types only. It does not assess skin
+            health and has not been evaluated for lesions, allergic reactions or
+            any other clinical question.
           </InfoCard>
 
           <InfoCard icon={<Shield className="w-3.5 h-3.5 text-blue-500" />} title="Regulatory Note">
@@ -568,22 +574,26 @@ function ProtectionDetailList({ appliedProtections }: { appliedProtections: stri
 // Guidance text helpers
 // ---------------------------------------------------------------------------
 
+// Guidance describes the CLASSIFICATION, never a clinical judgement. Phrases
+// like "regular skin checks recommended" or "no clinical concern" are advice
+// this system is not qualified to give: it was trained to tell tattoo types
+// apart and has never been evaluated against a clinical endpoint.
 function getShortGuidance(cls: PredictedClass): string {
-  if (cls === 'real_tattoo') return 'Real tattoo detected. Regular skin checks recommended.';
-  if (cls === 'sticker_tattoo') return 'Temporary tattoo detected. No clinical follow-up required.';
+  if (cls === 'real_tattoo') return 'Classified as a permanent tattoo.';
+  if (cls === 'sticker_tattoo') return 'Classified as a temporary transfer tattoo.';
   if (cls === 'not_tattoo') return 'No tattoo detected in the image.';
-  return 'Pen/marker drawing detected. No clinical concern.';
+  return 'Classified as pen or marker drawn on skin.';
 }
 
 function getDetailedGuidance(cls: PredictedClass): string {
   if (cls === 'real_tattoo') {
-    return 'Real tattoo confirmed. Include tattooed area in routine dermatological examinations. Patient should report colour changes or raised areas.';
+    return 'The model judged the ink to sit under the skin rather than on it. This is a classification of tattoo type only — it says nothing about the condition of the skin.';
   }
   if (cls === 'sticker_tattoo') {
-    return 'Temporary sticker tattoo identified. No ink penetration into dermis. Typically fades within 1-2 weeks without intervention.';
+    return 'The model judged this to be a transfer applied to the skin surface, rather than ink under the skin.';
   }
   if (cls === 'not_tattoo') {
-    return 'The image does not appear to contain a tattoo, sticker, or pen drawing. Please upload an image of the area you would like analysed.';
+    return 'The image does not appear to contain a tattoo, transfer or drawing. Point the camera at the marking you want classified.';
   }
-  return 'Pen or marker drawing on skin surface only. Washes off with soap and water. No clinical action needed.';
+  return 'The model judged this to be pigment drawn onto the skin surface, such as pen, marker or henna.';
 }
