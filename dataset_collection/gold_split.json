@@ -1,0 +1,109 @@
+{
+ "seed": 1234,
+ "per_class": 40,
+ "note": "Stratified random. Replaces the alphabetical crops[:12] split. Cross-class byte-duplicates and training images excluded. NOT gold until the adjudication queue has been reviewed.",
+ "strata": {
+  "real_tattoo": {
+   "drozdik": 3,
+   "tatvton": 9
+  },
+  "sticker_tattoo": {
+   "pexels": 11
+  },
+  "pen_drawn": {
+   "pexels": 11
+  },
+  "not_tattoo": {
+   "fst_1": 7,
+   "fst_2": 5,
+   "fst_3": 7,
+   "fst_4": 7,
+   "fst_5": 7,
+   "fst_6": 7
+  }
+ },
+ "split": {
+  "real_tattoo": [
+   "balanced/real_tattoo/drozdik_sample_004.png",
+   "balanced/real_tattoo/tatvton_00032.png",
+   "balanced/real_tattoo/tatvton_00036.png",
+   "balanced/real_tattoo/tatvton_00109.png",
+   "balanced/real_tattoo/tatvton_00068.png",
+   "balanced/real_tattoo/tatvton_00061.png",
+   "balanced/real_tattoo/drozdik_sample_001.png",
+   "balanced/real_tattoo/tatvton_00063.png",
+   "balanced/real_tattoo/tatvton_00087.png",
+   "balanced/real_tattoo/tatvton_00064.png",
+   "balanced/real_tattoo/tatvton_00053.png",
+   "balanced/real_tattoo/drozdik_sample_002.png"
+  ],
+  "sticker_tattoo": [
+   "balanced/sticker_tattoo/096a3881762c_7217906_Blue_Bird.png",
+   "balanced/sticker_tattoo/0e81e034d177_4246108_Ketut_Subiyanto.png",
+   "balanced/sticker_tattoo/0cc2aae6c9b0_31828301_Selvin_Esteban.png",
+   "balanced/sticker_tattoo/047b2e865bdc_5616993_Monsieur__Sylvain.png",
+   "balanced/sticker_tattoo/03105815f408_15097582_Ramdas_Aswale.png",
+   "balanced/sticker_tattoo/024af87aa67a_4123724_cottonbro_studio.png",
+   "balanced/sticker_tattoo/0ec8390e9515_7203741_Tima_Miroshnichenko.png",
+   "balanced/sticker_tattoo/098c2a2dee19_7113500_Kindel_Media.png",
+   "balanced/sticker_tattoo/023ea45adce9_4123733_cottonbro_studio.png",
+   "balanced/sticker_tattoo/06496016440d_7147761_Michael_Burrows.png",
+   "balanced/sticker_tattoo/07f3e74c669a_1550340_Element5_Digital.png"
+  ],
+  "pen_drawn": [
+   "balanced/pen_drawn/04bf0da1f02c_13060576_Lucas_Guimar\u00e3es_Buen.png",
+   "balanced/pen_drawn/01708986faf0_4348072_Antoni_Shkraba_Studi.png",
+   "balanced/pen_drawn/0148bafb8666_7067_Startup_Stock_Photos.png",
+   "balanced/pen_drawn/0399eb7e15fe_10474383_RDNE_Stock_project.png",
+   "balanced/pen_drawn/00ad5f0fd245_9257253_Keijiro_Takahashi.png",
+   "balanced/pen_drawn/079f11cf046b_7956417_Damla__K\u0131r\u00e7i\u00e7ek.png",
+   "balanced/pen_drawn/0097c65bc70a_4125666_cottonbro_studio.png",
+   "balanced/pen_drawn/01022aa0699b_8501573_Liliana_Drew.png",
+   "balanced/pen_drawn/034e86888100_8506328_Liliana_Drew.png",
+   "balanced/pen_drawn/02c1c70f441a_7951207_Felicity_Tai.png",
+   "balanced/pen_drawn/029cde185042_6340720_Pavel_Danilyuk.png"
+  ],
+  "not_tattoo": [
+   "not_tattoo_fitzpatrick/fst_6/scin_-5473654302560810311_1.png",
+   "not_tattoo_fitzpatrick/fst_2/scin_-106405243948208551_1.png",
+   "not_tattoo_fitzpatrick/fst_2/scin_-1369732580479712253_2.png",
+   "not_tattoo_fitzpatrick/fst_5/scin_-1855876897354133713_1.png",
+   "not_tattoo_fitzpatrick/fst_5/scin_-2151643177052809428_3.png",
+   "not_tattoo_fitzpatrick/fst_4/scin_-1235573782679771458_2.png",
+   "not_tattoo_fitzpatrick/fst_6/scin_-7197964546560317009_1.png",
+   "not_tattoo_fitzpatrick/fst_6/scin_-5293222191274931800_1.png",
+   "not_tattoo_fitzpatrick/fst_3/scin_-1128330186348790427_2.png",
+   "not_tattoo_fitzpatrick/fst_4/scin_-1261265309605882327_1.png",
+   "not_tattoo_fitzpatrick/fst_5/scin_-1822381819381484229_3.png",
+   "not_tattoo_fitzpatrick/fst_1/scin_-159306299408086544_1.png",
+   "not_tattoo_fitzpatrick/fst_3/scin_-1137468110374856758_3.png",
+   "not_tattoo_fitzpatrick/fst_6/scin_-7596615648821174505_1.png",
+   "not_tattoo_fitzpatrick/fst_3/scin_-111683086443147412_1.png",
+   "not_tattoo_fitzpatrick/fst_1/scin_-1003844406100696311_2.png",
+   "not_tattoo_fitzpatrick/fst_6/scin_-6732935876735691152_1.png",
+   "not_tattoo_fitzpatrick/fst_5/scin_-1822381819381484229_1.png",
+   "not_tattoo_fitzpatrick/fst_3/scin_-1207834327352514621_2.png",
+   "not_tattoo_fitzpatrick/fst_1/scin_-1455457950133640022_1.png",
+   "not_tattoo_fitzpatrick/fst_3/scin_-121780207208961369_1.png",
+   "not_tattoo_fitzpatrick/fst_2/scin_-1223898448071053723_1.png",
+   "not_tattoo_fitzpatrick/fst_1/scin_-177741761654665523_1.png",
+   "not_tattoo_fitzpatrick/fst_2/scin_-1219618387013167058_2.png",
+   "not_tattoo_fitzpatrick/fst_3/scin_-1119092979468790566_1.png",
+   "not_tattoo_fitzpatrick/fst_1/scin_-2003651929853335958_1.png",
+   "not_tattoo_fitzpatrick/fst_4/scin_-1214152415217842430_1.png",
+   "not_tattoo_fitzpatrick/fst_5/scin_-1994784874419458634_1.png",
+   "not_tattoo_fitzpatrick/fst_4/scin_-114959561601268372_3.png",
+   "not_tattoo_fitzpatrick/fst_1/scin_-1311370454326164660_2.png",
+   "not_tattoo_fitzpatrick/fst_6/scin_-4156608237143524629_2.png",
+   "not_tattoo_fitzpatrick/fst_2/scin_-1420442426037207871_3.png",
+   "not_tattoo_fitzpatrick/fst_3/scin_-1005079160214352144_3.png",
+   "not_tattoo_fitzpatrick/fst_4/scin_-1344904099031335410_2.png",
+   "not_tattoo_fitzpatrick/fst_5/scin_-2079383910052664228_1.png",
+   "not_tattoo_fitzpatrick/fst_1/scin_-2110024220741452514_1.png",
+   "not_tattoo_fitzpatrick/fst_5/scin_-1378411267380773173_1.png",
+   "not_tattoo_fitzpatrick/fst_6/scin_-4156608237143524629_1.png",
+   "not_tattoo_fitzpatrick/fst_4/scin_-1010778459521153386_2.png",
+   "not_tattoo_fitzpatrick/fst_4/scin_-1235573782679771458_1.png"
+  ]
+ }
+}

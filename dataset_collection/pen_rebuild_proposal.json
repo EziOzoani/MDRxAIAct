@@ -1,0 +1,3412 @@
+{
+ "min_skin": 0.5,
+ "min_concept": 0.5,
+ "scanned": 7105,
+ "note": "Proposal only \u2014 no files moved. Review before applying.",
+ "marker": [
+  {
+   "path": "balanced/pen_drawn/pen_drawn_d4dc54539ba0.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.987,
+   "skin_score": 0.99
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03853.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.978,
+   "skin_score": 0.959
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02607.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.977,
+   "skin_score": 0.959
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_676a9013ac00.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.962,
+   "skin_score": 0.947
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00894.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.961,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04110.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.942,
+   "skin_score": 0.994
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01305.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.933,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04681.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.928,
+   "skin_score": 0.974
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03184.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.912,
+   "skin_score": 0.988
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04427.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.91,
+   "skin_score": 0.995
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01122.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.905,
+   "skin_score": 0.816
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00467.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.904,
+   "skin_score": 0.979
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02262.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.902,
+   "skin_score": 0.974
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_cc5b35ea77a9.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.901,
+   "skin_score": 0.777
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03491.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.9,
+   "skin_score": 0.857
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04922.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.899,
+   "skin_score": 0.856
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01677.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.893,
+   "skin_score": 0.971
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01458.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.884,
+   "skin_score": 0.971
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02871.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.883,
+   "skin_score": 0.974
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_03452.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.881,
+   "skin_score": 0.927
+  },
+  {
+   "path": "balanced/pen_drawn/d537db88131e_9259986_Jess_Loiterton.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.881,
+   "skin_score": 0.66
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03539.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.881,
+   "skin_score": 0.991
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03446.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.88,
+   "skin_score": 0.983
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03013.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.877,
+   "skin_score": 0.782
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_01102.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.871,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02967.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.871,
+   "skin_score": 0.996
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_f75c44587abe.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.87,
+   "skin_score": 0.967
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02291.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.868,
+   "skin_score": 0.982
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03979.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.866,
+   "skin_score": 0.989
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04839.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.858,
+   "skin_score": 0.675
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_04255.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.856,
+   "skin_score": 0.992
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_00516.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.855,
+   "skin_score": 0.958
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_1d489c4bafad.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.85,
+   "skin_score": 0.61
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01439.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.849,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03312.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.844,
+   "skin_score": 0.963
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00580.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.843,
+   "skin_score": 0.998
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02400.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.842,
+   "skin_score": 0.979
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03121.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.84,
+   "skin_score": 0.948
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03890.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.837,
+   "skin_score": 0.973
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00795.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.836,
+   "skin_score": 0.889
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02261.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.833,
+   "skin_score": 0.853
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04112.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.829,
+   "skin_score": 0.95
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00356.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.826,
+   "skin_score": 0.969
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03832.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.824,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03614.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.82,
+   "skin_score": 0.627
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04689.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.818,
+   "skin_score": 0.985
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04111.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.817,
+   "skin_score": 0.974
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03624.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.813,
+   "skin_score": 0.976
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03134.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.809,
+   "skin_score": 0.99
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04493.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.808,
+   "skin_score": 0.958
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_2e6df8997821.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.804,
+   "skin_score": 0.988
+  },
+  {
+   "path": "uncleaned/pen_drawn/81285527da38_4125527_cottonbro_studio.png",
+   "from_class": "pen_drawn",
+   "tier": "uncleaned",
+   "concept_score": 0.802,
+   "skin_score": 0.982
+  },
+  {
+   "path": "unbalanced/pen_drawn/pen_drawn_711ad2dc89be.png",
+   "from_class": "pen_drawn",
+   "tier": "unbalanced",
+   "concept_score": 0.801,
+   "skin_score": 0.627
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00788.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.8,
+   "skin_score": 0.987
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01166.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.797,
+   "skin_score": 0.993
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_02518.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.795,
+   "skin_score": 0.996
+  },
+  {
+   "path": "balanced/sticker_tattoo/7cfa0c8c2950_3778028_cottonbro_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.795,
+   "skin_score": 0.958
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03630.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.793,
+   "skin_score": 0.931
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00244.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.792,
+   "skin_score": 0.799
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00768.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.784,
+   "skin_score": 0.86
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00021.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.781,
+   "skin_score": 0.845
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04604.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.781,
+   "skin_score": 0.852
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00670.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.78,
+   "skin_score": 0.9
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00247.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.774,
+   "skin_score": 0.971
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00930.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.773,
+   "skin_score": 0.989
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02326.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.773,
+   "skin_score": 0.995
+  },
+  {
+   "path": "balanced/sticker_tattoo/90c976aa8435_4123836_cottonbro_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.77,
+   "skin_score": 0.881
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01943.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.767,
+   "skin_score": 0.959
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05333.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.765,
+   "skin_score": 0.969
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02044.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.764,
+   "skin_score": 0.992
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04551.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.761,
+   "skin_score": 0.983
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04708.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.761,
+   "skin_score": 0.987
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03977.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.76,
+   "skin_score": 0.985
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02833.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.759,
+   "skin_score": 0.997
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01182.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.758,
+   "skin_score": 0.885
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_02488.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.757,
+   "skin_score": 0.988
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02241.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.757,
+   "skin_score": 0.996
+  },
+  {
+   "path": "uncleaned/pen_drawn/af1efc9d3eda_1129653_ge_yonk.png",
+   "from_class": "pen_drawn",
+   "tier": "uncleaned",
+   "concept_score": 0.757,
+   "skin_score": 0.548
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00973.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.756,
+   "skin_score": 0.957
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_01390.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.752,
+   "skin_score": 0.997
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03873.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.752,
+   "skin_score": 0.972
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_881f2a85db51.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.75,
+   "skin_score": 0.998
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03330.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.75,
+   "skin_score": 0.723
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05329.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.75,
+   "skin_score": 0.913
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02551.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.747,
+   "skin_score": 0.986
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01076.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.735,
+   "skin_score": 0.996
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03074.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.735,
+   "skin_score": 0.561
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03327.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.735,
+   "skin_score": 0.997
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04002.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.734,
+   "skin_score": 0.994
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00526.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.733,
+   "skin_score": 0.969
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01812.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.729,
+   "skin_score": 0.998
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01568.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.728,
+   "skin_score": 0.975
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02098.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.728,
+   "skin_score": 0.997
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04898.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.727,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04256.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.723,
+   "skin_score": 0.923
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-3298664804979000976_2.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.721,
+   "skin_score": 0.972
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03994.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.721,
+   "skin_score": 0.984
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-1350086547191064233_2.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.72,
+   "skin_score": 0.977
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01779.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.719,
+   "skin_score": 0.932
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04759.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.719,
+   "skin_score": 0.988
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00238.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.716,
+   "skin_score": 1.0
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03704.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.716,
+   "skin_score": 0.817
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03215.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.711,
+   "skin_score": 0.855
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04355.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.71,
+   "skin_score": 0.988
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-1243602176678500074_1.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.704,
+   "skin_score": 1.0
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02839.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.699,
+   "skin_score": 0.992
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03224.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.699,
+   "skin_score": 0.903
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02498.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.697,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00489.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.694,
+   "skin_score": 0.964
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01150.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.693,
+   "skin_score": 0.975
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04004.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.693,
+   "skin_score": 0.884
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00184.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.692,
+   "skin_score": 0.793
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03337.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.69,
+   "skin_score": 0.953
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04096.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.688,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00882.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.686,
+   "skin_score": 0.895
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05117.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.684,
+   "skin_score": 0.882
+  },
+  {
+   "path": "balanced/sticker_tattoo/0ec8390e9515_7203741_Tima_Miroshnichenko.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.683,
+   "skin_score": 0.927
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01553.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.682,
+   "skin_score": 0.783
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01759.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.682,
+   "skin_score": 0.941
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04504.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.682,
+   "skin_score": 0.994
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00079.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.68,
+   "skin_score": 0.682
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03799.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.679,
+   "skin_score": 0.989
+  },
+  {
+   "path": "balanced/sticker_tattoo/d414531aaaca_4125528_cottonbro_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.677,
+   "skin_score": 0.958
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04358.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.676,
+   "skin_score": 0.904
+  },
+  {
+   "path": "balanced/sticker_tattoo/f6976eb6b46a_1053962_yudy_pirmansah.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.672,
+   "skin_score": 0.616
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03843.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.672,
+   "skin_score": 0.975
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04361.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.672,
+   "skin_score": 0.834
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_c7d67e0ac657.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.67,
+   "skin_score": 0.959
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04179.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.67,
+   "skin_score": 0.908
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05095.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.67,
+   "skin_score": 0.995
+  },
+  {
+   "path": "balanced/pen_drawn/02c1c70f441a_7951207_Felicity_Tai.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.668,
+   "skin_score": 0.522
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04501.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.667,
+   "skin_score": 0.98
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02026.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.666,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02099.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.665,
+   "skin_score": 0.81
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04989.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.665,
+   "skin_score": 0.882
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03504.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.664,
+   "skin_score": 0.727
+  },
+  {
+   "path": "balanced/pen_drawn/614e9811e8b9_6593476_Pavel_Danilyuk.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.661,
+   "skin_score": 0.67
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02372.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.659,
+   "skin_score": 0.996
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04091.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.659,
+   "skin_score": 0.648
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01916.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.658,
+   "skin_score": 0.998
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_01744.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.657,
+   "skin_score": 0.981
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04320.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.656,
+   "skin_score": 0.975
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04993.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.654,
+   "skin_score": 0.927
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03735.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.652,
+   "skin_score": 0.998
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05040.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.652,
+   "skin_score": 0.966
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05223.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.652,
+   "skin_score": 0.842
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02059.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.651,
+   "skin_score": 0.959
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04820.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.651,
+   "skin_score": 0.987
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00196.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.643,
+   "skin_score": 0.783
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02147.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.643,
+   "skin_score": 0.974
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02947.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.639,
+   "skin_score": 0.979
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03497.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.639,
+   "skin_score": 0.986
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02550.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.638,
+   "skin_score": 0.998
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_03160.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.636,
+   "skin_score": 0.852
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01530.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.636,
+   "skin_score": 0.955
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02185.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.631,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05132.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.631,
+   "skin_score": 0.993
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_f088f5848e86.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.63,
+   "skin_score": 0.968
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00448.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.629,
+   "skin_score": 0.976
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02136.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.629,
+   "skin_score": 0.992
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03892.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.629,
+   "skin_score": 0.967
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04906.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.629,
+   "skin_score": 0.712
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03954.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.628,
+   "skin_score": 0.977
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01234.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.627,
+   "skin_score": 0.965
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01772.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.626,
+   "skin_score": 0.712
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04940.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.626,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02205.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.624,
+   "skin_score": 0.602
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_01653.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.623,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03932.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.623,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00979.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.622,
+   "skin_score": 0.963
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05057.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.622,
+   "skin_score": 0.975
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00962.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.62,
+   "skin_score": 0.796
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04245.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.618,
+   "skin_score": 0.997
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04661.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.616,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01006.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.612,
+   "skin_score": 0.682
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00363.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.61,
+   "skin_score": 0.974
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02771.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.609,
+   "skin_score": 0.995
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04915.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.609,
+   "skin_score": 0.831
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_03715.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.608,
+   "skin_score": 0.989
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01110.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.607,
+   "skin_score": 0.859
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03563.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.607,
+   "skin_score": 0.968
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03310.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.605,
+   "skin_score": 0.99
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_04885.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.6,
+   "skin_score": 0.989
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01980.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.599,
+   "skin_score": 0.847
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04742.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.599,
+   "skin_score": 0.987
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03102.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.597,
+   "skin_score": 0.626
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03324.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.597,
+   "skin_score": 0.986
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03905.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.597,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01642.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.596,
+   "skin_score": 0.942
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05386.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.596,
+   "skin_score": 0.755
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01270.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.594,
+   "skin_score": 0.971
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01931.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.594,
+   "skin_score": 0.989
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03068.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.594,
+   "skin_score": 0.904
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00425.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.593,
+   "skin_score": 0.936
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01889.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.593,
+   "skin_score": 0.964
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04943.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.59,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00729.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.587,
+   "skin_score": 0.959
+  },
+  {
+   "path": "balanced/pen_drawn/e60819b42332_4125522_cottonbro_studio.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.586,
+   "skin_score": 0.965
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00271.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.586,
+   "skin_score": 0.969
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02014.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.586,
+   "skin_score": 0.996
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01730.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.585,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04481.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.58,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00625.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.579,
+   "skin_score": 0.932
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02085.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.577,
+   "skin_score": 0.961
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04461.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.577,
+   "skin_score": 0.759
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02745.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.574,
+   "skin_score": 0.996
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_d45f3ed3c119.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.572,
+   "skin_score": 0.992
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02458.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.571,
+   "skin_score": 0.989
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02544.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.571,
+   "skin_score": 0.955
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03138.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.571,
+   "skin_score": 0.907
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03410.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.571,
+   "skin_score": 0.981
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01797.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.57,
+   "skin_score": 0.995
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01596.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.569,
+   "skin_score": 0.877
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03473.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.569,
+   "skin_score": 0.985
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05134.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.569,
+   "skin_score": 0.951
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00260.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.568,
+   "skin_score": 0.995
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04319.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.568,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02666.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.567,
+   "skin_score": 0.963
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_01920.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.565,
+   "skin_score": 0.981
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01015.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.564,
+   "skin_score": 0.91
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04280.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.561,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02533.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.559,
+   "skin_score": 0.92
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03079.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.559,
+   "skin_score": 0.691
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03022.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.558,
+   "skin_score": 0.978
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_00053.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.557,
+   "skin_score": 0.973
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01267.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.557,
+   "skin_score": 0.983
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03731.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.557,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03830.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.557,
+   "skin_score": 0.987
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_11fff13f3f6e.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.556,
+   "skin_score": 0.998
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01828.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.554,
+   "skin_score": 0.98
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05196.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.553,
+   "skin_score": 0.996
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-4255320473522429950_2.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.552,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01598.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.552,
+   "skin_score": 0.971
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_03507.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.55,
+   "skin_score": 0.938
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02207.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.55,
+   "skin_score": 0.681
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02480.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.549,
+   "skin_score": 0.963
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01053.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.548,
+   "skin_score": 0.82
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04203.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.547,
+   "skin_score": 0.973
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04212.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.547,
+   "skin_score": 0.926
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04724.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.547,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03339.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.545,
+   "skin_score": 0.852
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00787.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.544,
+   "skin_score": 0.758
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05025.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.544,
+   "skin_score": 0.945
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00405.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.542,
+   "skin_score": 0.935
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03072.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.542,
+   "skin_score": 0.989
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05056.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.542,
+   "skin_score": 0.994
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00187.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.54,
+   "skin_score": 0.927
+  },
+  {
+   "path": "balanced/sticker_tattoo/b3576cda3c4b_5560378_Tima_Miroshnichenko.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.539,
+   "skin_score": 0.957
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00389.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.539,
+   "skin_score": 0.968
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03567.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.539,
+   "skin_score": 0.948
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_00333.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.538,
+   "skin_score": 0.684
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04439.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.538,
+   "skin_score": 0.975
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/85316e673596_4125588_cottonbro_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.538,
+   "skin_score": 0.98
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04691.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.537,
+   "skin_score": 0.979
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01574.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.536,
+   "skin_score": 0.86
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04171.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.536,
+   "skin_score": 0.997
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03222.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.534,
+   "skin_score": 0.993
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04338.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.533,
+   "skin_score": 0.994
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_1390186b0245.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.532,
+   "skin_score": 0.97
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00128.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.532,
+   "skin_score": 0.897
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01725.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.532,
+   "skin_score": 0.931
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04436.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.532,
+   "skin_score": 0.926
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_01260.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.531,
+   "skin_score": 0.978
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02873.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.531,
+   "skin_score": 0.975
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04901.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.53,
+   "skin_score": 0.968
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02285.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.529,
+   "skin_score": 0.893
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03003.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.528,
+   "skin_score": 0.995
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00954.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.527,
+   "skin_score": 0.924
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02846.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.526,
+   "skin_score": 0.83
+  },
+  {
+   "path": "balanced/sticker_tattoo/feb312d0be74_4125526_cottonbro_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.523,
+   "skin_score": 0.981
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00959.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.523,
+   "skin_score": 0.938
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02392.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.521,
+   "skin_score": 0.922
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01085.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.52,
+   "skin_score": 0.99
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01164.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.52,
+   "skin_score": 0.933
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01308.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.52,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03697.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.52,
+   "skin_score": 0.996
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04116.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.52,
+   "skin_score": 0.759
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03211.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.517,
+   "skin_score": 0.978
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04021.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.517,
+   "skin_score": 0.982
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03997.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.516,
+   "skin_score": 0.981
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01115.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.515,
+   "skin_score": 0.755
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02005.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.515,
+   "skin_score": 0.808
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05219.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.515,
+   "skin_score": 0.958
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05225.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.515,
+   "skin_score": 0.998
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01761.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.514,
+   "skin_score": 0.911
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05308.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.513,
+   "skin_score": 0.998
+  },
+  {
+   "path": "balanced/sticker_tattoo/f884638affc5_4123783_cottonbro_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.512,
+   "skin_score": 0.862
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00558.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.512,
+   "skin_score": 0.903
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04903.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.511,
+   "skin_score": 0.979
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01413.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.51,
+   "skin_score": 0.935
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04521.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.51,
+   "skin_score": 0.985
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01621.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.509,
+   "skin_score": 0.981
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02474.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.509,
+   "skin_score": 0.978
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04056.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.509,
+   "skin_score": 0.975
+  },
+  {
+   "path": "balanced/sticker_tattoo/6e3eddfd6571_5677317_Ivan_S.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.508,
+   "skin_score": 0.997
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01224.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.508,
+   "skin_score": 0.987
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03244.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.508,
+   "skin_score": 0.996
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00383.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.507,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03210.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.507,
+   "skin_score": 0.988
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03503.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.507,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03200.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.506,
+   "skin_score": 0.78
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03961.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.506,
+   "skin_score": 0.667
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01098.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.505,
+   "skin_score": 0.968
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02161.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.505,
+   "skin_score": 0.998
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02913.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.505,
+   "skin_score": 0.961
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03887.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.503,
+   "skin_score": 0.961
+  }
+ ],
+ "henna": [
+  {
+   "path": "balanced/sticker_tattoo/16497272aa93_12872529_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.918
+  },
+  {
+   "path": "balanced/sticker_tattoo/2e7a29e37c0e_13102907_Rezoana_Amin_Rayna.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.964
+  },
+  {
+   "path": "balanced/sticker_tattoo/322eae987f15_5484964_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.971
+  },
+  {
+   "path": "balanced/sticker_tattoo/39b63fa88262_5166595_Muhamad_Faizal_Awal.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.651
+  },
+  {
+   "path": "balanced/sticker_tattoo/3a5e4eccc158_9790789_Effect_Box.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.898
+  },
+  {
+   "path": "balanced/sticker_tattoo/3b9f48be46a7_27151466_Ammad_Rasool.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.93
+  },
+  {
+   "path": "balanced/sticker_tattoo/3c13a8fe792d_30931269_Bonaventure__Fernand.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.929
+  },
+  {
+   "path": "balanced/sticker_tattoo/3d613df6efb2_28496968_Sabir_Khan_Shourov.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.879
+  },
+  {
+   "path": "balanced/sticker_tattoo/46b5bd666127_21568647_Vijay_Deep_Singh.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.99
+  },
+  {
+   "path": "balanced/sticker_tattoo/51da648790e8_9453508_Mad_Ari.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.947
+  },
+  {
+   "path": "balanced/sticker_tattoo/523a0d9048f2_8232427_Chand__Naliyadhara.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.892
+  },
+  {
+   "path": "balanced/sticker_tattoo/56cd9fae71c3_11091444_Rupinder_Singh.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.9
+  },
+  {
+   "path": "balanced/sticker_tattoo/5ab6d5938388_13723544_Mornie__Jeremiah.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.981
+  },
+  {
+   "path": "balanced/sticker_tattoo/6142ebc8fc00_11717790_Nasir_Javed.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.941
+  },
+  {
+   "path": "balanced/sticker_tattoo/65c8c7b5a998_29805012_Lalyphotos_Karthi.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.755
+  },
+  {
+   "path": "balanced/sticker_tattoo/7c0c92a0e85a_12606670_Towfiqu_barbhuiya.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.973
+  },
+  {
+   "path": "balanced/sticker_tattoo/8b593e186a7e_25824235_viresh_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.969
+  },
+  {
+   "path": "balanced/sticker_tattoo/8e4985a8bce6_12872535_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.837
+  },
+  {
+   "path": "balanced/sticker_tattoo/8fd001a2a8f6_12584788_BANU_FILM__ADS.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.97
+  },
+  {
+   "path": "balanced/sticker_tattoo/93decc645eb8_14626722_Yasir_Nur_Hidayat.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.954
+  },
+  {
+   "path": "balanced/sticker_tattoo/9913cc5f66b2_2064505_James_Ranieri.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.95
+  },
+  {
+   "path": "balanced/sticker_tattoo/9c6c85e8a704_13624551_Santosh_Saroj.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.701
+  },
+  {
+   "path": "balanced/sticker_tattoo/a588b9fba9cf_12337508_Atmaprakash_Nayak.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.963
+  },
+  {
+   "path": "balanced/sticker_tattoo/a6d7da02e69a_29092945_Mysara_Hassan.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.944
+  },
+  {
+   "path": "balanced/sticker_tattoo/ba591e4bd3db_32010609_Shailendra_Dhakal.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.959
+  },
+  {
+   "path": "balanced/sticker_tattoo/c42046503262_17416762_Syed_Qaarif_Andrabi.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.981
+  },
+  {
+   "path": "balanced/sticker_tattoo/ea5bbf89cbb6_7463161_Azmain_Abir.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.924
+  },
+  {
+   "path": "balanced/sticker_tattoo/f0a9bb1922e2_7802180_Syed_Qaarif_Andrabi.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.878
+  },
+  {
+   "path": "balanced/sticker_tattoo/f17f616062e5_6576295_Julia_Volk.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.943
+  },
+  {
+   "path": "balanced/sticker_tattoo/f32838207728_12899814_The_Vanity_Photograp.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.9
+  },
+  {
+   "path": "balanced/sticker_tattoo/fa8e4b507a8b_12872536_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.831
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_d14f5cbaddf5.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.975
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_eaf487f7e73f.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 1.0,
+   "skin_score": 0.974
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/35c440900fda_13155761_Gursher__Gill.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 1.0,
+   "skin_score": 0.969
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/583ca37a67d6_5776642_Suhail_Lone.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 1.0,
+   "skin_score": 0.912
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/c3e01e8a8654_5309018_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 1.0,
+   "skin_score": 0.977
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/sticker_tattoo_995be34c1843.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 1.0,
+   "skin_score": 0.961
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/3dd8028d3221_5043971_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 1.0,
+   "skin_score": 0.995
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/sticker_tattoo_dd66b7c21347.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 1.0,
+   "skin_score": 0.992
+  },
+  {
+   "path": "balanced/sticker_tattoo/22f7068bfc3c_12872533_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.932
+  },
+  {
+   "path": "balanced/sticker_tattoo/28f7474d8cdd_5309023_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.982
+  },
+  {
+   "path": "balanced/sticker_tattoo/2d5a0f47e1f9_2659251_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.958
+  },
+  {
+   "path": "balanced/sticker_tattoo/333968be1fcc_8750023_Anastasia__Shuraeva.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.577
+  },
+  {
+   "path": "balanced/sticker_tattoo/5df13f1fcee7_9790791_Effect_Box.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.975
+  },
+  {
+   "path": "balanced/sticker_tattoo/6910dccfc71e_5309016_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.997
+  },
+  {
+   "path": "balanced/sticker_tattoo/734d738c8dca_8751530_Anastasia__Shuraeva.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.885
+  },
+  {
+   "path": "balanced/sticker_tattoo/7e111f21c850_9790790_Effect_Box.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.938
+  },
+  {
+   "path": "balanced/sticker_tattoo/a40a7910b762_33452609_Rajesh_S__Balouria.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.969
+  },
+  {
+   "path": "balanced/sticker_tattoo/a627098ddc0b_34370649_Soft__Work__.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.911
+  },
+  {
+   "path": "balanced/sticker_tattoo/b3c704a9327f_5433151_Shashank_Sharma.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.913
+  },
+  {
+   "path": "balanced/sticker_tattoo/b7bb1697b53e_12872530_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.944
+  },
+  {
+   "path": "balanced/sticker_tattoo/c1d176610aec_1081997_Robert__Stokoe.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.994
+  },
+  {
+   "path": "balanced/sticker_tattoo/c5d7cfd9bef0_18650038_Weavehall_Collective.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.971
+  },
+  {
+   "path": "balanced/sticker_tattoo/c932faa755e0_12872540_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.922
+  },
+  {
+   "path": "balanced/sticker_tattoo/cb4c72bfa68d_2832415_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.967
+  },
+  {
+   "path": "balanced/sticker_tattoo/dd40a782d30d_18972911_Sam_Clickx.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.961
+  },
+  {
+   "path": "balanced/sticker_tattoo/e397551b09af_35460107_Aalap_Creation.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.829
+  },
+  {
+   "path": "balanced/sticker_tattoo/f63bd9645701_16615259_Bianca_Vitan.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.986
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_2b65695ef8dc.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.974
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_389b1c0d124c.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.966
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_50bcdeb96e5e.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.959
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_9bd90c9fb0d8.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.981
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_c1f52f8243f7.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.89
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_e21e60abc09d.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.964
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_e93a3ab060e4.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.999,
+   "skin_score": 0.987
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/17d50a4bf54d_33452608_Rajesh_S__Balouria.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.999,
+   "skin_score": 0.966
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/1e1a55740a67_2678412_Vlad_Vasnetsov.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.999,
+   "skin_score": 0.928
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/3f3013bfbb5a_4925052_Joseph_Ruwa.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.999,
+   "skin_score": 0.948
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/4025b1bccbfa_3323523_Ahmer_Qureshi.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.999,
+   "skin_score": 0.984
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/sticker_tattoo_6c30e8490427.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.999,
+   "skin_score": 0.989
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/10d4a406f41e_28901124_Ahmad_Anafee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.999,
+   "skin_score": 0.978
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/30711af75441_12872532_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.999,
+   "skin_score": 0.9
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/3e56d4dd35ea_12872534_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.999,
+   "skin_score": 0.889
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/9b666c97eeae_5246793_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.999,
+   "skin_score": 0.974
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/a53222e828f1_12872531_Tauseef_Khaliq.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.999,
+   "skin_score": 0.921
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/b4b1425b1101_8727690_Pintu_Graphics.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.999,
+   "skin_score": 0.967
+  },
+  {
+   "path": "balanced/sticker_tattoo/37900cb8a931_5759454_Varun.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.94
+  },
+  {
+   "path": "balanced/sticker_tattoo/3ce5f2f021a3_30708206_Anil__Sharma.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.99
+  },
+  {
+   "path": "balanced/sticker_tattoo/4c55857102b5_31469724_Fahad_Puthawala.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.84
+  },
+  {
+   "path": "balanced/sticker_tattoo/61edc3c70489_19143011_Amodita's_Frame.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.957
+  },
+  {
+   "path": "balanced/sticker_tattoo/68e575160ad2_4121064_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.928
+  },
+  {
+   "path": "balanced/sticker_tattoo/83673febecac_5359315_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.995
+  },
+  {
+   "path": "balanced/sticker_tattoo/c90c9bfc0fcd_19762226_Shay_Gordon.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.913
+  },
+  {
+   "path": "balanced/sticker_tattoo/fc431e67c1e0_17261986_CAMERA_TREASURE.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.927
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_6fad7746d891.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.995
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_7f19dc67dd8f.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.998,
+   "skin_score": 0.989
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/0ea1f9f02c85_21568655_Vijay_Deep_Singh.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.998,
+   "skin_score": 0.944
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/22e691d68cf6_25350318_Ali_Raza.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.998,
+   "skin_score": 0.817
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/f3e51d7aa42e_19939941_Tushar_Kadam.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.998,
+   "skin_score": 0.992
+  },
+  {
+   "path": "balanced/sticker_tattoo/588ba7c8894f_35490957_Aalap_Creation.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.997,
+   "skin_score": 0.831
+  },
+  {
+   "path": "balanced/sticker_tattoo/66a618576cf6_10148617_syed_mubashir.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.997,
+   "skin_score": 0.924
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_43859421e0c5.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.997,
+   "skin_score": 0.985
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_f185ec2103ec.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.997,
+   "skin_score": 0.959
+  },
+  {
+   "path": "balanced/sticker_tattoo/34cd5b659dda_31733586_Sourabh_Narwade.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.996,
+   "skin_score": 0.673
+  },
+  {
+   "path": "balanced/sticker_tattoo/35826ab11bde_30708199_Anil__Sharma.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.996,
+   "skin_score": 0.987
+  },
+  {
+   "path": "balanced/sticker_tattoo/b5c9b4da62f5_10613750_El_gringo_photo.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.996,
+   "skin_score": 0.863
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_806b6785f5a9.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.996,
+   "skin_score": 0.988
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/sticker_tattoo_bf8df2f9ab81.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.996,
+   "skin_score": 0.994
+  },
+  {
+   "path": "balanced/sticker_tattoo/1860f40bec16_17343891_Syed_Qaarif_Andrabi.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.995,
+   "skin_score": 0.998
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_b139729ce97e.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.995,
+   "skin_score": 0.992
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_b1959a712833.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.995,
+   "skin_score": 0.982
+  },
+  {
+   "path": "balanced/sticker_tattoo/f4d595add523_10613749_El_gringo_photo.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.994,
+   "skin_score": 0.993
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_fd853e01ce59.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.994,
+   "skin_score": 0.976
+  },
+  {
+   "path": "balanced/sticker_tattoo/6b4645fe266f_33807923_Bismad_Shots.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.993,
+   "skin_score": 0.924
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_116d9cd959be.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.993,
+   "skin_score": 0.975
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_b18642a986c0.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.993,
+   "skin_score": 0.947
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_fc8e6a8b77a2.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.993,
+   "skin_score": 0.999
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/53a531d7e2c2_5246788_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.993,
+   "skin_score": 0.984
+  },
+  {
+   "path": "balanced/sticker_tattoo/d16e492e632f_10613755_El_gringo_photo.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.992,
+   "skin_score": 0.978
+  },
+  {
+   "path": "balanced/sticker_tattoo/03105815f408_15097582_Ramdas_Aswale.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.991,
+   "skin_score": 0.846
+  },
+  {
+   "path": "balanced/sticker_tattoo/5d55cff1abed_1456669_viresh_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.991,
+   "skin_score": 0.624
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_df9c43460d4b.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.991,
+   "skin_score": 0.997
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_e35ef794314e.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.991,
+   "skin_score": 0.982
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/af324e2334a7_5281835_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.991,
+   "skin_score": 0.926
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/sticker_tattoo_443758c8db7b.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.991,
+   "skin_score": 0.986
+  },
+  {
+   "path": "balanced/sticker_tattoo/a53edd5b3379_34260693_viresh_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.99,
+   "skin_score": 0.876
+  },
+  {
+   "path": "balanced/sticker_tattoo/ae4b808c821d_2832411_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.989,
+   "skin_score": 0.996
+  },
+  {
+   "path": "balanced/sticker_tattoo/207fb660c1a4_6716574___Checan27___CK.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.985,
+   "skin_score": 0.973
+  },
+  {
+   "path": "uncleaned/sticker_tattoo/1e9a32f52346_5281829_Mee_Nee.png",
+   "from_class": "sticker_tattoo",
+   "tier": "uncleaned",
+   "concept_score": 0.984,
+   "skin_score": 0.958
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_890591d03f31.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.982,
+   "skin_score": 0.947
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_6a3a84aca903.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.981,
+   "skin_score": 0.992
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_a3d53c16c113.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.98,
+   "skin_score": 0.991
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_b8bce7d41809.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.98,
+   "skin_score": 0.997
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04507.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.979,
+   "skin_score": 0.988
+  },
+  {
+   "path": "balanced/sticker_tattoo/333ff68656b5_13392978_Kostiantyn_Klymovets.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.974,
+   "skin_score": 0.995
+  },
+  {
+   "path": "balanced/sticker_tattoo/941fb96bb218_32875373_Ds_babariya.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.974,
+   "skin_score": 0.646
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01035.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.969,
+   "skin_score": 0.9
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_a848d790d60a.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.968,
+   "skin_score": 0.991
+  },
+  {
+   "path": "balanced/sticker_tattoo/8ce4453696bb_13882794_amine_photographe.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.958,
+   "skin_score": 0.722
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_e7a7a36ecf86.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.947,
+   "skin_score": 0.931
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02138.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.947,
+   "skin_score": 0.991
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_734fcc240bcb.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.945,
+   "skin_score": 0.93
+  },
+  {
+   "path": "balanced/sticker_tattoo/f8c6688b0746_8466906_Anastasia__Shuraeva.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.933,
+   "skin_score": 0.96
+  },
+  {
+   "path": "balanced/sticker_tattoo/f83067343eb2_33922008_Ruly_Nurul_Ihsan.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.922,
+   "skin_score": 0.977
+  },
+  {
+   "path": "unbalanced/sticker_tattoo/sticker_tattoo_233c5bbf3796.png",
+   "from_class": "sticker_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.899,
+   "skin_score": 0.978
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_29d9090d3114.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.887,
+   "skin_score": 0.957
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03065.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.882,
+   "skin_score": 0.963
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_cd25e7da39ac.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.879,
+   "skin_score": 0.996
+  },
+  {
+   "path": "balanced/sticker_tattoo/1260d612f750_30887773_Ahmad_Shakir_Shamsul.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.877,
+   "skin_score": 0.93
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_707cd71c13b6.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.872,
+   "skin_score": 0.973
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04740.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.871,
+   "skin_score": 0.847
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04477.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.869,
+   "skin_score": 0.75
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01955.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.865,
+   "skin_score": 0.977
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03383.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.857,
+   "skin_score": 0.911
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03077.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.828,
+   "skin_score": 0.939
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03813.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.804,
+   "skin_score": 0.964
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_1df9ce4a526e.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.784,
+   "skin_score": 0.926
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04466.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.783,
+   "skin_score": 0.99
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00929.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.778,
+   "skin_score": 0.885
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02770.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.775,
+   "skin_score": 0.758
+  },
+  {
+   "path": "balanced/sticker_tattoo/8ae56c3eb634_10204402_Baghaei_Photography.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.767,
+   "skin_score": 0.976
+  },
+  {
+   "path": "balanced/sticker_tattoo/7d276dd92d3c_18971156_L\u00f3__Juan.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.758,
+   "skin_score": 1.0
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_01212.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.755,
+   "skin_score": 0.901
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05336.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.745,
+   "skin_score": 0.98
+  },
+  {
+   "path": "balanced/real_tattoo/tatvton_03008.png",
+   "from_class": "real_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.743,
+   "skin_score": 0.921
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_05365.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.731,
+   "skin_score": 0.963
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-1073891379022187312_1.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.726,
+   "skin_score": 0.999
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04216.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.723,
+   "skin_score": 0.974
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-6529098219030905694_2.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.701,
+   "skin_score": 1.0
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03399.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.7,
+   "skin_score": 0.983
+  },
+  {
+   "path": "balanced/sticker_tattoo/sticker_tattoo_3ae86e7580a2.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.651,
+   "skin_score": 0.951
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-6529098219030905694_1.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.633,
+   "skin_score": 1.0
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04687.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.627,
+   "skin_score": 0.956
+  },
+  {
+   "path": "balanced/pen_drawn/b1c98a10179a_7479542_Angela_Roma.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.621,
+   "skin_score": 1.0
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00570.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.62,
+   "skin_score": 0.998
+  },
+  {
+   "path": "balanced/sticker_tattoo/06164282b51f_4125687_cottonbro_studio.png",
+   "from_class": "sticker_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.583,
+   "skin_score": 0.983
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-1010778459521153386_1.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.561,
+   "skin_score": 0.986
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02977.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.561,
+   "skin_score": 0.687
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_03500.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.558,
+   "skin_score": 0.696
+  },
+  {
+   "path": "balanced/pen_drawn/pen_drawn_040920e0d35e.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.545,
+   "skin_score": 0.98
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-1010778459521153386_3.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.54,
+   "skin_score": 0.951
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_04743.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.53,
+   "skin_score": 0.776
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-5772910512699358522_1.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.528,
+   "skin_score": 1.0
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02287.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.524,
+   "skin_score": 0.785
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02200.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.522,
+   "skin_score": 0.923
+  },
+  {
+   "path": "balanced/pen_drawn/fcf28f4213a8_3738375_Polina_Tankilevitch.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.517,
+   "skin_score": 0.991
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_00335.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.511,
+   "skin_score": 0.962
+  },
+  {
+   "path": "unbalanced/real_tattoo/tatvton_02242.png",
+   "from_class": "real_tattoo",
+   "tier": "unbalanced",
+   "concept_score": 0.506,
+   "skin_score": 0.851
+  },
+  {
+   "path": "balanced/pen_drawn/782fc67832ce_5376049_Sonny_Sixteen.png",
+   "from_class": "pen_drawn",
+   "tier": "balanced",
+   "concept_score": 0.504,
+   "skin_score": 1.0
+  },
+  {
+   "path": "balanced/not_tattoo/scin_-738512219771788467_1.png",
+   "from_class": "not_tattoo",
+   "tier": "balanced",
+   "concept_score": 0.504,
+   "skin_score": 1.0
+  }
+ ]
+}
