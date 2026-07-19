@@ -20,6 +20,10 @@ Dependencies:
     - dataset_collection/embeddings/{variant}.npz           — precomputed ViT [CLS]
                                                               features for each
                                                               training image
+    - dataset_collection/embeddings_checkpoint/{variant}/step-{n}.npz
+                                                            — per-checkpoint [CLS]
+                                                              features (see
+                                                              precompute_checkpoint_embeddings.py)
     - dataset_collection/data/{variant}/{class}/*.png       — source training images
                                                               used to return
                                                               neighbour thumbnails
@@ -36,6 +40,9 @@ Changes:
                 Tile 3 checkpoint progression visual.
     2026-05-18: Added /models/{name}/similar (KNN over precomputed
                 embeddings) for the Tile 1 nearest-neighbour grid.
+    2026-07-19: Added /models/{name}/checkpoints/{step}/similar — KNN inside
+                each checkpoint's own embedding space, replacing Tile 3's
+                static reference image. See CHECKPOINT_KNN_CONTRACT.md.
 """
 
 import argparse
@@ -53,6 +60,8 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from transformers import (
+    AutoImageProcessor,
+    AutoModelForImageClassification,
     ViTForImageClassification,
     ViTImageProcessor,
     ViTModel,
@@ -72,7 +81,18 @@ MODEL_DIR = BASE_DIR / ACTIVE_MODEL_LINEAGE
 # discovery follows the model dir for the LP-FT layout, falling back to the
 # legacy sibling tree if it exists.
 CHECKPOINT_DIR = MODEL_DIR if (MODEL_DIR / "balanced" / "checkpoint-1").exists() else BASE_DIR / "checkpoints"
-EMBEDDINGS_DIR = BASE_DIR / "embeddings"
+# Embeddings for the k-NN tile. When TIER_EMBEDDINGS is on, each tier's
+# vectors were produced by that tier's OWN fine-tuned trunk
+# (precompute_embeddings_tier.py), so the neighbours reflect what that model
+# learned and the bias shield visibly changes them. When off, the legacy
+# shared-backbone vectors from precompute_embeddings.py are used, where all
+# three tiers share one space and the shield cannot change anything.
+TIER_EMBEDDINGS = os.environ.get("TIER_EMBEDDINGS", "0") == "1"
+EMBEDDINGS_DIR = BASE_DIR / ("embeddings_tier" if TIER_EMBEDDINGS else "embeddings")
+# Per-checkpoint embeddings for Tile 3: one .npz per (variant, step), written by
+# precompute_checkpoint_embeddings.py. Separate tree from the tier-level files
+# because these are indexed by step as well as variant.
+CHECKPOINT_EMBEDDINGS_DIR = BASE_DIR / "embeddings_checkpoint"
 DATA_DIR = BASE_DIR / "data"
 
 # Public name of the ViT backbone used both as the model starting point and
@@ -128,6 +148,17 @@ _loaded_checkpoints: dict[str, tuple] = {}
 # matching what precompute_embeddings.py wrote — not the classifier head.
 _loaded_embeddings: dict[str, dict] = {}
 _backbone_cache: dict[str, tuple] = {}
+
+# Per-checkpoint k-NN caches, both bounded. There are 27 (variant, step) pairs
+# and each embedding matrix is 4.4-18 MB, so holding them all would cost
+# ~340 MB of the box's RAM on top of the models already resident. Six entries
+# caps the embedding cache at roughly 110 MB worst case (six unbalanced tiers)
+# and ~80 MB typical, while still covering a user stepping back and forth over
+# a handful of adjacent epochs in one tier. Ordinary dicts preserve insertion
+# order, which is all an LRU needs.
+CHECKPOINT_KNN_CACHE_SIZE = 6
+_loaded_checkpoint_embeddings: dict[str, dict] = {}
+_checkpoint_trunk_cache: dict[str, tuple] = {}
 
 
 # ────────────────────────────────────────────────────────────────────────────
@@ -261,29 +292,49 @@ def load_embeddings(variant: str) -> dict:
     return _loaded_embeddings[variant]
 
 
-def load_backbone() -> tuple:
-    """Load the bare ViT backbone for embedding query images.
+def load_backbone(variant: str | None = None) -> tuple:
+    """Load the encoder used to embed query images.
 
-    Reuses the same architecture as the precompute job so the user's query
-    vector lives in the same feature space as the precomputed neighbours.
+    The query MUST be embedded by whatever produced the corpus vectors, or the
+    dot product compares points in two different spaces and the neighbours are
+    meaningless.
+
+    When TIER_EMBEDDINGS is on, that means each tier's OWN fine-tuned trunk —
+    which is the whole point: a tier's embedding space is shaped by its
+    training data, so a skewed tier genuinely retrieves different (and less
+    similar) neighbours. The previous behaviour embedded every tier with the
+    generic in21k backbone, giving all three tiers one shared space that never
+    saw the training data, so the bias shield could not change the neighbours.
+
+    Falls back to the generic backbone when TIER_EMBEDDINGS is off, matching
+    the legacy .npz files.
     """
-    if "default" in _backbone_cache:
-        return _backbone_cache["default"]
+    key = variant if (TIER_EMBEDDINGS and variant) else "default"
+    if key in _backbone_cache:
+        return _backbone_cache[key]
 
-    print(f"Loading ViT backbone for query embedding ({VIT_BACKBONE_NAME})...")
     t0 = time.time()
-    processor = ViTImageProcessor.from_pretrained(VIT_BACKBONE_NAME)
-    backbone = ViTModel.from_pretrained(VIT_BACKBONE_NAME)
+    if key == "default":
+        print(f"Loading ViT backbone for query embedding ({VIT_BACKBONE_NAME})...")
+        processor = ViTImageProcessor.from_pretrained(VIT_BACKBONE_NAME)
+        backbone = ViTModel.from_pretrained(VIT_BACKBONE_NAME)
+    else:
+        path = MODEL_DIR / variant
+        print(f"Loading {variant} tier model for query embedding ({path})...")
+        processor = AutoImageProcessor.from_pretrained(str(path))
+        # .vit is the fine-tuned trunk; the classifier head is not wanted here.
+        backbone = AutoModelForImageClassification.from_pretrained(str(path)).vit
     backbone.eval()
-    print(f"  Loaded backbone in {time.time() - t0:.1f}s")
+    print(f"  Loaded {key} encoder in {time.time() - t0:.1f}s")
 
-    _backbone_cache["default"] = (processor, backbone)
+    _backbone_cache[key] = (processor, backbone)
     return processor, backbone
 
 
-def embed_query(image: Image.Image) -> np.ndarray:
-    """Embed a single image to a normalised 768-dim vector."""
-    processor, backbone = load_backbone()
+def embed_query(image: Image.Image, variant: str | None = None) -> np.ndarray:
+    """Embed a single image to a normalised 768-dim vector, in the same space
+    as the corpus vectors for `variant`."""
+    processor, backbone = load_backbone(variant)
     inputs = processor(images=image, return_tensors="pt")
     with torch.no_grad():
         out = backbone(**inputs)
@@ -292,6 +343,111 @@ def embed_query(image: Image.Image) -> np.ndarray:
     # Match the same normalisation applied during precompute so dot product
     # equals cosine similarity in [-1, 1].
     return cls / max(norm, 1e-8)
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# Per-checkpoint KNN helpers (Tile 3 — "what did the model think looked like
+# your photo at epoch N?")
+# ────────────────────────────────────────────────────────────────────────────
+
+def _lru_touch(cache: dict, key):
+    """Move an existing key to the most-recently-used end of an ordered dict."""
+    cache[key] = cache.pop(key)
+    return cache[key]
+
+
+def _lru_evict(cache: dict, limit: int, label: str) -> None:
+    """Drop least-recently-used entries until the cache is within `limit`."""
+    while len(cache) > limit:
+        oldest = next(iter(cache))
+        del cache[oldest]
+        print(f"  Evicted {label} {oldest} (cache limit {limit})")
+
+
+def load_checkpoint_embeddings(variant: str, step: int) -> dict:
+    """Load the corpus vectors a single checkpoint produced, LRU-cached.
+
+    Raises FileNotFoundError naming the missing file — until the precompute job
+    has run this is the normal case, and the endpoint turns it into a 503 whose
+    body says exactly which file to generate.
+    """
+    key = f"{variant}:{step}"
+    if key in _loaded_checkpoint_embeddings:
+        return _lru_touch(_loaded_checkpoint_embeddings, key)
+
+    path = CHECKPOINT_EMBEDDINGS_DIR / variant / f"step-{step}.npz"
+    if not path.exists():
+        raise FileNotFoundError(str(path))
+
+    print(f"Loading checkpoint embeddings {key} from {path}...")
+    t0 = time.time()
+    data = np.load(path, allow_pickle=False)
+    _loaded_checkpoint_embeddings[key] = {
+        "embeddings": data["embeddings"],
+        "paths": data["paths"],
+    }
+    print(f"  Loaded {key}: {data['embeddings'].shape} in {time.time() - t0:.1f}s")
+    _lru_evict(_loaded_checkpoint_embeddings, CHECKPOINT_KNN_CACHE_SIZE, "checkpoint embeddings")
+    return _loaded_checkpoint_embeddings[key]
+
+
+def load_checkpoint_trunk(model_name: str, step: int) -> tuple:
+    """Load the encoder half (model.vit) of one checkpoint, LRU-cached.
+
+    Deliberately NOT reusing _loaded_checkpoints: that cache holds full
+    classification models for the inference endpoint and is unbounded, whereas
+    this one must stay bounded alongside the embedding matrices.
+    """
+    key = f"{model_name}:{step}"
+    if key in _checkpoint_trunk_cache:
+        return _lru_touch(_checkpoint_trunk_cache, key)
+
+    variant = VARIANT_FOR_MODEL[model_name]
+    path = CHECKPOINT_DIR / variant / f"checkpoint-{step}"
+    if not path.exists():
+        raise FileNotFoundError(f"Checkpoint not found: {path}")
+
+    print(f"Loading checkpoint trunk {key} from {path}...")
+    t0 = time.time()
+    processor = AutoImageProcessor.from_pretrained(str(path))
+    # .vit is the fine-tuned trunk; the classifier head would collapse the
+    # image to 4 logits and destroy the detail k-NN needs.
+    trunk = AutoModelForImageClassification.from_pretrained(str(path)).vit
+    trunk.eval()
+    print(f"  Loaded trunk {key} in {time.time() - t0:.1f}s")
+
+    _checkpoint_trunk_cache[key] = (processor, trunk)
+    _lru_evict(_checkpoint_trunk_cache, CHECKPOINT_KNN_CACHE_SIZE, "checkpoint trunk")
+    return _checkpoint_trunk_cache[key]
+
+
+def embed_query_at_checkpoint(image: Image.Image, model_name: str, step: int) -> np.ndarray:
+    """Embed the query with checkpoint {step}'s OWN trunk.
+
+    This must be the same checkpoint that produced the corpus vectors being
+    searched. Embed with any other checkpoint and the dot product compares
+    points in two unrelated spaces: the call still succeeds, the similarities
+    still look like plausible numbers in [-1, 1], and every neighbour returned
+    is meaningless. There is no runtime check that can catch this, so the
+    pairing is enforced by the caller passing the same (model_name, step) to
+    this function and to load_checkpoint_embeddings.
+    """
+    processor, trunk = load_checkpoint_trunk(model_name, step)
+    inputs = processor(images=image, return_tensors="pt")
+    with torch.no_grad():
+        out = trunk(**inputs)
+    cls = out.last_hidden_state[0, 0, :].numpy().astype(np.float32)
+    norm = float(np.linalg.norm(cls))
+    # Match the precompute normalisation so the dot product is cosine.
+    return cls / max(norm, 1e-8)
+
+
+def epoch_for_step(model_name: str, step: int) -> float | None:
+    """Look up the training epoch a checkpoint corresponds to, if recorded."""
+    for entry in list_checkpoints(model_name):
+        if entry["step"] == step:
+            return entry.get("epoch")
+    return None
 
 
 def thumbnail_b64(image_path: Path) -> str | None:
@@ -452,9 +608,18 @@ async def find_similar(model_name: str, request: Request):
     """Return the k training images most visually similar to the query image.
 
     Query parameters:
-      class — required, one of the 4 class names. Restricts the search to
-              that class's neighbours so the result reads as "examples of
-              {predicted_class} the model learned from".
+      class — OPTIONAL, one of the 4 class names. When given, restricts the
+              search to that class's neighbours so the result reads as
+              "examples of {predicted_class} the model learned from".
+
+              When OMITTED, the search runs over the WHOLE corpus of the tier.
+              This is what makes the bias story visible: the tiers differ in
+              class COUNTS, not in the images themselves, so a class-restricted
+              search returns byte-identical neighbours for balanced,
+              unbalanced and uncleaned — toggling the bias-testing shield
+              changes nothing on screen. Searching globally lets an
+              over-represented majority class crowd the results in a skewed
+              tier, which is the actual effect of the imbalance.
       k     — optional (default 8). Number of neighbours to return.
 
     Response:
@@ -479,10 +644,13 @@ async def find_similar(model_name: str, request: Request):
     if model_name not in MODELS:
         return Response(content=f"Unknown model: {model_name}", status_code=404)
 
+    # Absent 'class' means a global (all-class) search — see the docstring.
+    # A present-but-invalid value is still an error rather than a silent
+    # fallback to global, which would mask frontend typos.
     target_class = request.query_params.get("class")
-    if not target_class or target_class not in CLASS_NAMES:
+    if target_class is not None and target_class not in CLASS_NAMES:
         return Response(
-            content=f"'class' query param required, one of: {CLASS_NAMES}",
+            content=f"'class' must be one of: {CLASS_NAMES} (or omitted for a global search)",
             status_code=400,
         )
 
@@ -504,32 +672,40 @@ async def find_similar(model_name: str, request: Request):
     # Cosine similarity = dot product on pre-normalised vectors. NumPy's
     # vectorised matmul is several orders of magnitude faster than any
     # Python-side loop, even on the unbalanced tier (6,465 candidates).
-    query = embed_query(image)
+    query = embed_query(image, variant)
     sims = emb_data["embeddings"] @ query
 
-    # Restrict to the target class. Path entries start with "<class>/...".
     paths = emb_data["paths"]
-    class_prefix = f"{target_class}/"
-    class_mask = np.array([str(p).startswith(class_prefix) for p in paths])
-    if not class_mask.any():
-        # Class has no examples in this tier (e.g. not_tattoo in unbalanced
-        # is starved). Return an empty list with a clear marker — the
-        # frontend can render an "insufficient data" state.
-        return {
-            "variant": variant,
-            "class": target_class,
-            "k": k,
-            "mean_similarity": None,
-            "neighbours": [],
-            "warning": f"No '{target_class}' training images in the {variant} tier.",
-        }
 
-    # Mask out the other classes by setting their scores to -inf, then take
-    # the top-k. argpartition is O(n) and avoids a full sort over thousands
-    # of candidates we don't need ranked.
-    masked = sims.copy()
-    masked[~class_mask] = -np.inf
-    effective_k = min(k, int(class_mask.sum()))
+    if target_class is None:
+        # Global search: every training image in the tier competes, so a
+        # majority class in a skewed tier crowds the neighbours on merit.
+        masked = sims
+        candidates = len(paths)
+    else:
+        # Restrict to the target class. Path entries start with "<class>/...".
+        class_prefix = f"{target_class}/"
+        class_mask = np.array([str(p).startswith(class_prefix) for p in paths])
+        if not class_mask.any():
+            # Class has no examples in this tier (e.g. not_tattoo in unbalanced
+            # is starved). Return an empty list with a clear marker — the
+            # frontend can render an "insufficient data" state.
+            return {
+                "variant": variant,
+                "class": target_class,
+                "k": k,
+                "mean_similarity": None,
+                "neighbours": [],
+                "warning": f"No '{target_class}' training images in the {variant} tier.",
+            }
+        # Mask out the other classes by setting their scores to -inf, then take
+        # the top-k. argpartition is O(n) and avoids a full sort over thousands
+        # of candidates we don't need ranked.
+        masked = sims.copy()
+        masked[~class_mask] = -np.inf
+        candidates = int(class_mask.sum())
+
+    effective_k = min(k, candidates)
     top_idx = np.argpartition(masked, -effective_k)[-effective_k:]
     top_idx = top_idx[np.argsort(-masked[top_idx])]
 
@@ -540,13 +716,127 @@ async def find_similar(model_name: str, request: Request):
         thumb = thumbnail_b64(full_path) if full_path.exists() else None
         neighbours.append({
             "path": relative_path,
+            # Which class this neighbour actually belongs to. In a global
+            # search this is the point: it lets the frontend show that a
+            # skewed tier answers "what does your image look like?" with
+            # images from the over-represented class.
+            "class": relative_path.split("/")[0] if "/" in relative_path else None,
             "similarity": round(float(sims[idx]), 4),
             "thumbnail": thumb,
         })
 
+    # Class breakdown of the returned neighbours — the headline signal for the
+    # bias tile, and cheap to compute here rather than in the client.
+    breakdown: dict[str, int] = {}
+    for n in neighbours:
+        if n["class"]:
+            breakdown[n["class"]] = breakdown.get(n["class"], 0) + 1
+
     return {
         "variant": variant,
         "class": target_class,
+        "scope": "class" if target_class else "global",
+        "k": effective_k,
+        "mean_similarity": round(float(np.mean([n["similarity"] for n in neighbours])), 4),
+        "class_breakdown": breakdown,
+        "neighbours": neighbours,
+    }
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# Per-checkpoint KNN endpoint (Tile 3 — neighbours in each epoch's own space)
+# ────────────────────────────────────────────────────────────────────────────
+
+@app.post("/models/{model_name}/checkpoints/{step}/similar")
+async def find_similar_at_checkpoint(model_name: str, step: int, request: Request):
+    """Return the k training images nearest the query in checkpoint {step}'s space.
+
+    Query parameters:
+      k — optional (default 4), clamped to [1, 32].
+
+    There is deliberately NO class filter, unlike /models/{name}/similar. The
+    tile's question is "what did the model consider similar at this epoch?",
+    and restricting to the predicted class would pre-answer it: the interesting
+    signal is precisely that an early checkpoint retrieves a jumble of classes
+    and a late one retrieves the right one.
+
+    Similarity is cosine in [-1, 1], both sides pre-normalised, sorted
+    descending. 'mean_similarity' lets the frontend chart how the model's
+    confidence in its own geometry firms up across epochs.
+
+    Returns 503 naming the missing .npz when the checkpoint has not been
+    precomputed — the expected state until the cluster job has run.
+    """
+    if model_name not in MODELS:
+        return Response(content=f"Unknown model: {model_name}", status_code=404)
+
+    try:
+        k = max(1, min(int(request.query_params.get("k", "4")), 32))
+    except ValueError:
+        return Response(content="'k' must be an integer", status_code=400)
+
+    image, err = await read_image_body(request)
+    if err is not None:
+        return err
+
+    variant = VARIANT_FOR_MODEL[model_name]
+
+    # Existence of the checkpoint is checked before the embeddings so a step
+    # that was never trained reports 404 (wrong request) rather than 503
+    # (right request, data not generated yet) — the two mean different things
+    # to the frontend, which retries only the latter.
+    if not (CHECKPOINT_DIR / variant / f"checkpoint-{step}").exists():
+        return Response(
+            content=f"Checkpoint {step} not found for {model_name}",
+            status_code=404,
+        )
+
+    try:
+        emb_data = load_checkpoint_embeddings(variant, step)
+    except FileNotFoundError as missing:
+        return Response(
+            content=(
+                f"Checkpoint embeddings not precomputed: {missing}. "
+                "Run precompute_checkpoint_embeddings.py on the cluster and copy "
+                "the result into dataset_collection/embeddings_checkpoint/."
+            ),
+            status_code=503,
+        )
+
+    # The query is embedded with the SAME checkpoint trunk that produced the
+    # corpus vectors above. Mismatching them compares two unrelated spaces and
+    # yields plausible-looking but meaningless neighbours — see
+    # embed_query_at_checkpoint.
+    try:
+        query = embed_query_at_checkpoint(image, model_name, step)
+    except FileNotFoundError as e:
+        return Response(content=str(e), status_code=404)
+
+    # Cosine similarity as one vectorised matmul over the whole corpus.
+    sims = emb_data["embeddings"] @ query
+    paths = emb_data["paths"]
+
+    # argpartition is O(n) and avoids fully sorting thousands of candidates we
+    # never rank.
+    effective_k = min(k, len(paths))
+    top_idx = np.argpartition(sims, -effective_k)[-effective_k:]
+    top_idx = top_idx[np.argsort(-sims[top_idx])]
+
+    neighbours = []
+    for idx in top_idx:
+        relative_path = str(paths[idx])
+        full_path = DATA_DIR / variant / relative_path
+        neighbours.append({
+            "path": relative_path,
+            "class": relative_path.split("/")[0] if "/" in relative_path else None,
+            "similarity": round(float(sims[idx]), 4),
+            "thumbnail": thumbnail_b64(full_path) if full_path.exists() else None,
+        })
+
+    return {
+        "variant": variant,
+        "step": step,
+        "epoch": epoch_for_step(model_name, step),
         "k": effective_k,
         "mean_similarity": round(float(np.mean([n["similarity"] for n in neighbours])), 4),
         "neighbours": neighbours,
@@ -579,5 +869,6 @@ if __name__ == "__main__":
     print(f"Checkpoints: GET  http://{args.host}:{args.port}/models/{{model_name}}/checkpoints")
     print(f"Checkpoint:  POST http://{args.host}:{args.port}/models/{{model_name}}/checkpoints/{{step}}")
     print(f"Similar:     POST http://{args.host}:{args.port}/models/{{model_name}}/similar?class=<cls>&k=8")
+    print(f"Ckpt kNN:    POST http://{args.host}:{args.port}/models/{{model_name}}/checkpoints/{{step}}/similar?k=4")
 
     uvicorn.run(app, host=args.host, port=args.port)

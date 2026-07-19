@@ -33,6 +33,9 @@ import type { TierCheckpoints, CheckpointPrediction } from '@/hooks/useCheckpoin
 import type { PredictedClass } from '@/config/huggingface';
 import { SHIELD_RULES, type ShieldEffect, type ShieldEffectTarget } from '@/config/shieldRules';
 import { FAKE_DRIFT, trainingRefUrl, type FakeDriftEpoch } from '@/config/fakeDrift';
+import { EpochNeighbours } from './EpochNeighbours';
+import { useCheckpointNeighbours } from '@/hooks/useCheckpointNeighbours';
+import type { SimTier } from '@/hooks/useKnnSimilarity';
 import { RedactionStrip } from './RedactionStrip';
 import { cn } from '@/lib/utils';
 
@@ -174,6 +177,20 @@ export function Tile3Model({
   // renders. See buildDriftEpochs. Falls back to sticker if nothing classified.
   const cls: PredictedClass = predictedClass ?? 'sticker_tattoo';
   const driftEpochs = buildDriftEpochs(checkpoints?.predictions, cls, FAKE_DRIFT[cls]);
+
+  // Per-checkpoint nearest neighbours. This is what replaces the static
+  // training-reference image that was identical across all nine epochs: rather
+  // than an interpretation of the model, it is the model's own embedding
+  // geometry at that epoch, so there is no faithfulness question. Returns 503
+  // until precompute_checkpoint_embeddings.py has run, which the component
+  // renders as a calm "not computed yet" state rather than an error.
+  const nbTier: SimTier = !appliedProtections.includes('transparency')
+    ? 'uncleaned'
+    : !appliedProtections.includes('bias-testing')
+      ? 'unbalanced'
+      : 'balanced';
+  const realSteps = checkpoints?.predictions?.map((p) => p.step);
+  const epochNeighbours = useCheckpointNeighbours(userImageUrl, nbTier, realSteps);
   const peakEpoch = driftEpochs.reduce(
     (a, b) => (b.confidence > a.confidence ? b : a),
     driftEpochs[0],
@@ -370,6 +387,24 @@ export function Tile3Model({
                 baseURL={baseURL}
               />
             )}
+
+            {/* What each checkpoint considered similar to this photo. Sits
+                below the trajectory so the two read together: the line says
+                how confident the model became, the neighbours say what it was
+                drawing on to get there. */}
+            <EpochNeighbours
+              byStep={epochNeighbours.byStep}
+              loading={epochNeighbours.loading}
+              error={epochNeighbours.error}
+              trajectory={driftEpochs.map((e) => ({
+                step: e.step,
+                epoch: e.epoch,
+                confidence: e.confidence,
+                predictedLabel: e.predictedLabel,
+              }))}
+              userImageUrl={userImageUrl}
+              className="mt-4"
+            />
 
             {/* DOG-EAR, bottom-right page curl that invites the flip when
                 Explainability (xai) is applied. The curl breathes gently so
