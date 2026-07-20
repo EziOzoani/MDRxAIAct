@@ -30,8 +30,9 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { SimTier } from './useKnnSimilarity';
+import { API_BASE } from '@/config/apiBase';
 
-const API_BASE = '/api/models';
+
 
 export interface CheckpointMetrics {
   eval_accuracy?: number;

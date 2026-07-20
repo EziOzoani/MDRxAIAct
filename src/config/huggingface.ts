@@ -14,9 +14,13 @@ export const HUGGING_FACE_CONFIG = {
   UNCLEANED_MODEL_ID: 'tattoo-uncleaned',
 
   // API endpoint — local proxy in dev, stable HTTPS on the GCP VM in production.
-  // The VM has a static public IP (35.206.143.54); nip.io maps it to a hostname
+// NOTE: this is the VM's EPHEMERAL external IP. It changed once already
+// (35.206.143.54 -> 35.210.194.145), which silently broke every deployed
+// classification: the browser sat in TCP retry against a black-holed
+// address. Reserve it as a static IP in GCP, or this breaks again on the
+// next stop/start.
   // so Caddy can serve a real Let's Encrypt cert. No tunnel, survives reboot.
-  API_URL: import.meta.env.DEV ? '/api/models/' : 'https://35.206.143.54.nip.io/models/',
+  API_URL: import.meta.env.DEV ? '/api/models/' : 'https://35.210.194.145.nip.io/models/',
 
   MAX_RETRIES: 3,
   RETRY_DELAY_MS: 15000,
@@ -193,9 +197,15 @@ async function classifySingleTier(
 
       onLoadingMessage?.(`Classifying image (${tier})...`);
 
+      // Without a timeout an unreachable backend leaves the browser in TCP
+      // connect-retry for minutes, so the UI sits on "Classifying image..."
+      // forever rather than reporting a failure. That is exactly what happened
+      // when the VM's ephemeral IP changed: the address black-holed and the
+      // demo appeared to hang instead of saying it could not connect.
       const response = await fetch(url, {
         method: 'POST',
         body: imageBlob,
+        signal: AbortSignal.timeout(30000),
       });
 
       if (response.status === 503) {

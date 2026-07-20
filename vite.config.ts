@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => ({
         // HTTPS so `npm run dev` works anywhere (no local model server
         // needed). Override with INFERENCE_TARGET=http://localhost:8000 if
         // you run the backend yourself.
-        target: process.env.INFERENCE_TARGET || 'https://35.206.143.54.nip.io',
+        target: process.env.INFERENCE_TARGET || 'https://35.210.194.145.nip.io',
         changeOrigin: true,
         secure: true,
         rewrite: (path) => path.replace(/^\/api/, ''),

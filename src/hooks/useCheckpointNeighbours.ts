@@ -37,11 +37,12 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { SimTier } from './useKnnSimilarity';
+import { API_BASE } from '@/config/apiBase';
 
 // Same base as the other model hooks: the vite proxy rewrites this to the
 // local FastAPI in dev, and it resolves through the Cloudflare tunnel in
 // production. Keeping it identical avoids a second URL to keep in sync.
-const API_BASE = '/api/models';
+
 
 export interface CheckpointNeighbour {
   /** Path relative to data/{variant}/, e.g. "sticker_tattoo/abc123.png". */

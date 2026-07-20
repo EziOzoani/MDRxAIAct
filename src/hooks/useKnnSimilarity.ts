@@ -21,6 +21,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+import { API_BASE } from '@/config/apiBase';
 
 export type SimTier = 'balanced' | 'unbalanced' | 'uncleaned';
 
@@ -53,7 +54,7 @@ const TIERS: SimTier[] = ['balanced', 'unbalanced', 'uncleaned'];
 // In dev the vite proxy rewrites /api/models/* -> the local FastAPI. In
 // production the same path is reachable through the existing tunnel — both
 // already work for the other model endpoints, so KNN reuses the same URL.
-const API_BASE = '/api/models';
+
 
 /**
  * Convert the data URL we store for the user's photo into a Blob suitable
