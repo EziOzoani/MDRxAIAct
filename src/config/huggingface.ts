@@ -290,6 +290,26 @@ export async function classifyAllTiers(
 ): Promise<AllClassificationResults> {
   const tiers: ModelTier[] = ['balanced', 'unbalanced', 'uncleaned'];
 
+  // Probe /health first, with a short timeout. Without this, an unreachable
+  // backend leaves the user watching "Classifying image..." for the full 30s
+  // fetch timeout before anything is reported — and in front of an audience
+  // that reads as a broken demo rather than an offline server. The probe fails
+  // in ~3s and lets the caller show a clear message while the example images
+  // (which classify from cached results) keep working.
+  //
+  // This matters because the backend address has already gone stale once: the
+  // VM's external IP is ephemeral, so a stop/start silently black-holes it.
+  try {
+    const base = HUGGING_FACE_CONFIG.API_URL.replace(/\/models\/?$/, '');
+    const probe = await fetch(`${base}/health`, {
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!probe.ok) throw new Error(`health ${probe.status}`);
+  } catch {
+    onLoadingMessage?.('Cannot reach the classification server.');
+    return { balanced: null, unbalanced: null, uncleaned: null };
+  }
+
   const settled = await Promise.allSettled(
     tiers.map(tier => classifySingleTier(imageBlob, tier, onLoadingMessage, allowSimulation)),
   );
