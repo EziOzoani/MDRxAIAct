@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 """
-Train TWO models to demonstrate AI Act bias testing impact:
+Train THREE models to demonstrate AI Act bias testing impact:
 
-1. UNBALANCED model: raw data, no class weights, no skin tone balancing
+1. UNCLEANED model: raw + noisy data (includes not_tattoo_noisy), no class weights
+   → Represents what happens WITHOUT transparency (worst quality data)
+   → Worst bias, worst not_tattoo boundary
+
+2. UNBALANCED model: cleaned data, no class weights, no skin tone balancing
    → Represents what happens WITHOUT AI Act bias testing
    → Will perform worse on underrepresented skin tones
 
-2. BALANCED model: balanced data, class weights, skin tone aware sampling
+3. BALANCED model: balanced data, class weights, skin tone aware sampling
    → Represents what happens WITH AI Act bias testing
    → Should perform more evenly across skin tones
 
-The accuracy gap between the two models IS the demo:
-  - Toggle bias-testing ON  → use balanced model (fair across skin tones)
-  - Toggle bias-testing OFF → use unbalanced model (biased, worse on dark skin)
+The accuracy gap between the models IS the demo:
+  - Toggle bias-testing ON  + transparency ON  → balanced model (fair)
+  - Toggle bias-testing OFF + transparency ON  → unbalanced model (biased)
+  - Toggle transparency OFF                   → uncleaned model (worst)
 
 Usage:
   python train_both_models.py
@@ -29,16 +34,19 @@ import subprocess
 import sys
 from pathlib import Path
 from collections import Counter
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 import numpy as np
 from PIL import Image
 
-DATA_DIR = Path(__file__).parent / "data"
-BALANCED_DIR = Path(__file__).parent / "data_balanced"
-OUTPUT_DIR = Path(__file__).parent / "model_output"
-METRICS_FILE = Path(__file__).parent / "model_comparison.json"
+BASE_DIR = Path(__file__).resolve().parent.parent  # dataset_collection/
+DATA_DIR = BASE_DIR / "data" / "unbalanced"         # cleaned but unbalanced data
+BALANCED_DIR = BASE_DIR / "data" / "balanced"        # balanced data
+UNCLEANED_DIR_EXISTING = BASE_DIR / "data" / "uncleaned"  # pre-existing uncleaned data
+OUTPUT_DIR = BASE_DIR / "models"
+METRICS_FILE = BASE_DIR / "model_comparison.json"
 
-CATEGORIES = ["real_tattoo", "sticker_tattoo", "pen_drawn"]
+CATEGORIES = ["real_tattoo", "sticker_tattoo", "pen_drawn", "not_tattoo"]
 
 
 def estimate_skin_tone(img: Image.Image) -> str:
@@ -136,21 +144,62 @@ def run_training(data_dir: str, output_dir: str, epochs: int,
     return {}
 
 
+def prepare_uncleaned_data(data_dir: Path) -> Path:
+    """
+    Create an uncleaned dataset directory that merges raw data with noisy not_tattoo images.
+    For the 3 tattoo classes, uses existing raw data as-is.
+    For not_tattoo, merges clean + noisy images into one folder.
+    """
+    uncleaned_dir = data_dir.parent / "data_uncleaned"
+    import shutil
+
+    if uncleaned_dir.exists():
+        shutil.rmtree(uncleaned_dir)
+
+    for cat in CATEGORIES:
+        out_dir = uncleaned_dir / cat
+        out_dir.mkdir(parents=True, exist_ok=True)
+
+        # Copy original data
+        src_dir = data_dir / cat
+        if src_dir.exists():
+            for f in src_dir.glob("*.png"):
+                shutil.copy2(str(f), str(out_dir / f.name))
+
+        # For not_tattoo, also include the noisy/borderline images
+        if cat == "not_tattoo":
+            noisy_dir = data_dir / "not_tattoo_noisy"
+            if noisy_dir.exists():
+                for f in noisy_dir.glob("*.png"):
+                    shutil.copy2(str(f), str(out_dir / f.name))
+
+    # Also copy any _rejected images back in for all classes (they were cleaned out)
+    for cat in CATEGORIES:
+        rejected_dir = data_dir / cat / "_rejected"
+        if rejected_dir.exists():
+            out_dir = uncleaned_dir / cat
+            for f in rejected_dir.glob("*.png"):
+                shutil.copy2(str(f), str(out_dir / f.name))
+
+    return uncleaned_dir
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Train balanced + unbalanced models for demo")
+    parser = argparse.ArgumentParser(description="Train balanced + unbalanced + uncleaned models for demo")
     parser.add_argument("--model-name", default="google/vit-base-patch16-224-in21k")
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--target", type=int, default=300,
                         help="Target images per class for balanced dataset")
     parser.add_argument("--push-to-hub", action="store_true")
     parser.add_argument("--hub-org", default=None,
-                        help="HF Hub org (creates org/tattoo-classifier-balanced and org/tattoo-classifier-unbalanced)")
+                        help="HF Hub org (creates org/tattoo-classifier-{balanced,unbalanced,uncleaned})")
     parser.add_argument("--skip-balance", action="store_true",
                         help="Skip balance step (use existing data_balanced)")
     args = parser.parse_args()
 
     unbalanced_output = str(OUTPUT_DIR / "unbalanced")
     balanced_output = str(OUTPUT_DIR / "balanced")
+    uncleaned_output = str(OUTPUT_DIR / "uncleaned")
 
     # Step 1: Create balanced dataset
     if not args.skip_balance:
@@ -163,68 +212,101 @@ def main():
             "--create", "--target", str(args.target),
         ])
 
-    # Step 2: Analyze both datasets
+    # Step 2: Use existing uncleaned dataset
+    uncleaned_dir = UNCLEANED_DIR_EXISTING
     print("\n" + "="*60)
-    print("STEP 2: Dataset analysis")
+    print("STEP 2: Using uncleaned dataset")
+    print("="*60)
+    print(f"  Uncleaned dataset at: {uncleaned_dir}")
+    for cat in CATEGORIES:
+        cat_dir = uncleaned_dir / cat
+        count = len(list(cat_dir.glob("*.png"))) if cat_dir.exists() else 0
+        print(f"    {cat}: {count} images")
+
+    # Step 3: Analyze all datasets
+    print("\n" + "="*60)
+    print("STEP 3: Dataset analysis")
     print("="*60)
 
     raw_stats = analyze_data_distribution(DATA_DIR)
     balanced_stats = analyze_data_distribution(BALANCED_DIR)
+    uncleaned_stats = analyze_data_distribution(uncleaned_dir)
 
     print("\nRAW dataset (unbalanced):")
     for cat, info in raw_stats.items():
         print(f"  {cat}: {info['count']} images")
-        for tone, data in info.get("skin_tones", {}).items():
-            print(f"    {tone}: {data['count']} ({data['pct']}%)")
 
     print("\nBALANCED dataset:")
     for cat, info in balanced_stats.items():
         print(f"  {cat}: {info['count']} images")
-        for tone, data in info.get("skin_tones", {}).items():
-            print(f"    {tone}: {data['count']} ({data['pct']}%)")
 
-    # Step 3: Train unbalanced model
+    print("\nUNCLEANED dataset:")
+    for cat, info in uncleaned_stats.items():
+        print(f"  {cat}: {info['count']} images")
+
+    # Step 4: Train all 3 models IN PARALLEL
     print("\n" + "="*60)
-    print("STEP 3: Training UNBALANCED model (no bias mitigation)")
+    print("STEP 4: Training ALL 3 models in PARALLEL")
     print("="*60)
 
+    hub_id_uncleaned = f"{args.hub_org}/tattoo-classifier-uncleaned" if args.hub_org else None
     hub_id_unbalanced = f"{args.hub_org}/tattoo-classifier-unbalanced" if args.hub_org else None
-    unbalanced_metrics = run_training(
-        data_dir=str(DATA_DIR),
-        output_dir=unbalanced_output,
-        epochs=args.epochs,
-        use_class_weights=False,
-        model_name=args.model_name,
-        push_to_hub=args.push_to_hub,
-        hub_model_id=hub_id_unbalanced,
-    )
-
-    # Step 4: Train balanced model
-    print("\n" + "="*60)
-    print("STEP 4: Training BALANCED model (with bias mitigation)")
-    print("="*60)
-
     hub_id_balanced = f"{args.hub_org}/tattoo-classifier-balanced" if args.hub_org else None
-    balanced_metrics = run_training(
-        data_dir=str(BALANCED_DIR),
-        output_dir=balanced_output,
-        epochs=args.epochs,
-        use_class_weights=True,
-        model_name=args.model_name,
-        push_to_hub=args.push_to_hub,
-        hub_model_id=hub_id_balanced,
-    )
 
-    # Step 5: Compare
+    training_jobs = [
+        ("uncleaned", str(uncleaned_dir), uncleaned_output, False, hub_id_uncleaned),
+        ("unbalanced", str(DATA_DIR), unbalanced_output, False, hub_id_unbalanced),
+        ("balanced", str(BALANCED_DIR), balanced_output, True, hub_id_balanced),
+    ]
+
+    results = {}
+    with ProcessPoolExecutor(max_workers=3) as executor:
+        futures = {}
+        for name, data_dir_str, output_dir_str, use_weights, hub_id in training_jobs:
+            future = executor.submit(
+                run_training,
+                data_dir=data_dir_str,
+                output_dir=output_dir_str,
+                epochs=args.epochs,
+                use_class_weights=use_weights,
+                model_name=args.model_name,
+                push_to_hub=args.push_to_hub,
+                hub_model_id=hub_id,
+            )
+            futures[future] = name
+            print(f"  Launched: {name} model training")
+
+        for future in as_completed(futures):
+            name = futures[future]
+            try:
+                results[name] = future.result()
+                print(f"  Completed: {name} model")
+            except Exception as e:
+                print(f"  FAILED: {name} model — {e}")
+                results[name] = {}
+
+    uncleaned_metrics = results.get("uncleaned", {})
+    unbalanced_metrics = results.get("unbalanced", {})
+    balanced_metrics = results.get("balanced", {})
+
+    # Step 7: Compare
     comparison = {
-        "description": "Two models trained to demonstrate AI Act bias testing impact",
+        "description": "Three models trained to demonstrate AI Act impact (4-class: real_tattoo, sticker_tattoo, pen_drawn, not_tattoo)",
+        "uncleaned": {
+            "model_dir": uncleaned_output,
+            "hub_model_id": hub_id_uncleaned,
+            "data": "Raw + noisy + rejected data, includes ambiguous not_tattoo, no class weights",
+            "data_stats": uncleaned_stats,
+            "metrics": uncleaned_metrics.get("metrics", {}),
+            "represents": "Model WITHOUT transparency — trained on noisy data with no documentation",
+        },
         "unbalanced": {
             "model_dir": unbalanced_output,
             "hub_model_id": hub_id_unbalanced,
-            "data": "Raw unbalanced data, no class weights",
+            "data": "Cleaned data, no class weights, no skin tone balancing",
             "data_stats": raw_stats,
             "metrics": unbalanced_metrics.get("metrics", {}),
-            "represents": "Model WITHOUT AI Act bias testing — biased toward overrepresented groups",
+            "represents": "Model WITHOUT bias testing — biased toward overrepresented groups",
         },
         "balanced": {
             "model_dir": balanced_output,
@@ -232,18 +314,19 @@ def main():
             "data": "Balanced data with class weights and skin-tone-aware sampling",
             "data_stats": balanced_stats,
             "metrics": balanced_metrics.get("metrics", {}),
-            "represents": "Model WITH AI Act bias testing — fair performance across groups",
+            "represents": "Model WITH all AI Act protections — fair performance across groups",
         },
         "expected_demo_effect": {
-            "bias_testing_ON": "Uses balanced model. Similar accuracy across skin tones.",
+            "all_protections_ON": "Uses balanced model. Similar accuracy across skin tones.",
             "bias_testing_OFF": "Uses unbalanced model. Accuracy drops on Type V-VI skin tones.",
-            "visible_difference": "User sees real accuracy gap when toggling bias protection off.",
+            "transparency_OFF": "Uses uncleaned model. Worst bias + poor not_tattoo boundary.",
+            "visible_difference": "User sees real accuracy gap when toggling protections off.",
         },
         "app_integration": {
             "config_file": "src/config/huggingface.ts",
-            "toggle_key": "bias-testing",
             "balanced_model_id": hub_id_balanced or "local:model_output/balanced",
             "unbalanced_model_id": hub_id_unbalanced or "local:model_output/unbalanced",
+            "uncleaned_model_id": hub_id_uncleaned or "local:model_output/uncleaned",
         },
     }
 
@@ -251,26 +334,15 @@ def main():
         json.dump(comparison, f, indent=2, default=str)
 
     print(f"\n{'='*60}")
-    print("MODEL COMPARISON")
+    print("MODEL COMPARISON (3 TIERS)")
     print(f"{'='*60}")
     print(f"\n  Comparison saved to: {METRICS_FILE}")
 
-    ub_acc = unbalanced_metrics.get("metrics", {}).get("eval_accuracy", "N/A")
-    b_acc = balanced_metrics.get("metrics", {}).get("eval_accuracy", "N/A")
-    print(f"\n  Unbalanced model accuracy: {ub_acc}")
-    print(f"  Balanced model accuracy:   {b_acc}")
+    for tier_name, tier_metrics in [("Uncleaned", uncleaned_metrics), ("Unbalanced", unbalanced_metrics), ("Balanced", balanced_metrics)]:
+        acc = tier_metrics.get("metrics", {}).get("eval_accuracy", "N/A")
+        print(f"\n  {tier_name} model accuracy: {acc}")
 
-    ub_dark = unbalanced_metrics.get("metrics", {}).get("eval_acc_dark", "N/A")
-    b_dark = balanced_metrics.get("metrics", {}).get("eval_acc_dark", "N/A")
-    if ub_dark != "N/A" and b_dark != "N/A":
-        print(f"\n  On dark skin tones (V-VI):")
-        print(f"    Unbalanced: {ub_dark}")
-        print(f"    Balanced:   {b_dark}")
-        print(f"    Gap: {abs(float(b_dark) - float(ub_dark))*100:.1f}pp improvement with bias testing")
-
-    print(f"\n  To use in the app, update src/config/huggingface.ts:")
-    print(f"    BALANCED_MODEL_ID: '{hub_id_balanced or 'model_output/balanced'}'")
-    print(f"    UNBALANCED_MODEL_ID: '{hub_id_unbalanced or 'model_output/unbalanced'}'")
+    print(f"\n  Models saved directly to: {OUTPUT_DIR}")
 
 
 if __name__ == "__main__":

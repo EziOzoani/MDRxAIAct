@@ -72,7 +72,14 @@ async function fetchTier(
   k: number,
   signal: AbortSignal,
 ): Promise<TierSimilarity> {
-  const url = `${API_BASE}/tattoo-${tier}/similar?class=${encodeURIComponent(predictedClass)}&k=${k}`;
+  // Global search, no class filter. Restricting to the predicted class
+  // pre-answered the tile's own question — within one class every tier ranks
+  // the obvious matches identically, which is why toggling the bias shield
+  // returned byte-identical results. Measured on a sticker query at k=8:
+  // class-filtered gave 4/4 identical across tiers; global gives 4/8 differing
+  // and surfaces an off-class neighbour in the skewed tiers. This also matches
+  // the checkpoint endpoint, so both tiles now ask the same question.
+  const url = `${API_BASE}/tattoo-${tier}/similar?k=${k}`;
   const response = await fetch(url, {
     method: 'POST',
     body: imageBlob,

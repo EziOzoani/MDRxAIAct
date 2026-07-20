@@ -124,7 +124,7 @@ export function PersistentBear({ currentStep }: PersistentBearProps) {
 
   return (
     <motion.div
-      className={`fixed pointer-events-none ${currentStep === 'name' ? 'z-[25]' : 'z-30'}`}
+      className={`fixed pointer-events-none ${currentStep === 'name' ? 'z-[25]' : 'z-[70]'}`}
       initial={false}
       animate={{
         left: config.x,

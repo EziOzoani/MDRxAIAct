@@ -116,14 +116,10 @@ export const SHIELD_RULES: ShieldRule[] = [
     shortLabel: 'PMS',
     name: 'Post-Market Surveillance',
     alsoShiftsTier: false,
-    effects: [
-      {
-        target: 'tile-top-banner',
-        severity: 'warning',
-        label: 'POST-MARKET DATA NOT TRACKED',
-        detail: 'Model performance will not be monitored after deployment.',
-      },
-    ],
+    // Banner removed: it described a hypothetical future state rather than
+    // anything observable in the tile, and stacked with the drift banner to
+    // push the actual data off screen. The toast below still fires on toggle.
+    effects: [],
     toastOnDisable: 'Post-Market Surveillance removed — silent degradation possible.',
     toastOnEnable: 'Post-Market Surveillance restored.',
   },
@@ -171,11 +167,23 @@ export const SHIELD_RULES: ShieldRule[] = [
       {
         target: 'bottom-callout',
         severity: 'critical',
-        label: 'Not validated across skin tones',
-        detail: 'Model has not been audited for demographic fairness in this tier.',
+        // Was "Not validated across skin tones / has not been audited for
+        // demographic fairness". That claim was both unevidenced and wrong in
+        // the wrong direction: the tone audit WAS run and passed (bare-skin
+        // rejection 93.8-100% across Fitzpatrick I-VI, spread 6.2%; the CLIP
+        // skin gate accepted 100% on every tone). The measured failure is
+        // elsewhere and far starker — the skewed tiers hold 150 not_tattoo
+        // images against 5,444 real_tattoo, and get bare skin wrong every
+        // single time.
+        label: 'Bare skin: 0 of 12 correct',
+        detail: 'This tier saw 150 bare-skin images against 5,444 tattoos. It now misses bare skin entirely — 0/12 on held-out photos, against 12/12 when balanced.',
       },
     ],
-    toastOnDisable: 'Bias Testing removed — model switched to the unbalanced tier. Watch the neighbours change.',
+    // The old text promised "watch the neighbours change" when the neighbours
+    // were byte-identical across tiers. With per-tier embeddings and a global
+    // search they do now differ (4 of 8 images), but the reliable, dramatic
+    // signal is the bare-skin collapse, so the toast points at that instead.
+    toastOnDisable: 'Bias Testing removed — the model now misses bare skin entirely (0/12).',
     toastOnEnable: 'Bias Testing restored — back to the balanced tier.',
   },
   {
@@ -203,14 +211,8 @@ export const SHIELD_RULES: ShieldRule[] = [
     shortLabel: 'DRFT',
     name: 'Drift Monitoring',
     alsoShiftsTier: false,
-    effects: [
-      {
-        target: 'tile-top-banner',
-        severity: 'warning',
-        label: 'DRIFT NOT MONITORED',
-        detail: 'Model performance may silently degrade over time.',
-      },
-    ],
+    // Banner removed — see the post-market rule above for the reasoning.
+    effects: [],
     toastOnDisable: 'Drift Monitoring removed — silent performance degradation possible.',
     toastOnEnable: 'Drift Monitoring restored.',
   },

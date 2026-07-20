@@ -78,26 +78,16 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-          className="text-center max-w-xl"
+          className="text-center max-w-2xl lg:mr-32 xl:mr-48"
         >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="inline-block px-4 py-2 bg-primary/10 rounded-full text-primary font-semibold text-sm mb-6"
-          >
-            MDR × AI Act Compliant
-          </motion.div>
-
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
             className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-foreground mb-6 leading-tight"
           >
-            Welcome to the{' '}
-            <span className="text-gradient">Medical AI</span>{' '}
-            Dashboard
+            <span className="whitespace-nowrap">Testing an AI</span>{' '}
+            <span className="text-gradient whitespace-nowrap">In Practice</span>
           </motion.h1>
 
           <motion.p
@@ -106,22 +96,28 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed"
           >
-            Explore our tattoo detection AI system. 
-            Your friendly Doctor Bear will guide you through every step!
+            Can you tell a real tattoo from temporary tattoo?
+            <span className="mt-1 block font-semibold text-foreground">
+              So can an AI ... sometimes.
+            </span>
+            <span className="mt-3 block text-base md:text-lg">
+              Toggle the protections that the MDR and the AI Act require on and off,
+              and see the difference yourself.
+            </span>
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="flex flex-col sm:flex-row gap-4 items-center justify-center ml-8"
+            className="flex flex-col sm:flex-row gap-4 items-center justify-center"
           >
             <Button
               onClick={onGetStarted}
               size="lg"
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-lg px-8 py-6 rounded-xl shadow-glow hover:shadow-[0_0_60px_hsl(175_55%_42%_/_0.3)] transition-all duration-300"
             >
-              Jump Right In
+              Try it yourself
               <ChevronDown className="ml-2 animate-bounce-soft" />
             </Button>
           </motion.div>
@@ -134,7 +130,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 1.2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 lg:-ml-16 xl:-ml-24"
       >
         <div className="flex flex-col items-center gap-2 text-muted-foreground">
           <span className="text-sm font-medium">Scroll to begin</span>

@@ -30,7 +30,7 @@ from PIL import Image, ImageEnhance, ImageFilter
 DATA_DIR = Path(__file__).parent / "data"
 BALANCED_DIR = Path(__file__).parent / "data_balanced"
 
-CATEGORIES = ["real_tattoo", "sticker_tattoo", "pen_drawn"]
+CATEGORIES = ["real_tattoo", "sticker_tattoo", "pen_drawn", "not_tattoo"]
 
 
 def estimate_skin_tone(img: Image.Image) -> str:

@@ -61,3 +61,14 @@ tests/fixtures/camera/*.y4m
 dataset_collection/docs/
 claude_rules.md
 **/claude_rules.md
+
+# Model lineages and derived embeddings — regenerable from the cluster, and far
+# too large for git (models_lpft alone is 9.6 GB). Kept out deliberately; the
+# scripts that produce them are versioned instead.
+dataset_collection/models_lpft/
+dataset_collection/models_lpft_v2/
+dataset_collection/embeddings_tier/
+dataset_collection/embeddings_checkpoint/
+dataset_collection/scripts/data/
+dataset_collection/data/
+dataset_collection/models/*/checkpoint-*/

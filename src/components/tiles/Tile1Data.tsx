@@ -27,7 +27,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
-import { Database, BarChart3, Shield, AlertTriangle, CheckCircle2, RotateCw, X } from 'lucide-react';
+import { Database, BarChart3, Shield, AlertTriangle, CheckCircle2, RotateCw, X, ImageOff } from 'lucide-react';
 import type { RegState } from '../RegulationMenu';
 import type { TierSimilarity } from '@/hooks/useKnnSimilarity';
 import { SHIELD_RULES, type ShieldEffect, type ShieldEffectTarget } from '@/config/shieldRules';
@@ -132,6 +132,7 @@ export function Tile1Data({
   regState: _regState,
   appliedProtections,
   userImageUrl,
+  predictedClass,
   similarity,
   similarityLoading,
   onToggleProtection,
@@ -244,7 +245,7 @@ export function Tile1Data({
   return (
     <motion.div
       layout
-      className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-slate-950/80 px-4 py-6 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-slate-950/80 px-4 py-6 backdrop-blur-sm xl:pl-[620px]"
       onClick={() => setState('resting')}
     >
       <motion.div
@@ -312,9 +313,16 @@ export function Tile1Data({
                       : tier === 'unbalanced' ? 'text-amber-700 dark:text-amber-400'
                       : 'text-red-700 dark:text-red-400',
                   )}>
-                    {tier === 'balanced' && 'Balanced, audited across all skin tones.'}
-                    {tier === 'unbalanced' && 'Skewed, no fairness audit on this slice.'}
-                    {tier === 'uncleaned' && 'Raw, noisy and unaudited training data.'}
+                    {/* Measured, not asserted. These replace qualitative copy
+                        ("audited across all skin tones") that the project could
+                        not evidence. Numbers come from the 48 held-out real
+                        photographs in val_heldout_manifest.json, scored against
+                        each tier: overall accuracy, and the bare-skin class
+                        where the imbalance actually bites — 150 not_tattoo
+                        images against 5,444 real_tattoo in the skewed tiers. */}
+                    {tier === 'balanced' && '81% correct on held-out photos. Bare skin: 12/12.'}
+                    {tier === 'unbalanced' && '58% correct on held-out photos. Bare skin: 0/12.'}
+                    {tier === 'uncleaned' && '56% correct on held-out photos. Bare skin: 0/12.'}
                   </p>
                 </div>
               </div>
@@ -382,12 +390,22 @@ export function Tile1Data({
 
               <RedactionStrip active={!!perClassRedaction} label={perClassRedaction?.label}>
                 <div className="space-y-2">
+                  {/* The counts are a property of the tier, not of the photo, so
+                      on their own the chart looks inert between images. Marking
+                      the row the user's own image was assigned to ties it back:
+                      it answers "how many examples like MINE did this model
+                      actually see?", which is the whole point in a skewed tier. */}
                   {(['real_tattoo', 'sticker_tattoo', 'pen_drawn', 'not_tattoo'] as const).map((cls) => {
                     const count = composition[cls];
                     const pct = (count / maxClass) * 100;
+                    const isYours = predictedClass === cls;
                     return (
-                      <div key={cls} className="flex items-center gap-3 text-sm">
-                        <span className="w-24 text-right font-mono text-xs text-foreground/80">
+                      <div key={cls} className={`flex items-center gap-3 text-sm ${
+                        isYours ? 'rounded -mx-1 px-1 ring-1 ring-primary/50 bg-primary/5' : ''
+                      }`}>
+                        <span className={`w-24 text-right font-mono text-xs ${
+                          isYours ? 'font-bold text-foreground' : 'text-foreground/80'
+                        }`}>
                           {CLASS_LABELS[cls]}
                         </span>
                         <div className="flex-1 overflow-hidden rounded bg-muted h-5">
@@ -395,10 +413,17 @@ export function Tile1Data({
                             initial={{ width: 0 }}
                             animate={{ width: `${pct}%` }}
                             transition={{ duration: 0.5, ease: 'easeOut' }}
-                            className={`h-full ${CLASS_COLOURS[cls]}`}
+                            className={`h-full ${CLASS_COLOURS[cls]} ${isYours ? '' : 'opacity-50'}`}
                           />
                         </div>
-                        <span className="w-14 font-mono text-xs text-muted-foreground">{count}</span>
+                        <span className={`w-14 font-mono text-xs ${
+                          isYours ? 'font-bold text-foreground' : 'text-muted-foreground'
+                        }`}>{count}</span>
+                        {isYours && (
+                          <span className="whitespace-nowrap text-[10px] font-semibold uppercase tracking-wider text-primary">
+                            yours
+                          </span>
+                        )}
                       </div>
                     );
                   })}
@@ -613,7 +638,20 @@ function NeighbourGrid({ similarity, loading, baseURL, tier }: NeighbourGridProp
                   className="aspect-square w-full rounded-md border border-border object-cover"
                 />
               ) : (
-                <div className="aspect-square w-full rounded-md border border-border bg-muted" />
+                /* The backend returns thumbnail: null when the indexed file is
+                   absent from disk. Rendering a bare grey square made that
+                   indistinguishable from "no match found" or a broken demo —
+                   360 balanced not_tattoo neighbours looked like empty tiles.
+                   The match itself is real, so keep the slot and say why the
+                   picture is missing rather than showing nothing. */
+                <div className="flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border bg-muted/50 p-1 text-center">
+                  <ImageOff className="h-4 w-4 text-muted-foreground/70" />
+                  <span className="text-[8px] leading-tight text-muted-foreground">
+                    image
+                    <br />
+                    unavailable
+                  </span>
+                </div>
               )}
               <span className="absolute bottom-1 right-1 rounded bg-slate-900/85 px-1 py-0.5 text-[9px] font-mono text-foreground leading-none">
                 {n.similarity.toFixed(2)}
