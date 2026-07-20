@@ -153,7 +153,12 @@ export function useCheckpointNeighbours(
   userImageUrl: string | null | undefined,
   tier: SimTier,
   steps?: number[],
-  k = 4,
+  // 8, not 4. Measured on a sticker query: the top FOUR neighbours are
+  // identical across tiers — every model agrees on the obvious matches — and
+  // the divergence only begins at position 5. At k=4 the bias toggle therefore
+  // changes nothing on screen (Jaccard 1.00); at k=8 half the images change.
+  // Requesting 4 was hiding the very effect the tile exists to show.
+  k = 8,
 ): CheckpointNeighboursState {
   const [state, setState] = useState<CheckpointNeighboursState>({
     byStep: {},
