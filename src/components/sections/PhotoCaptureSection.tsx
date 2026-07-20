@@ -755,7 +755,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                         {/* Dynamic explainability message - wrapped in ProtectionGate */}
                         <ProtectionGate protectionId="explainability" appliedProtections={appliedProtections} label="XAI Disabled">
                           <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
-                            <Brain className="w-3 h-3" /> XAI Active: Model identified key features in the image
+                            <Brain className="w-3 h-3" /> Explainability on: see the training images behind this result in Under the Hood
                           </p>
                         </ProtectionGate>
                         {!hasExplainability && (
@@ -766,7 +766,7 @@ export function PhotoCaptureSection({ userName, onContinue, appliedProtections =
                         {/* Dynamic bias message - wrapped in ProtectionGate */}
                         <ProtectionGate protectionId="bias-testing" appliedProtections={appliedProtections} label="Bias Testing Disabled">
                           <p className="text-xs text-green-600 mt-1 flex items-center gap-1">
-                            <Shield className="w-3 h-3" /> Bias Testing: Validated across skin tones
+                            <Shield className="w-3 h-3" /> Bias Testing: bare-skin detection checked on Fitzpatrick I&ndash;VI (94&ndash;100%)
                           </p>
                         </ProtectionGate>
                         {!hasBiasTesting && (

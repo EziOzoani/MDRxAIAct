@@ -140,7 +140,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
       {/* Content is padded left on wide screens so the header text and cards
           sit to the upper-right, clear of the bear + speech bubble on the
           left. Below xl the bear is hidden, so no padding is needed. */}
-      <div className="container mx-auto px-4 relative z-10 xl:pl-[26rem]">
+      <div className="container mx-auto px-4 relative xl:pl-[26rem]">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -161,40 +161,10 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
             <span className="text-accent font-medium"> model</span> react in real time, to your own image.
           </p>
 
-          {/* Final Protection Summary */}
-          <div className={cn(
-            "max-w-xl mx-auto p-4 rounded-xl border-2 transition-all",
-            totalProtections === 10 ? "bg-green-50 dark:bg-green-950/30 border-green-400" :
-            totalProtections >= 5 ? "bg-amber-50 dark:bg-amber-950/30 border-amber-400" :
-            "bg-red-50 dark:bg-red-950/30 border-red-400"
-          )}>
-            <div className="flex items-center justify-between mb-3">
-              <span className="font-bold">
-                {totalProtections === 10 ? "✓ Full Protection Stack Complete" :
-                 totalProtections >= 5 ? `⚠ ${totalProtections}/10 Protections Active` :
-                 `⛔ Only ${totalProtections}/10 Protections Active`}
-              </span>
-              <div className="group relative">
-                <div className={cn(
-                  "flex items-center gap-1 px-2 py-1 rounded text-xs font-medium cursor-help",
-                  hasHumanOversight ? "bg-purple-500 text-white" : "bg-slate-200 text-slate-500"
-                )}>
-                  <Eye className="w-3 h-3" />
-                  HUM
-                </div>
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-lg">
-                  <div className="font-bold text-purple-300">{allProtections.find(p => p.id === 'human-oversight')?.label}</div>
-                  <div className="text-slate-300">{allProtections.find(p => p.id === 'human-oversight')?.description}</div>
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
-                </div>
-              </div>
-            </div>
-            <p className="text-sm text-center">
-              {hasHumanOversight
-                ? "Human oversight active - a qualified person reviews AI decisions."
-                : "⚠ No human oversight - AI decisions are fully automated without review."}
-            </p>
-          </div>
+          {/* Removed the protection-summary panel: it counted shields already
+              listed in the regulation menu, and claimed "a qualified person
+              reviews AI decisions" when no such review exists anywhere in this
+              demonstrator. */}
         </motion.div>
 
         {/*
@@ -209,7 +179,7 @@ export function UnderTheHoodSection({ userName, onCardExpandedChange, regState =
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="fixed z-30 hidden xl:block w-56"
+            className="fixed z-[70] hidden xl:block w-56"
             style={{ left: 'calc(5% + 300px)', top: '42%' }}
           >
             <SpeechBubble direction="left">

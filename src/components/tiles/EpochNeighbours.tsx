@@ -159,8 +159,45 @@ export function EpochNeighbours({
 
   const hasTrajectory = points.some((p) => Number.isFinite(p.confidence));
 
+  // Consecutive steps whose neighbours are identical came from a frozen
+  // backbone. Detect it from the data rather than hard-coding "6": the phase
+  // boundary is a training hyper-parameter and a longer phase-2 run would move
+  // it.
+  const frozenUntil = (() => {
+    const steps = Object.values(byStep)
+      .filter((st) => st.neighbours.length > 0)
+      .sort((a, b) => a.step - b.step);
+    if (steps.length < 2) return null;
+    const sig = (st: EpochNeighbourStep) =>
+      st.neighbours.map((n) => n.path).join('|');
+    const first = sig(steps[0]);
+    let last = steps[0].step;
+    for (const st of steps.slice(1)) {
+      if (sig(st) !== first) break;
+      last = st.step;
+    }
+    return last > steps[0].step ? last : null;
+  })();
+
+  // Steps that share the frozen trunk collapse to a single selectable entry.
+  // Offering six identical choices implied six distinct states; one entry
+  // labelled for what it is tells the truth and shortens the row.
+  const selectableSteps = (() => {
+    const all = Object.values(byStep).sort((a, b) => a.step - b.step);
+    if (frozenUntil === null) return all;
+    return all.filter((st) => st.step === 1 || st.step > frozenUntil);
+  })();
+
   return (
     <div className={cn('w-full', className)}>
+      {frozenUntil !== null && (
+        <p className="mb-2 rounded-md border border-border bg-muted/40 px-2.5 py-1.5 text-[10px] leading-snug text-muted-foreground">
+          Epochs 1&ndash;{frozenUntil} share one result: during this phase the
+          backbone was frozen and only the classifier head trained, so the
+          model&rsquo;s sense of similarity could not change yet. It starts
+          moving at epoch {frozenUntil + 1}.
+        </p>
+      )}
       {!compact && hasTrajectory && (
         <TrajectorySparkline
           points={points}
@@ -173,7 +210,9 @@ export function EpochNeighbours({
           click on — the grid must stay navigable on its own. */}
       {!compact && !hasTrajectory && points.length > 1 && (
         <div className="mb-3 flex flex-wrap gap-1.5">
-          {points.map((p) => (
+          {points
+            .filter((p) => selectableSteps.some((st) => st.step === p.step))
+            .map((p) => (
             <button
               key={p.step}
               onClick={() => setPickedStep(p.step)}
@@ -216,7 +255,7 @@ export function EpochNeighbours({
             </p>
             <div className="h-20 w-20 overflow-hidden rounded-lg border border-border bg-muted">
               {userImageUrl ? (
-                <img src={userImageUrl} alt="Your upload" className="h-full w-full object-cover" />
+                <img src={userImageUrl} alt="" className="h-full w-full object-cover" />
               ) : (
                 <div className="flex h-full w-full items-center justify-center text-center text-[10px] text-muted-foreground">
                   no photo
@@ -269,7 +308,7 @@ function NeighbourRow({
   weakSimilarityThreshold: number;
 }) {
   const loading = step?.loading ?? (stepLoading && !step);
-  const err = step?.error ?? fetchError;
+  const err = step ? step.error : fetchError;
 
   if (loading) {
     return (
@@ -343,23 +382,45 @@ function NeighbourRow({
           className="grid grid-cols-4 gap-1.5"
         >
           {step.neighbours.map((n, i) => (
-            <div key={`${step.step}-${n.path}-${i}`} className="relative">
-              {n.thumbnail ? (
-                <img
-                  src={`data:image/jpeg;base64,${n.thumbnail}`}
-                  alt={n.cls}
-                  className="aspect-square w-full rounded-md border border-border object-cover"
-                />
-              ) : (
-                // No thumbnail is not the same as no neighbour — the match is
-                // real, so keep its slot and its score rather than dropping it.
-                <div className="flex aspect-square w-full items-center justify-center rounded-md border border-dashed border-border bg-muted text-[9px] text-muted-foreground">
+            <div key={`${step.step}-${n.path}-${i}`}>
+              {/* The image and its score badge share their own positioning
+                  context. Previously the wrapper enclosed the caption too, so
+                  `absolute bottom-1` anchored the badge to the bottom of the
+                  whole cell and it sat across the class caption rather than in
+                  the image corner. */}
+              <div className="relative">
+                {n.thumbnail ? (
+                  <img
+                    src={`data:image/jpeg;base64,${n.thumbnail}`}
+                    /* alt is deliberately empty: the class is already stated in
+                       the caption below, and a non-empty alt is painted as text
+                       when a base64 payload fails to decode — which rendered
+                       the class twice ("real_tattoo0.44" above "real_tattoo"). */
+                    alt=""
+                    className="aspect-square w-full rounded-md border border-border object-cover"
+                    onError={(e) => {
+                      // A malformed payload has nothing to fall back to
+                      // otherwise; drop to the same placeholder the null case
+                      // uses so a decode failure looks deliberate.
+                      e.currentTarget.style.display = 'none';
+                      e.currentTarget.parentElement
+                        ?.querySelector('[data-fallback]')
+                        ?.classList.remove('hidden');
+                    }}
+                  />
+                ) : null}
+                {/* No thumbnail is not the same as no neighbour — the match is
+                    real, so keep its slot and its score rather than dropping it. */}
+                <div
+                  data-fallback
+                  className={`${n.thumbnail ? 'hidden ' : ''}flex aspect-square w-full items-center justify-center rounded-md border border-dashed border-border bg-muted text-[9px] text-muted-foreground`}
+                >
                   no image
                 </div>
-              )}
-              <span className="absolute bottom-1 right-1 rounded bg-slate-900/85 px-1 py-0.5 font-mono text-[9px] leading-none text-white">
-                {n.similarity.toFixed(2)}
-              </span>
+                <span className="absolute bottom-1 right-1 rounded bg-slate-900/85 px-1 py-0.5 font-mono text-[9px] leading-none text-white">
+                  {n.similarity.toFixed(2)}
+                </span>
+              </div>
               <span className="mt-1 block truncate text-center text-[9px] text-muted-foreground">
                 {CLASS_DISPLAY[n.cls] ?? n.cls}
               </span>

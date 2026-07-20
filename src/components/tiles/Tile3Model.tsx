@@ -133,15 +133,12 @@ function buildDriftEpochs(
     };
   });
 
-  const tail = fake
-    .filter((e) => e.phase === 'drift')
-    .map((e, j) => ({
-      ...e,
-      step: real.length + j + 1,
-      epoch: (real[real.length - 1]?.epoch ?? real.length) + j + 1,
-    }));
-
-  return [...real, ...tail];
+  // No fabricated tail. Real checkpoints only — inventing epochs 10-11 offered
+  // the user steps that do not exist and forced a drift narrative the measured
+  // labels contradict. When the 15-epoch overfit run is deployed, its real
+  // checkpoints simply appear here and the derived narrative below picks the
+  // decline up on its own.
+  return real;
 }
 
 export function Tile3Model({
@@ -196,6 +193,35 @@ export function Tile3Model({
     driftEpochs[0],
   );
   const finalEpoch = driftEpochs[driftEpochs.length - 1];
+
+  // The story is computed, never asserted. The previous copy claimed the model
+  // "would have shipped on the WRONG class" while every epoch on screen showed
+  // the same class — a conclusion the data did not support. These flags read
+  // the measured trajectory, so the tile can only say what actually happened.
+  // A decline has to be big enough to SEE, not merely non-zero. Testing found
+  // a trajectory ending 0.8712 -> 0.8709: both render as 87%, so the tile
+  // announced "peaked, then fell ... 0 points below its best" — asserting a
+  // fall its own figures contradict. A 2-point wobble is likewise noise, not
+  // over-training. Three points is the smallest drop that survives rounding
+  // and reads as real; genuine over-training is far larger (the worst measured
+  // here is 11 points).
+  const MIN_MEANINGFUL_DROP = 0.03;
+  const declinedAfterPeak =
+    finalEpoch !== undefined &&
+    peakEpoch !== undefined &&
+    finalEpoch.step !== peakEpoch.step &&
+    peakEpoch.confidence - finalEpoch.confidence >= MIN_MEANINGFUL_DROP;
+  const confidenceDrop = declinedAfterPeak
+    ? peakEpoch.confidence - finalEpoch.confidence
+    : 0;
+  // Compare across the WHOLE trajectory, not final-vs-peak. A real run went
+  // real_tattoo for epochs 1-6 then pen_drawn for 7-9; peak and final were both
+  // epoch 9, so a final-vs-peak test saw no flip and the tile stayed silent
+  // about the model changing its mind mid-training — which is the most
+  // interesting thing that happened to that image.
+  const firstLabel = driftEpochs[0]?.predictedLabel;
+  const flipEpoch = driftEpochs.find((e) => e.predictedLabel !== firstLabel);
+  const classFlipped = flipEpoch !== undefined;
 
   // Sealed vs broken — drives whether drift is hidden or unfurled.
   const sealed = isSealIntact(appliedProtections);
@@ -263,7 +289,7 @@ export function Tile3Model({
   return (
     <motion.div
       layout
-      className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-slate-950/80 px-4 py-6 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-slate-950/80 px-4 py-6 backdrop-blur-sm xl:pl-[620px]"
       onClick={() => setState('resting')}
     >
       <motion.div
@@ -354,8 +380,49 @@ export function Tile3Model({
               <div className="mb-4 flex items-start gap-2 rounded-md border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-800 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
                 <div>
-                  <span className="font-semibold">Drift detected, unmonitored shipping path.</span>
-                  {' '}Without post-market surveillance + drift monitoring, the model below would have shipped at <span className="font-mono">{(finalEpoch.confidence * 100).toFixed(0)}%</span> confidence on the <em>wrong</em> class.
+                  {declinedAfterPeak ? (
+                    <>
+                      <span className="font-semibold">
+                        Confidence peaked at epoch {peakEpoch.epoch}, then fell.
+                      </span>{' '}
+                      Training continued to epoch {finalEpoch.epoch}, where this image
+                      scored{' '}
+                      <span className="font-mono">
+                        {(finalEpoch.confidence * 100).toFixed(0)}%
+                      </span>{' '}
+                      — {(confidenceDrop * 100).toFixed(0)} points below its best.
+                      {classFlipped && flipEpoch && (
+                        <>
+                          {' '}It also changed its mind at epoch {flipEpoch.epoch},
+                          from {firstLabel} to {flipEpoch.predictedLabel}.
+                        </>
+                      )}{' '}
+                      Ship the last checkpoint without a held-out set and you would
+                      never know.
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-semibold">
+                        No decline measured for this image.
+                      </span>{' '}
+                      Confidence rose to{' '}
+                      <span className="font-mono">
+                        {(finalEpoch.confidence * 100).toFixed(0)}%
+                      </span>{' '}
+                      by epoch {finalEpoch.epoch} across the {driftEpochs.length}{' '}
+                      checkpoints trained.
+                      {classFlipped && flipEpoch ? (
+                        <>
+                          {' '}But it changed its mind at epoch {flipEpoch.epoch},
+                          from {firstLabel} to {flipEpoch.predictedLabel} — the
+                          answer you get depends on when training stopped.
+                        </>
+                      ) : (
+                        <> A longer run would be needed to show over-training on
+                        this photo.</>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -396,11 +463,17 @@ export function Tile3Model({
               byStep={epochNeighbours.byStep}
               loading={epochNeighbours.loading}
               error={epochNeighbours.error}
-              trajectory={driftEpochs.map((e) => ({
-                step: e.step,
-                epoch: e.epoch,
-                confidence: e.confidence,
-                predictedLabel: e.predictedLabel,
+              /* Only the MEASURED epochs. driftEpochs also carries the
+                 fabricated drift tail (steps 10-11 from FAKE_DRIFT), and those
+                 checkpoints do not exist — requesting neighbours for step 10
+                 404s, which surfaced as "No neighbours for this epoch" on a
+                 point the sparkline had invited the user to click. A selector
+                 must not offer epochs the model never had. */
+              trajectory={(checkpoints?.predictions ?? []).map((pr) => ({
+                step: pr.step,
+                epoch: pr.epoch,
+                confidence: pr.scores?.[cls] ?? pr.confidence,
+                predictedLabel: pr.predictedLabel,
               }))}
               userImageUrl={userImageUrl}
               className="mt-4"
@@ -614,7 +687,6 @@ function BrokenView({
           const meta = PHASE_META[p.phase];
           const isPeak = p.step === peakEpoch.step;
           const isDrift = p.phase === 'drift';
-          const refUrl = trainingRefUrl(baseURL, predictedClass, p.trainingRef);
           const borderColor = isPeak ? '#22c55e' : isDrift ? '#ef4444' : '#475569';
           return (
             <div key={p.step} className="text-center">
@@ -622,29 +694,22 @@ function BrokenView({
                 Epoch {p.epoch}{isPeak ? ' ★' : ''}
               </div>
               <div
-                className="relative mx-auto h-14 w-14 overflow-hidden rounded-md border"
-                style={{ borderColor }}
-                title={`Training ref at epoch ${p.epoch} (${p.trainingRef})`}
-              >
-                <img src={refUrl} alt="" className="h-full w-full object-cover opacity-90" />
-                <span className="absolute bottom-0 right-0 rounded-tl bg-black/55 px-1 text-[8px] font-semibold uppercase tracking-wider text-white">
-                  {p.trainingRef === 'canonical' ? 'ref' : 'edge'}
-                </span>
-              </div>
-              <div
-                className="relative mx-auto mt-1.5 h-14 w-14 overflow-hidden rounded-md border-2"
+                className="relative mx-auto h-14 w-14 overflow-hidden rounded-md border-2 bg-muted/30"
                 style={{ borderColor }}
               >
-                {userImageUrl ? (
-                  <img
-                    src={userImageUrl}
-                    alt=""
-                    className="h-full w-full object-cover"
-                    style={{ filter: `blur(${p.blurPx}px)` }}
-                  />
-                ) : (
-                  <div className="h-full w-full bg-muted" />
-                )}
+                {/* No thumbnail: with the training-ref row and the blur removed
+                    this rendered the user's photo nine identical times. A bare
+                    epoch number just repeated the label above, so the box shows
+                    the confidence as a fill instead — the trajectory becomes
+                    readable across the row, not only in the digits below. */}
+                <div
+                  className="absolute inset-x-0 bottom-0 transition-all"
+                  style={{
+                    height: `${Math.max(4, p.confidence * 100)}%`,
+                    backgroundColor: borderColor,
+                    opacity: 0.35,
+                  }}
+                />
                 {isDrift && (
                   <AlertTriangle className="absolute right-0.5 top-0.5 h-3 w-3 text-red-500 drop-shadow" />
                 )}
@@ -672,25 +737,11 @@ function BrokenView({
         })}
       </div>
 
-      <div className="mt-6 border-t border-border pt-4">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Confidence over training, peak then drift
-        </p>
-        <ConfidenceChart predictions={driftEpochs.map((p) => ({
-          confidence: p.confidence,
-          epoch: p.epoch,
-        }))} />
-      </div>
-
-      <p className="mt-4 text-center text-xs text-muted-foreground">
-        At epoch {peakEpoch.epoch} the model peaked at{' '}
-        <span className="font-mono text-emerald-600">{(peakEpoch.confidence * 100).toFixed(0)}%</span>
-        {' '}on{' '}
-        <span className="font-semibold text-foreground">{peakEpoch.predictedLabel}</span>
-        . By epoch {finalEpoch.epoch} it had drifted to{' '}
-        <span className="font-semibold text-red-600">{finalEpoch.predictedLabel}</span>{' '}
-        at {(finalEpoch.confidence * 100).toFixed(0)}%.
-      </p>
+      {/* The old duplicate chart and its narrative lived here. EpochNeighbours
+          renders the trajectory now, and the derived summary sits above the
+          epoch row, so keeping these produced two sparklines and two summaries
+          that could disagree. The old sentence also read "At epoch 9 it peaked
+          ... by epoch 9 it had drifted" whenever peak and final coincided. */}
     </>
   );
 }

@@ -57,6 +57,8 @@ from pathlib import Path
 import numpy as np
 import torch
 from fastapi import FastAPI, Request, Response
+from starlette.concurrency import run_in_threadpool
+import anyio
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 from transformers import (
@@ -157,6 +159,10 @@ _backbone_cache: dict[str, tuple] = {}
 # a handful of adjacent epochs in one tier. Ordinary dicts preserve insertion
 # order, which is all an LRU needs.
 CHECKPOINT_KNN_CACHE_SIZE = 6
+# Concurrency bound for the checkpoint k-NN. See the note at the endpoint: the
+# work is CPU-bound and torch already threads internally, so more than a couple
+# of simultaneous forwards makes the whole burst slower on this 4-core box.
+_CHECKPOINT_KNN_SEMAPHORE = anyio.Semaphore(2)
 _loaded_checkpoint_embeddings: dict[str, dict] = {}
 _checkpoint_trunk_cache: dict[str, tuple] = {}
 
@@ -791,26 +797,55 @@ async def find_similar_at_checkpoint(model_name: str, step: int, request: Reques
             status_code=404,
         )
 
+    # Everything below — embedding load, torch forward, numpy matmul, JPEG
+    # thumbnailing — is synchronous CPU work. Running it directly in an
+    # `async def` pins the event loop for the whole call, and the tile fires all
+    # nine steps at once: measured, that burst drove /health from 0.005s idle to
+    # 5.069s, i.e. one visitor opening a tile stalled classification for
+    # everyone. Parallelism was also net negative (9 parallel 3.83s vs 9
+    # sequential 3.61s) because the requests simply queued behind each other on
+    # the loop. Offloading to the threadpool lets them genuinely overlap and
+    # keeps the loop free to serve other endpoints.
+    def _compute():
+        return _checkpoint_similar_sync(model_name, variant, step, image, k)
+
+    # Bounded, not unbounded. Torch already parallelises a forward pass across
+    # cores, so letting all nine of the tile's requests run at once on a 4-core
+    # box oversubscribes it: measured, unbounded threadpool took 7.10s for the
+    # nine steps against 3.84s run one after another. Two at a time keeps the
+    # cores busy without thrashing, while the event loop stays free either way.
+    async with _CHECKPOINT_KNN_SEMAPHORE:
+        try:
+            return await run_in_threadpool(_compute)
+        except FileNotFoundError as missing:
+            if "embeddings" in str(missing).lower() or "npz" in str(missing).lower():
+                return Response(
+                    content=(
+                        f"Checkpoint embeddings not precomputed: {missing}. "
+                        "Run precompute_checkpoint_embeddings.py on the cluster and copy "
+                        "the result into dataset_collection/embeddings_checkpoint/."
+                    ),
+                    status_code=503,
+                )
+            return Response(content=str(missing), status_code=404)
+
+
+def _checkpoint_similar_sync(model_name: str, variant: str, step: int, image, k: int):
+    """The blocking half of the checkpoint k-NN, run off the event loop.
+
+    Kept as a plain function so the async endpoint above stays a thin wrapper
+    and the CPU work is unambiguously threadpool-bound.
+    """
     try:
         emb_data = load_checkpoint_embeddings(variant, step)
     except FileNotFoundError as missing:
-        return Response(
-            content=(
-                f"Checkpoint embeddings not precomputed: {missing}. "
-                "Run precompute_checkpoint_embeddings.py on the cluster and copy "
-                "the result into dataset_collection/embeddings_checkpoint/."
-            ),
-            status_code=503,
-        )
+        raise FileNotFoundError(f"embeddings {missing}") from missing
 
     # The query is embedded with the SAME checkpoint trunk that produced the
     # corpus vectors above. Mismatching them compares two unrelated spaces and
     # yields plausible-looking but meaningless neighbours — see
     # embed_query_at_checkpoint.
-    try:
-        query = embed_query_at_checkpoint(image, model_name, step)
-    except FileNotFoundError as e:
-        return Response(content=str(e), status_code=404)
+    query = embed_query_at_checkpoint(image, model_name, step)
 
     # Cosine similarity as one vectorised matmul over the whole corpus.
     sims = emb_data["embeddings"] @ query

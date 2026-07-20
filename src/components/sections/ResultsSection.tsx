@@ -226,7 +226,7 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                         }`}>
                           {regState === 'mdrOnly'
                             ? 'No explanation provided. AI Act would require explainability.'
-                            : 'Tattoo type classified. This is not a medical assessment.'}
+                            : 'Tattoo type classified.'}
                         </p>
                       </div>
                     </div>
@@ -268,7 +268,7 @@ export function ResultsSection({ userName, onConfirm, onDecline, regState = 'bot
                       ))}
                     </div>
                     {rankedScores.length > 1 &&
-                     rankedScores[0][1] - rankedScores[1][1] < 0.25 && (
+                     rankedScores[0][1] - rankedScores[1][1] < 0.10 && (
                       <p className="text-xs text-amber-600 mt-3">
                         The top two are close — the model is not clearly separating them.
                       </p>

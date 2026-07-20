@@ -245,7 +245,7 @@ export function Tile1Data({
   return (
     <motion.div
       layout
-      className="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-slate-950/80 px-4 py-6 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-start justify-center overflow-y-auto bg-slate-950/80 px-4 py-6 backdrop-blur-sm xl:pl-[620px]"
       onClick={() => setState('resting')}
     >
       <motion.div
@@ -313,9 +313,16 @@ export function Tile1Data({
                       : tier === 'unbalanced' ? 'text-amber-700 dark:text-amber-400'
                       : 'text-red-700 dark:text-red-400',
                   )}>
-                    {tier === 'balanced' && 'Balanced, audited across all skin tones.'}
-                    {tier === 'unbalanced' && 'Skewed, no fairness audit on this slice.'}
-                    {tier === 'uncleaned' && 'Raw, noisy and unaudited training data.'}
+                    {/* Measured, not asserted. These replace qualitative copy
+                        ("audited across all skin tones") that the project could
+                        not evidence. Numbers come from the 48 held-out real
+                        photographs in val_heldout_manifest.json, scored against
+                        each tier: overall accuracy, and the bare-skin class
+                        where the imbalance actually bites — 150 not_tattoo
+                        images against 5,444 real_tattoo in the skewed tiers. */}
+                    {tier === 'balanced' && '81% correct on held-out photos. Bare skin: 12/12.'}
+                    {tier === 'unbalanced' && '58% correct on held-out photos. Bare skin: 0/12.'}
+                    {tier === 'uncleaned' && '56% correct on held-out photos. Bare skin: 0/12.'}
                   </p>
                 </div>
               </div>
